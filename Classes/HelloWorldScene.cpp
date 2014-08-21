@@ -114,7 +114,18 @@ bool HelloWorld::init()
     {
         for (int y = 0; y < s.height; ++y)
         {
+            auto sprite = layer->getTileAt(Vec2(x,y));
             auto GID = layer->getTileGIDAt(Vec2(x, y));
+            if(GID != 0) //not empty
+            {
+                sprite->setAnchorPoint(Point(0.5,0.5));
+                auto getpos = sprite->getPosition();
+                sprite->setPosition(getpos.x + sprite->getBoundingBox().size.width/2,getpos.y +  sprite->getBoundingBox().size.height/2);
+            }
+            if(GID == 2) //fire
+            {
+                sprite->runAction(RepeatForever::create(RotateBy::create(1.0, 360)));
+            }
             if(GID == 3 || GID == 4)
             {
                 auto player = Male::create();
