@@ -30,8 +30,8 @@ bool Male::init()
 void Male::setSprite(cocos2d::Texture2D *tex,int x,int y,float width,float height)
 {
     _sprite = Sprite::createWithTexture(tex,Rect(x, y, width, height));
-    _sprite->setPosition(width/2, height/2);
-    _sprite->setAnchorPoint(Point(0.5,0.5));
+//    _sprite->setPosition(width/2, height/2);
+    _sprite->setAnchorPoint(Point(0,0));
     addChild(_sprite);
 }
 
