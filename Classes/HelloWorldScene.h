@@ -13,6 +13,14 @@ public:
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     virtual bool init();  
     
+    Male* _male;
+    Male* _female;
+    
+    
+    bool _pressedLeft;
+    bool _pressedRight;
+    bool _pressedUp;
+    
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
     
@@ -25,6 +33,8 @@ public:
     void onTouchesBegan(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event* event);
     void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+    
+    virtual void update(float dt);
 };
 
 #endif // __HELLOWORLD_SCENE_H__

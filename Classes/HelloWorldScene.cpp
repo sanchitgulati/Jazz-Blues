@@ -31,16 +31,24 @@ bool HelloWorld::init()
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     
     
+    auto director = Director::getInstance();
+    auto dispatcher = director->getEventDispatcher();
+    
     auto listener = EventListenerKeyboard::create();
     listener->onKeyPressed = CC_CALLBACK_2(HelloWorld::onKeyPressed, this);
     listener->onKeyReleased = CC_CALLBACK_2(HelloWorld::onKeyReleased, this);
+    dispatcher->addEventListenerWithSceneGraphPriority(listener, this);
     
-    auto director = Director::getInstance();
-    auto dispatcher = director->getEventDispatcher();
     touchListener = EventListenerTouchAllAtOnce::create();
     touchListener->onTouchesEnded = CC_CALLBACK_2(HelloWorld::onTouchesEnded, this);
     touchListener->onTouchesBegan = CC_CALLBACK_2(HelloWorld::onTouchesBegan, this);
     dispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+    
+    
+    _pressedLeft = false;
+    _pressedRight = false;
+    _pressedUp = false;
+    
 
     /////////////////////////////
     // 2. add a menu item with "X" image, which is clicked to quit the program
@@ -82,11 +90,18 @@ bool HelloWorld::init()
     // position the sprite on the center of the screen
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
 
+    auto _platformGroup = Node::create();
+    _platformGroup->setAnchorPoint(Point(0.0,0.0));
+    this->addChild(_platformGroup,1);
     
     auto map = TMXTiledMap::create("levels/1.tmx");
-    map->setAnchorPoint(Point(0.5,0.5));
-    map->setPosition(Point(visibleSize.width/2,visibleSize.height/2));
-    this->addChild(map,1);
+    map->setAnchorPoint(Point(0.0,0.0));
+//    _platformGroup->setContentSize(map->getContentSize());
+    _platformGroup->addChild(map,1);
+    
+    auto mapContentSize = map->getContentSize();
+    _platformGroup->setPosition(Point((visibleSize.width - mapContentSize.width)/2,
+                                      (visibleSize.height - mapContentSize.height)/2));
     
     for (const auto& child : map->getChildren())
     {
@@ -103,18 +118,22 @@ bool HelloWorld::init()
             if(GID == 3 || GID == 4)
             {
                 auto player = Male::create();
-                Texture2D* femaleTex = layer->getTileAt(Vec2(x, y))->getTexture();
-                player->setSprite(femaleTex);
-                player->setPosition(x*map->getTileSize().width, y*map->getTileSize().height);
+                Texture2D* tex = layer->getTileAt(Vec2(x, y))->getTexture();
+                player->setSprite(tex,(GID-1)*32,0*32,32,32);
+                player->setPosition(x*map->getTileSize().width, (map->getMapSize().height-y-1)*map->getTileSize().height);
+                
                 layer->setTileGID(0,Vec2(x, y));
-                this->addChild(player,2);
-                if(GID == 3)
+                
+                player->setMapRef(map);
+                _platformGroup->addChild(player,2);
+                if(GID == 4)
                 {
-                    player->setColor(Color3B::GREEN);
+                    _male = player;
                 }
-                else if(GID == 4)
+                else if(GID == 3)
                 {
-                    player->setColor(Color3B::ORANGE);
+                    _female = player;
+                    _female->setInverted(true);
                 }
             }
         }
@@ -123,8 +142,33 @@ bool HelloWorld::init()
     
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
+    this->scheduleUpdate();
     
     return true;
+}
+
+void HelloWorld::update(float dt)
+{
+    if(_pressedLeft)
+    {
+        _male->moveLeft();
+        _female->moveLeft();
+    }
+    if(_pressedRight)
+    {
+        _male->moveRight();
+        _female->moveRight();
+    }
+    if(_pressedUp)
+    {
+//        _male->jump(true);
+//        _female->jump(true);
+    }
+    else
+    {
+//        _male->jump();
+//        _female->jump();
+    }
 }
 
 void HelloWorld::onTouchesEnded(const std::vector<Touch*>& touches, Event* event)
@@ -144,13 +188,14 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
     
     switch (keyCode) {
-        case EventKeyboard::KeyCode::KEY_K:
-            break;
         case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            _pressedUp = true;
             break;
         case  EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+            _pressedLeft = true;
             break;
         case  EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+            _pressedRight = true;
             break;
         default:
             break;
@@ -162,9 +207,14 @@ void HelloWorld::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 {
     
     switch (keyCode) {
+        case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            _pressedUp = false;
+            break;
         case  EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+            _pressedLeft = false;
             break;
         case  EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+            _pressedRight = false;
             break;
         default:
             break;
