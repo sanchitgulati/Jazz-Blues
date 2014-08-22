@@ -76,6 +76,9 @@ void GameScene::update(float dt)
     
     if(!_male->getIsAlive())
     {
+        auto emitter = ParticleSystemQuad::create("particle_texture.plist");
+        emitter->setPosition(_male->getPosition());
+        _platformsGroup->addChild(emitter, 999);
         _world->DestroyBody(_male->getB2Body());
         _male->removeFromParentAndCleanup(true);
     }

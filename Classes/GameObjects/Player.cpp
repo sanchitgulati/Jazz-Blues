@@ -367,10 +367,6 @@ void Player::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
         case  EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
             _pressedRight = false;
             break;
-            
-        case EventKeyboard::KeyCode::KEY_R:
-            Director::getInstance()->replaceScene(Director::getInstance()->getRunningScene());
-            break;
         default:
             break;
     }
