@@ -38,12 +38,7 @@ private:
     cocos2d::TMXTiledMap* _tm;
     
     
-    //levelTime
-    double getCurrentTimeInSeconds();
-    float currentTime;
-    float lastTickTime;
-    float accumulator;
-    
+    bool _gsGamePlaying;
    
     
     //Box2d

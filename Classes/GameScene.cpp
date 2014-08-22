@@ -34,9 +34,7 @@ bool GameScene::init()
     {
         return false;
     }
-    accumulator = 0.0f;
-    currentTime = 0.0f;
-    lastTickTime = 0.0f;
+    _gsGamePlaying = true;
     
     _visibleSize = Director::getInstance()->getVisibleSize();
     
@@ -74,13 +72,23 @@ void GameScene::update(float dt)
 {
     _world->Step(dt, 8, 1);
     
-    if(!_male->getIsAlive())
+    if(!_male->getIsAlive() && _gsGamePlaying)
     {
         auto emitter = ParticleSystemQuad::create("particle_texture.plist");
-        emitter->setPosition(_male->getPosition());
-        _platformsGroup->addChild(emitter, 999);
+        _playerGroup->addChild(emitter, 999);
+        emitter->setPosition(_male->getSprite()->getPosition());
         _world->DestroyBody(_male->getB2Body());
         _male->removeFromParentAndCleanup(true);
+        _gsGamePlaying = false;
+    }
+    if(!_female->getIsAlive() && _gsGamePlaying)
+    {
+        auto emitter = ParticleSystemQuad::create("particle_texture.plist");
+        _playerGroup->addChild(emitter, 999);
+        emitter->setPosition(_female->getSprite()->getPosition());
+        _world->DestroyBody(_female->getB2Body());
+        _female->removeFromParentAndCleanup(true);
+        _gsGamePlaying = false;
     }
 }
 
