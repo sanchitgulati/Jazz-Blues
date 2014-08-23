@@ -71,24 +71,36 @@ void GameScene::menuCloseCallback(Ref* pSender)
 void GameScene::update(float dt)
 {
     _world->Step(dt, 8, 1);
-    
-    if(!_male->getIsAlive() && _gsGamePlaying)
+    if(_gsGamePlaying)
     {
-        auto emitter = ParticleSystemQuad::create("particle_texture.plist");
-        _playerGroup->addChild(emitter, 999);
-        emitter->setPosition(_male->getSprite()->getPosition());
-        _world->DestroyBody(_male->getB2Body());
-        _male->removeFromParentAndCleanup(true);
-        _gsGamePlaying = false;
-    }
-    if(!_female->getIsAlive() && _gsGamePlaying)
-    {
-        auto emitter = ParticleSystemQuad::create("particle_texture.plist");
-        _playerGroup->addChild(emitter, 999);
-        emitter->setPosition(_female->getSprite()->getPosition());
-        _world->DestroyBody(_female->getB2Body());
-        _female->removeFromParentAndCleanup(true);
-        _gsGamePlaying = false;
+        //Dynamic Scaling
+        auto diffX = fabs(_male->getSprite()->getPosition().x - _female->getSprite()->getPosition().x);
+        auto diffY = fabs( _male->getSprite()->getPosition().y - _female->getSprite()->getPosition().y);
+        auto maxScale = MAX(diffX, diffY);
+        _parent->setScale((((_parent->getContentSize().width-maxScale)/_parent->getContentSize().width)*0.5)+0.9);
+        //End
+        
+        
+        if(!_male->getIsAlive())
+        {
+            auto emitter = ParticleSystemQuad::create("particle_texture.plist");
+            _playerGroup->addChild(emitter, 999);
+            emitter->setPosition(_male->getSprite()->getPosition());
+            _world->DestroyBody(_male->getB2Body());
+            _male->removeFromParentAndCleanup(true);
+            _gsGamePlaying = false;
+        }
+        if(!_female->getIsAlive())
+        {
+            auto emitter = ParticleSystemQuad::create("particle_texture.plist");
+            _playerGroup->addChild(emitter, 999);
+            emitter->setPosition(_female->getSprite()->getPosition());
+            _world->DestroyBody(_female->getB2Body());
+            _female->removeFromParentAndCleanup(true);
+            _gsGamePlaying = false;
+            
+        }
+        
     }
 }
 

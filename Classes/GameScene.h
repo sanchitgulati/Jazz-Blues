@@ -37,7 +37,6 @@ private:
     bool _quit;
     cocos2d::TMXTiledMap* _tm;
     
-    
     bool _gsGamePlaying;
    
     
