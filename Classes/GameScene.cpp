@@ -78,7 +78,7 @@ void GameScene::update(float dt)
         auto diffY = fabs( _male->getSprite()->getPosition().y - _female->getSprite()->getPosition().y);
         auto maxScale = MAX(diffX, diffY);
         _parent->setScale((((_parent->getContentSize().width-maxScale)/_parent->getContentSize().width)*0.5)+0.9);
-        //End
+        //End 
         
         
         if(!_male->getIsAlive())
@@ -144,6 +144,8 @@ void GameScene::loadLevel(int level)
     auto _bg1 = Sprite::create(IMG_BG);
     _bg1->setColor(Color3B::WHITE);
     _bg1->setPosition(cocos2d::Point(_visibleSize.width/2.0f,_visibleSize.height/2.0f));
+    _bg1->setScaleX( Util::getScreenRatioWidth(_bg1)*1.5);
+    _bg1->setScaleY(Util::getScreenRatioHeight(_bg1)*1.5);
     _bgGroup->addChild(_bg1);
     
     _tm = TMXTiledMap::create("levels/2.tmx");
@@ -166,8 +168,6 @@ void GameScene::loadLevel(int level)
 
     prepareLayers();
     
-    _bg1->setScaleX( ((_tm->getMapSize().width-1) * _tm->getTileSize().width)/_bg1->getBoundingBox().size.width );
-    _bg1->setScaleY( ((_tm->getMapSize().height-1) * _tm->getTileSize().height)/_bg1->getBoundingBox().size.height  );
     _bg1->setAnchorPoint(Point(0.5,0.5));
     auto bgSize = _platformsGroup->getBoundingBox().size;
     _bg1->setPosition(bgSize.width/2,bgSize.height/2);

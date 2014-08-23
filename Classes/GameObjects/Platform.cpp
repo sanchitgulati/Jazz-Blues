@@ -37,13 +37,19 @@ Platform* Platform::create(b2Body* body,float scaleX,float scaleY)
 
 bool Platform::initWithBody(b2Body* body,float scaleX,float scaleY)
 {
-    _sprite = LFSpriteNode::create(IMG_PLATFORM);
-    _sprite->setColor(Color3B::BLACK);
+    _sprite = LFSpriteNode::create(IMG_PLATFORM,Rect(0, 0, 32*scaleX, 32*scaleY));
+//    _sprite->setColor(Color3B::BLACK);
     _sprite->setB2Body(body);
-    _sprite->setScaleX(scaleX);
-    _sprite->setScaleY(scaleY);
+    
+    
+//    _sprite->setScaleX(scaleX);
+//    _sprite->setScaleY(scaleY);
+//    
     _sprite->setPTMRatio(kPixelsPerMeter);
     this->addChild(_sprite);
+    
+    
+    _sprite->getTexture()->setTexParameters({GL_LINEAR,GL_LINEAR,GL_REPEAT,GL_REPEAT});
     return true;
 }
 
