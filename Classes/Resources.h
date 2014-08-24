@@ -21,7 +21,9 @@
 #define IMG_MALE "images/boy.png"
 #define IMG_PLATFORM "images/platform.png"
 #define IMG_SPIKE "images/fire.png"
+#define IMG_WIN "images/win.png"
 
+#define FONT "fonts/Lato.ttf"
 
 enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock};
 enum playerIndex {pUnknown,pFemale,pMale};

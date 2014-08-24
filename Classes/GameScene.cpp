@@ -38,6 +38,8 @@ bool GameScene::init()
     
     _visibleSize = Director::getInstance()->getVisibleSize();
     
+    _eventDispatcher = Director::getInstance()->getEventDispatcher();
+    _eventDispatcher->removeAllEventListeners();
     auto listener = EventListenerKeyboard::create();
     listener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
     listener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
@@ -80,6 +82,11 @@ void GameScene::update(float dt)
         _parent->setScale((((_parent->getContentSize().width-maxScale)/_parent->getContentSize().width)*0.5)+0.9);
         //End 
         
+        if(_male->getAtFinish() && _female->getAtFinish())
+        {
+            log("You Win");
+            Director::getInstance()->replaceScene((Scene*)GameScene::create());
+        }
         
         if(!_male->getIsAlive())
         {
@@ -332,6 +339,12 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     _platformsGroup->addChild(death);
                     break;
                 }
+                case tmxWin:
+                {
+                    auto win = Win::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    _platformsGroup->addChild(win);
+                    break;
+                }
                 default:
                     break;
             }
@@ -352,6 +365,7 @@ void GameScene::BeginContact(b2Contact* contact)
         int arraySensor[4] = {sensorNone,sensorNone,sensorNone,sensorNone}; // 4 sensors
         int count = 0;
         bool die = false;
+        bool isFinished = false;
         
         if(data1->a == tmxPlatform || data2->a == tmxPlatform)
         {
@@ -372,11 +386,21 @@ void GameScene::BeginContact(b2Contact* contact)
         {
             die = true;
         }
+        if(data1->a == tmxWin || data2->a == tmxWin)
+        {
+            isFinished = true;
+        }
         
-        if(data1->b == pFemale)
+        if(data1->b == pFemale || data2->b == pFemale)
+        {
+            _female->setAtFinish(isFinished);
             _female->setIsTouching(arraySensor,true,die);
-        else if(data1->b == pMale)
+        }
+        else if(data1->b == pMale || data2->b == pMale)
+        {
+            _male->setAtFinish(isFinished);
             _male->setIsTouching(arraySensor,true,die);
+        }
     }
 }
 
@@ -408,10 +432,23 @@ void GameScene::EndContact(b2Contact* contact)
                 arraySensor[count++] = sensorBottom;
             }
         }
+        
+        if(data1->a == tmxWin || data2->a == tmxWin)
+        {
+            if(data1->b == pFemale || data2->b == pFemale)
+                _female->setAtFinish(false);
+            else if(data1->b == pMale || data2->b == pMale)
+                _male->setAtFinish(false);
+        }
+        
         if(data1->b == pFemale)
-            _female->setIsTouching(arraySensor,false);
+        {
+            _female->setIsTouching(arraySensor,true);
+        }
         else if(data1->b == pMale)
-            _male->setIsTouching(arraySensor,false);
+        {
+            _male->setIsTouching(arraySensor,true);
+        }
 
     }
 }

@@ -30,9 +30,10 @@ private:
     cocos2d::Point _wallHit;
     
     LFSpriteNode* _sprite;
-    cocos2d::MotionStreak* _streak;
     
     int _pIndex;
+    
+    bool _isAtFinish;
     
     int _health;
     
@@ -77,6 +78,8 @@ public:
     void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     
+    void setAtFinish(bool val);
+    bool getAtFinish();
     
     void update(float dt);
     ~Player();

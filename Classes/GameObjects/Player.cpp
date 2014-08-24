@@ -58,6 +58,7 @@ bool Player::initWithBody(b2Body* body,int pIndex)
         
     _time = 0;
     _died = false;
+    _isAtFinish = false;
     
     _airTime = 0.0f;
     _jumping = false;
@@ -334,6 +335,16 @@ bool Player::getIsAlive()
 void Player::setIsDied(bool val)
 {
     _died = val;
+}
+
+void Player::setAtFinish(bool val)
+{
+    _isAtFinish = val;
+}
+
+bool Player::getAtFinish()
+{
+    return _isAtFinish;
 }
 
 void Player::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)

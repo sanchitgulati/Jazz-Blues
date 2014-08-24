@@ -1,4 +1,5 @@
 #include "AppDelegate.h"
+#include "LogoSplash.h"
 #include "GameScene.h"
 
 USING_NS_CC;
@@ -29,9 +30,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
     
     
     CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sfx/jump_0.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sfx/bg.mp3");
+    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/bg.mp3",true);
+    
 
     // create a scene. it's an autorelease object
-    auto scene = GameScene::createScene();
+//    auto scene = (Scene*)GameScene::create();
+    auto scene = (Scene*)LogoSplash::create();
 
     // run
     director->runWithScene(scene);
@@ -44,7 +49,7 @@ void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
 
     // if you use SimpleAudioEngine, it must be pause
-    // SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
+    CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
@@ -52,5 +57,5 @@ void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
 
     // if you use SimpleAudioEngine, it must resume here
-    // SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
+    CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }

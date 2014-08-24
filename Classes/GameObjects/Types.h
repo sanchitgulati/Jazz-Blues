@@ -12,7 +12,7 @@
 #include "Player.h"
 #include "Platform.h"
 #include "Death.h"
-
+#include "Win.h"
 
 
 #endif
