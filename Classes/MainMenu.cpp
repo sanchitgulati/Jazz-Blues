@@ -78,6 +78,7 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
 {
     auto obj = (Node*)pSender;
     log("Reached menuCallback from %d",obj->getTag());
+    kCurrentLevel = 1;
     auto scene = (Scene*)GameScene::create();
     Director::getInstance()->replaceScene(scene);
     

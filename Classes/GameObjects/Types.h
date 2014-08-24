@@ -13,6 +13,7 @@
 #include "Platform.h"
 #include "Death.h"
 #include "Win.h"
+#include "Block.h"
 
 
 #endif

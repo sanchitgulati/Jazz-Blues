@@ -22,6 +22,7 @@
 #define IMG_PLATFORM "images/platform.png"
 #define IMG_SPIKE "images/fire.png"
 #define IMG_WIN "images/win.png"
+#define IMG_BLOCK "images/block.png"
 
 #define FONT "fonts/Lato.ttf"
 
@@ -34,4 +35,6 @@ const float kGravity = -kPixelsPerMeter / 0.5; // adjust this to taste
 const float kUpdateInterval = 1.0f / 60.0f;
 const double kSecondsPerUpdate = 0.1;
 struct userdataFormat { int a;int b;int c;cocos2d::Node* node;  userdataFormat(int a,int b = 0,int c = 0,cocos2d::Node* node = nullptr){this->a = a;this->b = b;this->c = c;this->node = node;}};
+
+static int kCurrentLevel = 1;
 #endif

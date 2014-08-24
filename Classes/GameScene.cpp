@@ -80,11 +80,13 @@ void GameScene::update(float dt)
         auto diffY = fabs( _male->getSprite()->getPosition().y - _female->getSprite()->getPosition().y);
         auto maxScale = MAX(diffX, diffY);
         _parent->setScale((((_parent->getContentSize().width-maxScale)/_parent->getContentSize().width)*0.5)+0.9);
+        
+        
         //End 
         
         if(_male->getAtFinish() && _female->getAtFinish())
         {
-            log("You Win");
+            kCurrentLevel ++;
             Director::getInstance()->replaceScene((Scene*)GameScene::create());
         }
         
@@ -155,7 +157,9 @@ void GameScene::loadLevel(int level)
     _bg1->setScaleY(Util::getScreenRatioHeight(_bg1)*1.5);
     _bgGroup->addChild(_bg1);
     
-    _tm = TMXTiledMap::create("levels/2.tmx");
+    
+    auto loadLevelString = StringUtils::format("levels/%d.tmx",kCurrentLevel);
+    _tm = TMXTiledMap::create(loadLevelString);
     _tm->setVisible(false);
     _platformsGroup = Node::create();
     _parent->addChild(_platformsGroup);
@@ -326,11 +330,11 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     break;
                 }
                 case tmxFemale:
-                    _female = Player::createPlayerFixture(_world,layer, x, y, 1.0f, 1.0f,pFemale);
+                    _female = Player::createPlayerFixture(_world,layer, x, y, 0.9f, 0.9f,pFemale);
                     _playerGroup->addChild(_female);
                     break;
                 case tmxMale:
-                    _male = Player::createPlayerFixture(_world,layer, x, y, 1.0f, 1.0f,pMale);
+                    _male = Player::createPlayerFixture(_world,layer, x, y, 0.9f, 0.9f,pMale);
                     _playerGroup->addChild(_male);
                     break;
                 case tmxFire:
@@ -344,6 +348,11 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     auto win = Win::createFixture(_world, layer, x, y, 1.0, 1.0);
                     _platformsGroup->addChild(win);
                     break;
+                }
+                case tmxBlock:
+                {
+                    auto block = Block::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    _platformsGroup->addChild(block);
                 }
                 default:
                     break;
