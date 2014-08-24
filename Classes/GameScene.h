@@ -55,10 +55,14 @@ private:
 protected:
     void loadData();
     void loadLevel(int level);
+    void loadInstuctions();
+    
     void setupObjects();
     void addObjects();
+    
     void createPhysicalWorld();
     void prepareLayers();
+    
     void createFixturesFirstPass(cocos2d::TMXLayer* layer);
     void createFixturesSecondPass(cocos2d::TMXLayer* layer);
     

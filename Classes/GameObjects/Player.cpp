@@ -284,16 +284,6 @@ void Player::setIsTouching(int sensorEnum[],int val,bool died)
                     _jumping = false;
                     _airTime = 0;
                     _wallStickTimer = true;
-                    auto body = _sprite->getB2Body();
-                    auto velocity = body->GetLinearVelocity();
-                    auto reducedFall = velocity;
-                    reducedFall.y = velocity.y/2.5;
-                    body->SetLinearVelocity(reducedFall);
-                    auto pos = body->GetPosition();
-                    _wallHit = Point(pos.x,pos.y);
-                    if (_wallJumping) {
-                        //sound hit
-                    }
                 }
                 else
                 {

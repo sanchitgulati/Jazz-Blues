@@ -52,6 +52,7 @@ bool GameScene::init()
     
     createPhysicalWorld();
     loadLevel(0);// for testing
+    loadInstuctions();
     
     // schedule the update
     this->schedule(schedule_selector(GameScene::update), kUpdateInterval);
@@ -86,7 +87,7 @@ void GameScene::update(float dt)
         
         if(_male->getAtFinish() && _female->getAtFinish())
         {
-            kCurrentLevel ++;
+            kCurrentLevel ++; //increment level
             Director::getInstance()->replaceScene((Scene*)GameScene::create());
         }
         
@@ -119,6 +120,36 @@ void GameScene::loadData()
     //todo: leaderboards
 }
 
+void GameScene::loadInstuctions()
+{
+    auto screenSize = Director::getInstance()->getWinSize();
+    
+    auto titleBackground = Sprite::create("images/bg.png");
+    titleBackground->setColor(Color3B::BLACK);
+    titleBackground->setPosition(screenSize.width/2, screenSize.height/2);
+    titleBackground->setScaleX(Util::getScreenRatioWidth(titleBackground));
+    titleBackground->setScaleY(Util::getScreenRatioHeight(titleBackground));
+    this->addChild(titleBackground);
+    
+    auto valuekey = _tm->getProperties();
+    auto labelTitle = Label::createWithTTF(valuekey["title"].asString().c_str(), FONT, 64);
+    labelTitle->setWidth(screenSize.width/2);
+    
+    auto contentSize = titleBackground->getBoundingBox().size;
+    labelTitle->setPosition(Point(contentSize.width/2,contentSize.height/2));
+    labelTitle->setAnchorPoint(Point(0.5,0.5));
+    titleBackground->addChild(labelTitle);
+    
+    
+    auto pos = titleBackground->getPosition();
+    titleBackground->setPositionY(pos.y + contentSize.height);
+    auto awayPos = titleBackground->getPosition();
+    auto easeIn = EaseIn::create(MoveTo::create(1.0, pos), 1.0);
+    auto easesOut = EaseOut::create(MoveTo::create(1.0, awayPos), 1.0);
+    auto delay  = DelayTime::create(1.0f);
+    auto seq = Sequence::create(easeIn,delay,easesOut, NULL);
+    titleBackground->runAction(seq);
+}
 
 void GameScene::createPhysicalWorld()
 {
@@ -257,11 +288,8 @@ void GameScene::createFixturesSecondPass(TMXLayer* layer)
                             lx = x;
                             ly = y;
                         }
-                        if(length != 1)
-                        {
-                            auto platform = Platform::createFixture(_world,layer, lx, ly, 1.0f, 1.0f,length,true);
-                            _platformsGroup->addChild(platform);
-                        }
+                        auto platform = Platform::createFixture(_world,layer, lx, ly, 1.0f, 1.0f,length,true);
+                        _platformsGroup->addChild(platform);
                         length = 1;
                         lx = ly = -1;
                     }
