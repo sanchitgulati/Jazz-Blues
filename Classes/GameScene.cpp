@@ -480,11 +480,11 @@ void GameScene::EndContact(b2Contact* contact)
         
         if(data1->b == pFemale)
         {
-            _female->setIsTouching(arraySensor,true);
+            _female->setIsTouching(arraySensor,false);
         }
         else if(data1->b == pMale)
         {
-            _male->setIsTouching(arraySensor,true);
+            _male->setIsTouching(arraySensor,false);
         }
 
     }
@@ -514,11 +514,6 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 
 void GameScene::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
-//    _renderTex->beginWithClear(0, 0, 0, 0);
-//    _parent->visit(renderer, transform, flags);
-//    _renderTex->end();
-    
-    
     _customCommand.init(_globalZOrder);
     _customCommand.func = CC_CALLBACK_0(GameScene::onDraw, this, transform, flags);
     renderer->addCommand(&_customCommand);

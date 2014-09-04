@@ -31,7 +31,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     
     CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sfx/jump_0.mp3");
     CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sfx/bg.mp3");
-    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/bg.mp3",true);
+//    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/bg.mp3",true);
     
 
     // create a scene. it's an autorelease object

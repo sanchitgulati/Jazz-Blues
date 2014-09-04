@@ -43,7 +43,7 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     addChild(_sprite);
     
     
-    _jumpHeight = 680/kPixelsPerMeter;
+    _jumpHeight = 510/kPixelsPerMeter;
     _gravity = -1000/kPixelsPerMeter;
     _maxspeed = Point(120/kPixelsPerMeter,360/kPixelsPerMeter);
     
