@@ -403,8 +403,9 @@ void GameScene::BeginContact(b2Contact* contact)
         int count = 0;
         bool die = false;
         bool isFinished = false;
+        bool isBottomSet = false;
         
-        if(data1->a == tmxPlatform || data2->a == tmxPlatform)
+        if(data1->a == tmxPlatform || data2->a == tmxPlatform )
         {
             if( data1->a ==  sensorLeft || data2->a == sensorLeft)
             {
@@ -417,8 +418,20 @@ void GameScene::BeginContact(b2Contact* contact)
             else if( data1->a ==  sensorBottom || data2->a == sensorBottom)
             {
                 arraySensor[count++] = sensorBottom;
+                isBottomSet = true;
             }
         }
+        if(!isBottomSet)
+        {
+            if(data1->a == tmxBlock || data2->a == tmxBlock )
+            {
+                if( data1->a ==  sensorBottom || data2->a == sensorBottom)
+                {
+                    arraySensor[count++] = sensorBottom;
+                }
+            }
+        }
+        
         if(data1->a == tmxFire || data2->a == tmxFire)
         {
             die = true;
@@ -453,8 +466,9 @@ void GameScene::EndContact(b2Contact* contact)
         
         int arraySensor[4] = {sensorNone,sensorNone,sensorNone,sensorNone}; // 4 sensors
         int count = 0;
+        bool isBottomSet = false;
         
-        if(data1->a == tmxPlatform || data2->a == tmxPlatform)
+        if(data1->a == tmxPlatform || data2->a == tmxPlatform )
         {
             if( data1->a ==  sensorLeft || data2->a == sensorLeft)
             {
@@ -467,6 +481,18 @@ void GameScene::EndContact(b2Contact* contact)
             else if( data1->a ==  sensorBottom || data2->a == sensorBottom)
             {
                 arraySensor[count++] = sensorBottom;
+                isBottomSet = true;
+            }
+        }
+        
+        if(!isBottomSet)
+        {
+            if(data1->a == tmxBlock || data2->a == tmxBlock )
+            {
+                if( data1->a ==  sensorBottom || data2->a == sensorBottom)
+                {
+                    arraySensor[count++] = sensorBottom;
+                }
             }
         }
         
@@ -478,11 +504,11 @@ void GameScene::EndContact(b2Contact* contact)
                 _male->setAtFinish(false);
         }
         
-        if(data1->b == pFemale)
+        if(data1->b == pFemale || data2->b == pFemale)
         {
             _female->setIsTouching(arraySensor,false);
         }
-        else if(data1->b == pMale)
+        else if(data1->b == pMale || data2->b == pMale)
         {
             _male->setIsTouching(arraySensor,false);
         }

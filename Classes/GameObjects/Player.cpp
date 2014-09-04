@@ -43,7 +43,7 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     addChild(_sprite);
     
     
-    _jumpHeight = 510/kPixelsPerMeter;
+    _jumpHeight = 560/kPixelsPerMeter;
     _gravity = -1000/kPixelsPerMeter;
     _maxspeed = Point(120/kPixelsPerMeter,360/kPixelsPerMeter);
     
@@ -107,11 +107,15 @@ void Player::update(float dt)
         body->ApplyLinearImpulse(b2Vec2((-1*(_pIndex == pFemale ? -1 : 1)*_maxspeed.x)/4.0, 0),body->GetWorldCenter(), true);
         _facing = directionLeft;
     }
-    
-    if(_pressedRight)
+    else if(_pressedRight)
     {
         body->ApplyLinearImpulse(b2Vec2((1*(_pIndex == pFemale ? -1 : 1)*_maxspeed.x)/4.0, 0),body->GetWorldCenter(), true);
         _facing = directionRight;
+    }
+    else
+    {
+        auto getVelocity = body->GetLinearVelocity();
+        body->SetLinearVelocity(b2Vec2(getVelocity.x/16,getVelocity.y));
     }
     
     if(_pressedUp || _doJump)
