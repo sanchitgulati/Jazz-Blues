@@ -47,7 +47,7 @@ bool GameScene::init()
     
     _parent = Node::create();
     _parent->setAnchorPoint(Point(0.5,0.5));
-    this->addChild(_parent);
+    this->addChild(_parent,zGame);
     
     
     createPhysicalWorld();
@@ -57,6 +57,23 @@ bool GameScene::init()
     // schedule the update
     this->schedule(schedule_selector(GameScene::update), kUpdateInterval);
     
+    //setting up on-screen button for mobile
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    auto left = Button::create(IMG_BUTTON_LEFT_0, IMG_BUTTON_LEFT_1);
+    left->setUserData((void*)"left");
+    left->setPosition(128, 128);
+    this->addChild(left,zControl);
+    
+    auto right = Button::create(IMG_BUTTON_RIGHT_0, IMG_BUTTON_RIGHT_1);
+    right->setUserData((void*)"right");
+    right->setPosition(320,128);
+    this->addChild(right,zControl);
+    
+    auto up = Button::create(IMG_BUTTON_UP_0, IMG_BUTTON_UP_1);
+    up->setUserData((void*)"up");
+    up->setPosition(_visibleSize.width - 128,128);
+    this->addChild(up,zControl);
+#endif
     
     return true;
 }
@@ -178,7 +195,7 @@ void GameScene::loadLevel(int level)
     
     //load bg
     _bgGroup = Node::create();
-    _parent->addChild(_bgGroup);
+    _parent->addChild(_bgGroup,zBackground);
     
     
     auto _bg1 = Sprite::create(IMG_BG);
@@ -195,8 +212,7 @@ void GameScene::loadLevel(int level)
     _platformsGroup = Node::create();
     _parent->addChild(_platformsGroup);
     
-    //TODO: implement camera system
-    _parent->setPosition(480,320);
+    _parent->setPosition(Point(_visibleSize.width/2,_visibleSize.height/2));
     _parent->setContentSize(Size(_tm->getMapSize().width * _tm->getTileSize().width,
                                  _tm->getMapSize().height * _tm->getTileSize().height));
     _platformsGroup->setContentSize(_parent->getContentSize());

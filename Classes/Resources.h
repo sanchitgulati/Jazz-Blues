@@ -24,8 +24,16 @@
 #define IMG_WIN "images/win.png"
 #define IMG_BLOCK "images/block.png"
 
+#define IMG_BUTTON_LEFT_0 "images/button_left_0.png"
+#define IMG_BUTTON_LEFT_1 "images/button_left_1.png"
+#define IMG_BUTTON_RIGHT_0 "images/button_right_0.png"
+#define IMG_BUTTON_RIGHT_1 "images/button_right_1.png"
+#define IMG_BUTTON_UP_0 "images/button_top_0.png"
+#define IMG_BUTTON_UP_1 "images/button_top_1.png"
+
 #define FONT "fonts/Lato.ttf"
 
+enum zIndex {zBackground,zGame,zForeground,zHUD,zControl};
 enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock};
 enum playerIndex {pUnknown,pFemale,pMale};
 enum sensorIndex {sensorNone = 100,sensorTop = 101,sensorRight = 102,sensorBottom = 103,sensorLeft = 104};

@@ -15,6 +15,7 @@
 #include "Resources.h"
 #include <iostream>
 #include "Box2d/box2d.h"
+#include "Button.h"
 #include "GLESDebugDraw.h"
 
 class GameScene : public cocos2d::Layer, public b2ContactListener

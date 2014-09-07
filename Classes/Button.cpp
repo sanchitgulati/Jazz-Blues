@@ -12,26 +12,38 @@ using namespace cocos2d;
 int Button::identifier = 0;
 
 Button::Button(const char *normalSprite, const char *selectedSprite) {
-	setAnchorPoint(Vec2(0.5, 0.5));
 	isPressed = false;
     
+    setAnchorPoint(Vec2(0.5, 0.5));
 	_normalSprite = Sprite::create(normalSprite);
 	_selectedSprite = Sprite::create(selectedSprite);
 	_selectedSprite->setVisible(false);
-	addChild(_normalSprite);
-	addChild(_selectedSprite);
+    _normalSprite->setAnchorPoint(Vec2(0.0, 0.0));
+    _selectedSprite->setAnchorPoint(Vec2(0.0, 0.0));
     
-    this->setContentSize(Size(_normalSprite->getContentSize().width,_normalSprite->getContentSize().height));
+    auto boundingBox = _normalSprite->getBoundingBox().size;
+    this->setContentSize(boundingBox);
+    this->getBoundingBox().setRect(0, 0, boundingBox.width, boundingBox.height);
+    
+    
+    /* Testing */
+//    auto drawNode = DrawNode::create();
+//    drawNode->drawDot(getPosition(), 2, Color4F::BLACK);
+//    drawNode->drawDot(Point(getPositionX() + boundingBox.width,getPositionY() + boundingBox.height), 2, Color4F::BLUE);
+//    addChild(drawNode,9090);
+    /* End Testing */
     
     // Adds touch event listener
     auto listener = EventListenerTouchOneByOne::create();
-    listener->setSwallowTouches(true);
+    listener->setSwallowTouches(false);
     
     listener->onTouchBegan = CC_CALLBACK_2(Button::onTouchBegan, this);
     listener->onTouchEnded = CC_CALLBACK_2(Button::onTouchEnded, this);
     
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
     
+	addChild(_normalSprite);
+	addChild(_selectedSprite);
 }
 
 
@@ -48,7 +60,7 @@ bool Button::onTouchBegan(Touch* touch, Event* event)
         isPressed = true;
         _selectedSprite->setVisible(true);
         _normalSprite->setVisible(false);
-        log("%s",(char *)getUserData());
+        log("%s pressed",(char *)getUserData());
         return true;
     }
     return false;
@@ -58,9 +70,9 @@ bool Button::onTouchBegan(Touch* touch, Event* event)
 void Button::onTouchEnded(Touch* touch, Event* event)
 {
     auto touchLocation = touch->getLocation();
-    if (this->getBoundingBox().containsPoint(touchLocation)) {
-        isPressed = true;
-        _selectedSprite->setVisible(false);
-        _normalSprite->setVisible(true);
-    }
+    isPressed = true;
+    _selectedSprite->setVisible(false);
+    _normalSprite->setVisible(true);
+    
+    log("%s released",(char *)getUserData());
 }
