@@ -376,3 +376,41 @@ void Player::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
             break;
     }
 }
+
+
+void Player::onButtonPressed(void* userData)
+{
+    auto index = static_cast<userdataFormat *>(userData)->a;
+    switch (index) {
+        case bLeft:
+            _pressedLeft = true;
+            break;
+        case bRight:
+            _pressedRight = true;
+            break;
+        case bUp:
+            _pressedUp = true;
+            break;
+        default:
+            break;
+    }
+}
+
+
+void Player::onButtonReleased(void* userData)
+{
+    auto index = static_cast<userdataFormat *>(userData)->a;
+    switch (index) {
+        case bLeft:
+            _pressedLeft = false;
+            break;
+        case bRight:
+            _pressedRight = false;
+            break;
+        case bUp:
+            _pressedUp = false;
+            break;
+        default:
+            break;
+    }
+}

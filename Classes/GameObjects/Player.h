@@ -78,6 +78,10 @@ public:
     void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     
+    
+    void onButtonPressed(void *);
+    void onButtonReleased(void *);
+    
     void setAtFinish(bool val);
     bool getAtFinish();
     

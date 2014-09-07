@@ -7,13 +7,14 @@
 //
 
 #include "Button.h"
+#include "GameObjects/Player.h"
 using namespace cocos2d;
 
-int Button::identifier = 0;
 
-Button::Button(const char *normalSprite, const char *selectedSprite) {
+Button::Button(const char *normalSprite, const char *selectedSprite,cocos2d::Node* target1,cocos2d::Node* target2) {
 	isPressed = false;
-    
+    _target1 = target1;
+    _target2 = target2;
     setAnchorPoint(Vec2(0.5, 0.5));
 	_normalSprite = Sprite::create(normalSprite);
 	_selectedSprite = Sprite::create(selectedSprite);
@@ -47,8 +48,8 @@ Button::Button(const char *normalSprite, const char *selectedSprite) {
 }
 
 
-Button* Button::create(const char *normalSprite, const char *selectedSprite) {
-	Button *button = new Button(normalSprite, selectedSprite);
+Button* Button::create(const char *normalSprite, const char *selectedSprite,cocos2d::Node* target1,cocos2d::Node* target2) {
+	Button *button = new Button(normalSprite, selectedSprite,target1,target2);
 	button->autorelease();
 	return button;
 }
@@ -60,7 +61,8 @@ bool Button::onTouchBegan(Touch* touch, Event* event)
         isPressed = true;
         _selectedSprite->setVisible(true);
         _normalSprite->setVisible(false);
-        log("%s pressed",(char *)getUserData());
+        static_cast<Player *>(_target1)->onButtonPressed(getUserData());
+        static_cast<Player *>(_target2)->onButtonPressed(getUserData());
         return true;
     }
     return false;
@@ -73,6 +75,17 @@ void Button::onTouchEnded(Touch* touch, Event* event)
     isPressed = true;
     _selectedSprite->setVisible(false);
     _normalSprite->setVisible(true);
-    
-    log("%s released",(char *)getUserData());
+    static_cast<Player *>(_target1)->onButtonReleased(getUserData());
+    static_cast<Player *>(_target2)->onButtonReleased(getUserData());
 }
+
+void Button::setTarget(cocos2d::Node *target1,cocos2d::Node *target2)
+{
+    _target1=target1;
+    _target2=target2;
+}
+
+//void Button::setCallback(cocos2d::Ref* target)
+//{
+//    this->mTarget = target;
+//}

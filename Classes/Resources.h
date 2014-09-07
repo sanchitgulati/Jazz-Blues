@@ -33,6 +33,8 @@
 
 #define FONT "fonts/Lato.ttf"
 
+
+enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zForeground,zHUD,zControl};
 enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock};
 enum playerIndex {pUnknown,pFemale,pMale};

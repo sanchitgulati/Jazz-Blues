@@ -54,23 +54,25 @@ bool GameScene::init()
     loadLevel(0);// for testing
     loadInstuctions();
     
+    
+    
     // schedule the update
     this->schedule(schedule_selector(GameScene::update), kUpdateInterval);
     
     //setting up on-screen button for mobile
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    auto left = Button::create(IMG_BUTTON_LEFT_0, IMG_BUTTON_LEFT_1);
-    left->setUserData((void*)"left");
+    auto left = Button::create(IMG_BUTTON_LEFT_0, IMG_BUTTON_LEFT_1,_male,_female);
+    left->setUserData((void*)(new userdataFormat(bLeft)));
     left->setPosition(128, 128);
     this->addChild(left,zControl);
     
-    auto right = Button::create(IMG_BUTTON_RIGHT_0, IMG_BUTTON_RIGHT_1);
-    right->setUserData((void*)"right");
+    auto right = Button::create(IMG_BUTTON_RIGHT_0, IMG_BUTTON_RIGHT_1,_male,_female);
+    right->setUserData((void*)(new userdataFormat(bRight)));
     right->setPosition(320,128);
     this->addChild(right,zControl);
     
-    auto up = Button::create(IMG_BUTTON_UP_0, IMG_BUTTON_UP_1);
-    up->setUserData((void*)"up");
+    auto up = Button::create(IMG_BUTTON_UP_0, IMG_BUTTON_UP_1,_male,_female);
+    up->setUserData((void*)(new userdataFormat(bUp)));
     up->setPosition(_visibleSize.width - 128,128);
     this->addChild(up,zControl);
 #endif
@@ -90,6 +92,11 @@ void GameScene::menuCloseCallback(Ref* pSender)
 
 void GameScene::update(float dt)
 {
+    /* Taking inputs from On-Screen Button if any */
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    
+#endif
+    /* End */
     _world->Step(dt, 8, 1);
     if(_gsGamePlaying)
     {
