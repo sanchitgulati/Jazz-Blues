@@ -29,6 +29,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0 / 60);
     
     
+    /* Add this to appDelegate.mm for multitouch */
+    /*
+     [eaglView setMultipleTouchEnabled:YES];
+     */
+    
     CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sfx/jump_0.mp3");
     CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sfx/bg.mp3");
 //    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/bg.mp3",true);
