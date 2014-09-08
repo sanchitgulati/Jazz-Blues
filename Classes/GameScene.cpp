@@ -59,6 +59,30 @@ bool GameScene::init()
     // schedule the update
     this->schedule(schedule_selector(GameScene::update), kUpdateInterval);
     
+    //Menu
+    auto levelSelector = MenuItemImage::create(IMG_LEVEL_SELECTOR_0, IMG_LEVEL_SELECTOR_1,CC_CALLBACK_1(GameScene::menuCloseCallback, this));
+    levelSelector->setTag(menuLevel);
+    auto margin = levelSelector->getContentSize().width*1.2;
+    levelSelector->setPositionX(margin);
+    
+    auto refresh = MenuItemImage::create(IMG_REFRESH_0,IMG_REFRESH_1,CC_CALLBACK_1(GameScene::menuCloseCallback, this));
+    refresh->setTag(menuRefresh);
+    refresh->setPositionX(margin*2);
+    
+    auto unmute = MenuItemImage::create(IMG_UNMUTE_0,IMG_UNMUTE_1);
+    unmute->setTag(menuUnmute);
+    
+    auto mute = MenuItemImage::create(IMG_MUTE_0,IMG_MUTE_1);
+    mute->setTag(menuMute);
+    
+    auto sfxToggle = MenuItemToggle::createWithCallback(CC_CALLBACK_1(GameScene::menuCloseCallback, this), mute,unmute, NULL);
+    sfxToggle->setTag(menuToggle);
+    sfxToggle->setPositionX(margin*3);
+    
+    auto menu = Menu::create(levelSelector,refresh,sfxToggle, NULL);
+    menu->setPosition(Point(0,_visibleSize.height-margin));
+    this->addChild(menu,zHUD);
+    
     //setting up on-screen button for mobile
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     auto left = Button::create(IMG_BUTTON_LEFT_0, IMG_BUTTON_LEFT_1,_male,_female);
@@ -83,6 +107,7 @@ bool GameScene::init()
 
 void GameScene::menuCloseCallback(Ref* pSender)
 {
+    log("sender id %d",((Node*)pSender)->getTag());
     Director::getInstance()->end();
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)

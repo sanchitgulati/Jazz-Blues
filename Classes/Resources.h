@@ -31,9 +31,21 @@
 #define IMG_BUTTON_UP_0 "images/button_top_0.png"
 #define IMG_BUTTON_UP_1 "images/button_top_1.png"
 
+#define IMG_LEVEL_SELECTOR_0 "images/level_selector_0.png"
+#define IMG_LEVEL_SELECTOR_1 "images/level_selector_1.png"
+
+#define IMG_REFRESH_0 "images/refresh_0.png"
+#define IMG_REFRESH_1 "images/refresh_1.png"
+
+#define IMG_MUTE_0 "images/mute_0.png"
+#define IMG_MUTE_1 "images/mute_1.png"
+
+#define IMG_UNMUTE_0 "images/unmute_0.png"
+#define IMG_UNMUTE_1 "images/unmute_1.png"
+
 #define FONT "fonts/Lato.ttf"
 
-
+enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zForeground,zHUD,zControl};
 enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock};
