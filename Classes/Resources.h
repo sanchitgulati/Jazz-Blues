@@ -53,7 +53,7 @@
 #define IMG_GAME_LOGO "images/game_logo.png"
 
 #define RGB_BLACK Color3B(20,20,20)
-#define RGB_WHITE Color3B(219,219,219)
+#define RGB_WHITE Color3B(249,249,249)
 #define RGB_ROSE Color3B(120,25,61)
 
 #define LVL_A 9
@@ -77,8 +77,8 @@ struct userdataFormat { int a;int b;int c;cocos2d::Node* node;  userdataFormat(i
 
 const std::string sideA[LVL_A] = {
     "We were the world",
-    "She even made me a believer",
-    "Sample Text",
+    "Almighty",
+    "Superman",
     "Sample Text",
     "Sample Text",
     "Sample Text",

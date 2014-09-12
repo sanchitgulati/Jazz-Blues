@@ -320,11 +320,11 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     break;
                 }
                 case tmxFemale:
-                    _female = Player::createPlayerFixture(_world,layer, x, y, 0.9f, 0.9f,pFemale);
+                    _female = Player::createPlayerFixture(_world,layer, x, y, 1.0f, 2.0f,pFemale);
                     _playerGroup->addChild(_female);
                     break;
                 case tmxMale:
-                    _male = Player::createPlayerFixture(_world,layer, x, y, 0.9f, 0.9f,pMale);
+                    _male = Player::createPlayerFixture(_world,layer, x, y, 1.0f, 2.0f,pMale);
                     _playerGroup->addChild(_male);
                     break;
                 case tmxFire:
