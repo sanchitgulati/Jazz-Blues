@@ -43,7 +43,23 @@
 #define IMG_UNMUTE_0 "images/unmute_0.png"
 #define IMG_UNMUTE_1 "images/unmute_1.png"
 
-#define FONT "fonts/Lato.ttf"
+#define FONT "fonts/MavenPro-Medium.ttf"
+#define FONT_BOLD "fonts/MavenPro-Black.ttf"
+
+#define SFX_BG_INTRO "sfx/at_the_window_intro.mp3"
+#define SFX_BG_HAPPY "sfx/at_the_window_happy.mp3"
+
+#define IMG_JAZZ "images/jazz_01.png"
+#define IMG_GAME_LOGO "images/game_logo.png"
+
+#define RGB_BLACK Color3B(20,20,20)
+#define RGB_WHITE Color3B(219,219,219)
+#define RGB_ROSE Color3B(120,25,61)
+
+#define LVL_A 9
+#define LVL_B 10
+
+#define VFX_CONSTANT 0.75
 
 enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle};
 enum zButtonIndex {bLeft,bRight,bUp};
@@ -58,5 +74,29 @@ const float kUpdateInterval = 1.0f / 60.0f;
 const double kSecondsPerUpdate = 0.1;
 struct userdataFormat { int a;int b;int c;cocos2d::Node* node;  userdataFormat(int a,int b = 0,int c = 0,cocos2d::Node* node = nullptr){this->a = a;this->b = b;this->c = c;this->node = node;}};
 
-static int kCurrentLevel = 1;
+
+const std::string sideA[LVL_A] = {
+    "We were the world 1",
+    "We were the world 2",
+    "We were the world 3",
+    "We were the world 4",
+    "We were the world 5",
+    "We were the world 6",
+    "We were the world 7",
+    "We were the world 8",
+    "We were the world 9",
+};
+const std::string sideB[LVL_B] = {
+    "We were the world 1",
+    "We were the world 2",
+    "We were the world 3",
+    "We were the world 4",
+    "We were the world 5",
+    "We were the world 6",
+    "We were the world 7",
+    "We were the world 8",
+    "We were the world 9",
+    "We were the world 10",
+};
+
 #endif

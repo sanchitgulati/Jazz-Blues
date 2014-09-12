@@ -39,7 +39,8 @@ private:
     cocos2d::TMXTiledMap* _tm;
     
     bool _gsGamePlaying;
-   
+    
+    int kCurrentLevel;
     
     //Box2d
     b2World* _world;

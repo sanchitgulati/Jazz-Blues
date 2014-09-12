@@ -16,6 +16,8 @@ public:
     
     // a selector callback
     void menuCallback(cocos2d::Ref* pSender);
+    void menuACallback(cocos2d::Ref* pSender);
+    void menuBCallback(cocos2d::Ref* pSender);
     
     cocos2d::Label* _gameLabel;
     

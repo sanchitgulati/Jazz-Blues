@@ -35,6 +35,7 @@ bool GameScene::init()
         return false;
     }
     _gsGamePlaying = true;
+    kCurrentLevel = 1;
     
     _visibleSize = Director::getInstance()->getVisibleSize();
     
@@ -101,6 +102,8 @@ bool GameScene::init()
     this->addChild(up,zControl);
 #endif
     
+    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_HAPPY,true);
     return true;
 }
 
@@ -237,7 +240,6 @@ void GameScene::loadLevel(int level)
     _bg1->setScaleY(Util::getScreenRatioHeight(_bg1)*1.5);
     _bgGroup->addChild(_bg1);
     
-    
     auto loadLevelString = StringUtils::format("levels/%d.tmx",kCurrentLevel);
     _tm = TMXTiledMap::create(loadLevelString);
     _tm->setVisible(false);
@@ -295,116 +297,30 @@ void GameScene::prepareLayers()
         if (layer != nullptr)
         {
             this->createFixturesFirstPass(layer);
-            this->createFixturesSecondPass(layer);
         }
     }
 }
 
-void GameScene::createFixturesSecondPass(TMXLayer* layer)
-{
-    // create all the rectangular fixtures for each tile
-    Size layerSize = layer->getLayerSize();
-    for (int x = 0; x < layerSize.width; x++)
-    {
-        
-        int length = 1;
-        int lx,ly = -1;
-        for (int y = 0; y < layerSize.height; y++)
-        {
-            auto tileGID = layer->getTileGIDAt(Point(x,y));
-            switch (tileGID) {
-                case tmxEmpty:
-                    break;
-                case tmxPlatform: // platform
-                {
-                    uint32_t nextElementY = tmxEmpty;
-                    if(y < _tm->getMapSize().height-1)
-                        nextElementY = layer->getTileGIDAt(Point(x,y+1));
-                    if(nextElementY == tmxPlatform)
-                    {
-                        if(lx == -1 || ly == -1)
-                        {
-                            lx = x;
-                            ly = y;
-                        }
-                        length++;
-                    }
-                    else
-                    {
-                        if(lx == -1 || ly == -1)
-                        {
-                            lx = x;
-                            ly = y;
-                        }
-                        auto platform = Platform::createFixture(_world,layer, lx, ly, 1.0f, 1.0f,length,true);
-                        _platformsGroup->addChild(platform);
-                        length = 1;
-                        lx = ly = -1;
-                    }
-                    break;
-
-                    
-                }
-            }
-        }
-    }
-    
-}
 void GameScene::createFixturesFirstPass(TMXLayer* layer)
 {
     // create all the rectangular fixtures for each tile
     Size layerSize = layer->getLayerSize();
     for (int y = 0; y < layerSize.height; y++)
     {
-        
-        int length = 1;
-        int lx,ly = -1;
         for (int x = 0; x < layerSize.width; x++)
         {
-            // create a fixture if this tile has a sprite
-//            auto tileSprite = layer->getTileAt(Point(x, y));
             auto tileGID = layer->getTileGIDAt(Point(x,y));
             switch (tileGID) {
                 case tmxEmpty:
                     break;
                 case tmxPlatform: // platform
                 {
-                    uint32_t nextElementX;
-                    if(x < _tm->getMapSize().width-1)
-                        nextElementX = layer->getTileGIDAt(Point(x + 1,y));
-                    else
-                        nextElementX = tmxEmpty;
                     
-                    
-                    if(nextElementX == tmxPlatform)
-                    {
-                        if(lx == -1 || ly == -1)
-                        {
-                            lx = x;
-                            ly = y;
-                        }
-                        layer->setTileGID(tmxEmpty,Vec2(x, y)); //if used, delete from map
-                        length++;
-                    }
-                    else
-                    {
-                        if(lx == -1 || ly == -1)
-                        {
-                            lx = x;
-                            ly = y;
-                        }
-                        if(length != 1)
-                        {
-                            layer->setTileGID(tmxEmpty,Vec2(x, y)); //if used, delete from map
-                            auto platform = Platform::createFixture(_world,layer, lx, ly, 1.0f, 1.0f,length);
-                            _platformsGroup->addChild(platform);
-
-                        }
-                        length = 1;
-                        lx = ly = -1;
-                    }
+                    auto platform = Platform::createFixture(_world,layer, x, y, 1.0f, 1.0f,pFemale);
+                    _platformsGroup->addChild(platform);
                     break;
                 }
+                    
                 case tmxFemale:
                     _female = Player::createPlayerFixture(_world,layer, x, y, 0.9f, 0.9f,pFemale);
                     _playerGroup->addChild(_female);

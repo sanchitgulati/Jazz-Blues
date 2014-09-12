@@ -36,6 +36,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     
     CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sfx/jump_0.mp3");
     CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sfx/bg.mp3");
+    
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(SFX_BG_INTRO);
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(SFX_BG_HAPPY);
 //    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/bg.mp3",true);
     
 

@@ -17,7 +17,6 @@ public:
     // a selector callback
     void menuCallback(cocos2d::Ref* pSender);
     
-    cocos2d::Label* _gameLabel;
     
     CREATE_FUNC(MainMenu);
 };

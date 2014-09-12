@@ -118,11 +118,9 @@ void Player::update(float dt)
         body->SetLinearVelocity(b2Vec2(getVelocity.x/16,getVelocity.y));
     }
     
-    if(_pressedUp || _doJump)
+    if(_pressedUp)
     {
         _pressedUp = false;
-        _doJump = false;
-        
         _jumping = true;
         _walking = false;
         
@@ -132,9 +130,8 @@ void Player::update(float dt)
             body->ApplyLinearImpulse(jumpHeight,body->GetWorldCenter(),true);
             
             CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sfx/jump_0.mp3");
-            //sound jump
         }
-        }
+    }
     
     if(_facing == directionRight)
     {
@@ -406,9 +403,6 @@ void Player::onButtonReleased(void* userData)
             break;
         case bRight:
             _pressedRight = false;
-            break;
-        case bUp:
-            _pressedUp = false;
             break;
         default:
             break;
