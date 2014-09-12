@@ -14,6 +14,7 @@
 #include "Death.h"
 #include "Win.h"
 #include "Block.h"
+#include "Wall.h"
 
 
 #endif

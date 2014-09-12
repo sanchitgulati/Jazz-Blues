@@ -64,7 +64,7 @@
 enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zForeground,zHUD,zControl};
-enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock};
+enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxPoison};
 enum playerIndex {pUnknown,pFemale,pMale};
 enum sensorIndex {sensorNone = 100,sensorTop = 101,sensorRight = 102,sensorBottom = 103,sensorLeft = 104};
 enum directionIndex {directionLeft,directionRight};
@@ -76,27 +76,27 @@ struct userdataFormat { int a;int b;int c;cocos2d::Node* node;  userdataFormat(i
 
 
 const std::string sideA[LVL_A] = {
-    "We were the world 1",
-    "We were the world 2",
-    "We were the world 3",
-    "We were the world 4",
-    "We were the world 5",
-    "We were the world 6",
-    "We were the world 7",
-    "We were the world 8",
-    "We were the world 9",
+    "We were the world",
+    "She even made me a believer",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text"
 };
 const std::string sideB[LVL_B] = {
-    "We were the world 1",
-    "We were the world 2",
-    "We were the world 3",
-    "We were the world 4",
-    "We were the world 5",
-    "We were the world 6",
-    "We were the world 7",
-    "We were the world 8",
-    "We were the world 9",
-    "We were the world 10",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text",
+    "Sample Text"
 };
 
 #endif

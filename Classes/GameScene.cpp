@@ -234,7 +234,7 @@ void GameScene::loadLevel(int level)
     
     
     auto _bg1 = Sprite::create(IMG_BG);
-    _bg1->setColor(Color3B::WHITE);
+    _bg1->setColor(RGB_WHITE);
     _bg1->setPosition(cocos2d::Point(_visibleSize.width/2.0f,_visibleSize.height/2.0f));
     _bg1->setScaleX( Util::getScreenRatioWidth(_bg1)*1.5);
     _bg1->setScaleY(Util::getScreenRatioHeight(_bg1)*1.5);
@@ -315,12 +315,10 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     break;
                 case tmxPlatform: // platform
                 {
-                    
-                    auto platform = Platform::createFixture(_world,layer, x, y, 1.0f, 1.0f,pFemale);
+                    auto platform = Platform::createFixture(_world,layer, x, y, 1.0f, 1.0f);
                     _platformsGroup->addChild(platform);
                     break;
                 }
-                    
                 case tmxFemale:
                     _female = Player::createPlayerFixture(_world,layer, x, y, 0.9f, 0.9f,pFemale);
                     _playerGroup->addChild(_female);
@@ -337,9 +335,16 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 }
                 case tmxWin:
                 {
-                    auto win = Win::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    auto win = Win::createFixture(_world, layer, x, y, 3.0, 3.0); //bcoz image is 96*96
                     _platformsGroup->addChild(win);
                     break;
+                }
+                case tmxWall:
+                {
+                    auto wall = Wall::createFixture(_world,layer, x, y, 1.0f, 1.0f);
+                    _platformsGroup->addChild(wall);
+                    break;
+                    
                 }
                 case tmxBlock:
                 {

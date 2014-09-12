@@ -38,7 +38,6 @@ Win* Win::create(b2Body* body)
 bool Win::initWithBody(b2Body* body)
 {
     _sprite = LFSpriteNode::create(IMG_WIN);
-    _sprite->setOpacity(100);
     _sprite->setB2Body(body);
     _sprite->setPTMRatio(kPixelsPerMeter);
     this->addChild(_sprite);
@@ -67,13 +66,9 @@ Win* Win::createFixture(b2World* world, TMXLayer* layer, int x, int y, float wid
     // define the shape
     b2PolygonShape shape;
     shape.SetAsBox(
-                   (tileSize.width / kPixelsPerMeter) * 0.35f * width,
-                   (tileSize.width / kPixelsPerMeter) * 0.35f * height
+                   (tileSize.width / kPixelsPerMeter) * 0.50f * width,
+                   (tileSize.width / kPixelsPerMeter) * 0.50f * height
                    );
-    
-    //define alternative shape
-    b2CircleShape shapeC;
-    shapeC.m_radius = (tileSize.width / kPixelsPerMeter) * 0.5f * width;
     
     
     // create the fixture
