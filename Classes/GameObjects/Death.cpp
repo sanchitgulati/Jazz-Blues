@@ -70,7 +70,7 @@ Death* Death::createFixture(b2World* world, TMXLayer* layer, int x, int y, float
     b2PolygonShape shape;
     shape.SetAsBox(
                    (tileSize.width / kPixelsPerMeter) * 0.35f * width,
-                   (tileSize.width / kPixelsPerMeter) * 0.35f * height
+                   (tileSize.height / kPixelsPerMeter) * 0.35f * height
                    );
     
     //define alternative shape

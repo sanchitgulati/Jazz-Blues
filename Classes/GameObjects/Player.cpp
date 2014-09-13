@@ -27,13 +27,16 @@ Player* Player::create(b2Body* body,int pIndex)
 
 bool Player::initWithBody(b2Body* body,int pIndex)
 {
+    _sprite = LFSpriteNode::create(IMG_BODY);
     if(pIndex == pFemale)
     {
-        _sprite= LFSpriteNode::create(IMG_FEMALE);
+        _sprite->setColor(RGB_GIRL);
+        _shape = Sprite::create(IMG_FEMALE);
     }
     else if(pIndex == pMale)
     {
-        _sprite= LFSpriteNode::create(IMG_MALE);
+        _sprite->setColor(RGB_BOY);
+        _shape = Sprite::create(IMG_MALE);
     }
     
     _pIndex = pIndex;
@@ -42,10 +45,14 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     _sprite->getTexture()->setAntiAliasTexParameters();
     addChild(_sprite);
     
+    auto size = _sprite->getBoundingBox().size;
+    _shape->setPosition(size.width/2.0, size.height/2.0);
+    _sprite->addChild(_shape);
     
-    _jumpHeight = 560/kPixelsPerMeter;
+    
+    _jumpHeight = 1020/kPixelsPerMeter;
     _gravity = -1000/kPixelsPerMeter;
-    _maxspeed = Point(120/kPixelsPerMeter,360/kPixelsPerMeter);
+    _maxspeed = Point(240/kPixelsPerMeter,640/kPixelsPerMeter);
     
     //Add Physics Restrictions
     _lastWall = sensorNone;
@@ -185,20 +192,32 @@ Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int
     b2Body* body = world->CreateBody(&bodyDef);
     
     
+    auto widthHalf = (tileSize.width / kPixelsPerMeter) * 0.5f * width;
+    auto heightHalf = (tileSize.height / kPixelsPerMeter) * 0.5f * height;
+    
     // define the shape
     b2PolygonShape shape;
     shape.SetAsBox(
                    (tileSize.width / kPixelsPerMeter) * 0.5f * width,
-                   (tileSize.width / kPixelsPerMeter) * 0.5f * height
-                   );
+                   (tileSize.height / kPixelsPerMeter) * 0.5f * height *0.75
+                   ,b2Vec2(0, widthHalf * 0.25),0);
     
     //define alternative shape
     b2CircleShape shapeC;
     shapeC.m_radius = (tileSize.width / kPixelsPerMeter) * 0.5f * width;
-    
+    shapeC.m_p = b2Vec2(0, -heightHalf*0.25);
     
     // create the fixture
     b2FixtureDef fixtureDef;
+    fixtureDef.shape = &shapeC; //changed from shape
+    fixtureDef.density = 1.0f;
+    fixtureDef.friction = 0.3f;
+    fixtureDef.userData = (void*)(new userdataFormat(sensorNone,pIndex));
+    fixtureDef.restitution = 0.0f;
+    //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
+    //    fixtureDef.filter.maskBits = 0xffff;
+    body->CreateFixture(&fixtureDef);
+    
     fixtureDef.shape = &shape; //changed from shape
     fixtureDef.density = 1.0f;
     fixtureDef.friction = 0.3f;
@@ -208,8 +227,8 @@ Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int
     //    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
     
-    auto widthHalf = (tileSize.width / kPixelsPerMeter) * 0.5f * width;
-    auto heightHalf = (tileSize.height / kPixelsPerMeter) * 0.5f * height;
+    
+    
     
     
     //prepare a shape definition

@@ -102,6 +102,12 @@ bool GameScene::init()
     this->addChild(up,zControl);
 #endif
     
+    /* Entering box2d world */
+    _platformsGroup->setVisible(false);
+    _playerGroup->setVisible(false);
+    _bgGroup->setVisible(false);
+    /*end*/
+    
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_HAPPY,true);
     return true;
@@ -209,11 +215,11 @@ void GameScene::createPhysicalWorld()
     _world->SetAllowSleeping(true);
     _world->SetContinuousPhysics(true);
     auto _debugDraw = new GLESDebugDraw( kPixelsPerMeter );
-//    _world->SetDebugDraw(_debugDraw);
+    _world->SetDebugDraw(_debugDraw);
     _world->SetContactListener(this);
     uint32 flags = 0;
     flags += b2Draw::e_shapeBit;
-//    flags += b2Draw::e_jointBit;
+    flags += b2Draw::e_jointBit;
 //    flags += b2Draw::e_aabbBit;
 //    flags += b2Draw::e_pairBit;
 //    flags += b2Draw::e_centerOfMassBit;

@@ -67,7 +67,7 @@ Win* Win::createFixture(b2World* world, TMXLayer* layer, int x, int y, float wid
     b2PolygonShape shape;
     shape.SetAsBox(
                    (tileSize.width / kPixelsPerMeter) * 0.50f * width,
-                   (tileSize.width / kPixelsPerMeter) * 0.50f * height
+                   (tileSize.height / kPixelsPerMeter) * 0.50f * height
                    );
     
     

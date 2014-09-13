@@ -18,6 +18,7 @@
 
 #define IMG_BG "images/bg.png"
 #define IMG_FEMALE "images/girl.png"
+#define IMG_BODY "images/body.png"
 #define IMG_MALE "images/boy.png"
 #define IMG_PLATFORM "images/platform.png"
 #define IMG_SPIKE "images/fire.png"
@@ -53,8 +54,11 @@
 #define IMG_GAME_LOGO "images/game_logo.png"
 
 #define RGB_BLACK Color3B(20,20,20)
-#define RGB_WHITE Color3B(249,249,249)
+#define RGB_WHITE Color3B(252,252,252)
 #define RGB_ROSE Color3B(120,25,61)
+
+#define RGB_BOY Color3B(0,86,185)
+#define RGB_GIRL Color3B(171,71,203)
 
 #define LVL_A 9
 #define LVL_B 10

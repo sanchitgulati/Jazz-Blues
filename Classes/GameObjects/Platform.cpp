@@ -72,7 +72,7 @@ Platform* Platform::createFixture(b2World* world, TMXLayer* layer, int x, int y,
     b2PolygonShape shape;
     shape.SetAsBox(
                    ((tileSize.width / kPixelsPerMeter) * 0.5f * width)* widthMultiplier,
-                   ((tileSize.width / kPixelsPerMeter) * 0.5f * height)* heightMultiplier
+                   ((tileSize.height / kPixelsPerMeter) * 0.5f * height)* heightMultiplier
                    );
     // create the fixture
     b2FixtureDef fixtureDef;

@@ -30,6 +30,7 @@ private:
     cocos2d::Point _wallHit;
     
     LFSpriteNode* _sprite;
+    cocos2d::Sprite* _shape;
     
     int _pIndex;
     
