@@ -67,7 +67,7 @@ bool LevelSelector::init() {
             auto lbl = Label::createWithTTF(sideA[i].c_str(), FONT, 24);
             auto lblItem = MenuItemLabel::create(lbl, CC_CALLBACK_1(LevelSelector::menuACallback, this));
             lblItem->setPosition(screenSize.width*0.25, 50*(LVL_A-i));
-            lblItem->setTag(i);
+            lblItem->setTag(i+1);
             lblItem->setColor(RGB_ROSE);
             sideAList.pushBack(lblItem);
         }
@@ -82,7 +82,7 @@ bool LevelSelector::init() {
             auto lbl = Label::createWithTTF(sideB[i].c_str(), FONT, 24);
             auto lblItem = MenuItemLabel::create(lbl, CC_CALLBACK_1(LevelSelector::menuBCallback, this));
             lblItem->setPosition(screenSize.width*0.25, 50*(LVL_B-i));
-            lblItem->setTag(i);
+            lblItem->setTag(i+1);
             lblItem->setColor(RGB_ROSE);
             sideBList.pushBack(lblItem);
         }
@@ -112,23 +112,16 @@ void LevelSelector::onEnter() {
 // a selector callback
 void LevelSelector::menuCallback(cocos2d::Ref* pSender)
 {
-    auto obj = (Node*)pSender;
-    switch (obj->getTag()) {
-        default:
-        {
-            auto scene = (Scene*)MainMenu::create();
-            Director::getInstance()->replaceScene(scene);
-            break;
-        }
-    }
-    
+    auto scene = (Scene*)MainMenu::create();
+    Director::getInstance()->replaceScene(scene);
 }
 
 // a selector callback
 void LevelSelector::menuACallback(cocos2d::Ref* pSender)
 {
     auto obj = (Node*)pSender;
-//    kCurrentLevel = obj->getTag();
+    UserDefault::getInstance()->setIntegerForKey("continue",obj->getTag());
+    UserDefault::getInstance()->flush();
     switch (obj->getTag()) {
         default:
         {
@@ -143,7 +136,8 @@ void LevelSelector::menuACallback(cocos2d::Ref* pSender)
 void LevelSelector::menuBCallback(cocos2d::Ref* pSender)
 {
     auto obj = (Node*)pSender;
-//    kCurrentLevel = LVL_A + obj->getTag();
+    UserDefault::getInstance()->setIntegerForKey("continue",LVL_A + obj->getTag());
+    UserDefault::getInstance()->flush();
     switch (obj->getTag()) {
         default:
         {

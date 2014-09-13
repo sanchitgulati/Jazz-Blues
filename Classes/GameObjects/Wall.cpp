@@ -37,7 +37,7 @@ Wall* Wall::create(b2Body* body,float scaleX,float scaleY)
 
 bool Wall::initWithBody(b2Body* body,float scaleX,float scaleY)
 {
-    _sprite = LFSpriteNode::create(IMG_PLATFORM);
+    _sprite = LFSpriteNode::create(IMG_WALL);
     _sprite->setColor(RGB_WHITE);
     auto contentSize = _sprite->getContentSize();
     _sprite->setTextureRect(Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
@@ -78,7 +78,7 @@ Wall* Wall::createFixture(b2World* world, TMXLayer* layer, int x, int y, float w
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape;
     fixtureDef.density = 1.0f;
-    fixtureDef.userData = (void*)(new userdataFormat(tmxPlatform));
+    fixtureDef.userData = (void*)(new userdataFormat(tmxWall));
     fixtureDef.friction = 0.3f;
     fixtureDef.restitution = 0.0f;
     //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;

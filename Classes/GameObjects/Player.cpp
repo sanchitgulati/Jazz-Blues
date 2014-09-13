@@ -50,18 +50,11 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     _sprite->addChild(_shape);
     
     
-    _jumpHeight = 1020/kPixelsPerMeter;
+    _jumpHeight = 1536/kPixelsPerMeter;
     _gravity = -1000/kPixelsPerMeter;
-    _maxspeed = Point(240/kPixelsPerMeter,640/kPixelsPerMeter);
+    _maxspeed = Point(480/kPixelsPerMeter,1020/kPixelsPerMeter);
     
     //Add Physics Restrictions
-    _lastWall = sensorNone;
-    _wallStickTime = 0.0f;
-    _wallStickTimer = false;
-    
-    _wallJumping = false;
-    _wallFloorJump = false;
-    _wallHit = Point::ZERO;
         
     _time = 0;
     _died = false;
@@ -69,7 +62,6 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     
     _airTime = 0.0f;
     _jumping = false;
-    _wallJumping = false;
     _walking = false;
     
     
@@ -77,8 +69,7 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     _pressedRight = false;
     _pressedUp = false;
     
-    _isTouchingFloor = false;
-    _isTouchingWall = false;
+    _isTouchingFloor = 0;
     _facing = directionRight;
     
     
@@ -131,12 +122,12 @@ void Player::update(float dt)
         _jumping = true;
         _walking = false;
         
-        if(_isTouchingFloor)
+        if(_isTouchingFloor > 0)
         {
             auto jumpHeight = b2Vec2(0,_jumpHeight);
             body->ApplyLinearImpulse(jumpHeight,body->GetWorldCenter(),true);
             
-            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sfx/jump_0.mp3");
+            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_JUMP);
         }
     }
     
@@ -198,29 +189,47 @@ Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int
     // define the shape
     b2PolygonShape shape;
     shape.SetAsBox(
-                   (tileSize.width / kPixelsPerMeter) * 0.5f * width,
-                   (tileSize.height / kPixelsPerMeter) * 0.5f * height *0.75
+                   (tileSize.width / kPixelsPerMeter) * 0.5f * width * 0.90,
+                   (tileSize.height / kPixelsPerMeter) * 0.5f * height *0.50
                    ,b2Vec2(0, widthHalf * 0.25),0);
     
-    //define alternative shape
+    //define bottom
     b2CircleShape shapeC;
     shapeC.m_radius = (tileSize.width / kPixelsPerMeter) * 0.5f * width;
-    shapeC.m_p = b2Vec2(0, -heightHalf*0.25);
+    shapeC.m_p = b2Vec2(0, -heightHalf*0.50);
+    
+    
     
     // create the fixture
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shapeC; //changed from shape
     fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.3f;
+    fixtureDef.friction = 0.1f;
     fixtureDef.userData = (void*)(new userdataFormat(sensorNone,pIndex));
     fixtureDef.restitution = 0.0f;
     //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
     //    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
     
+    
+    //define top
+    shapeC.m_radius = (tileSize.width / kPixelsPerMeter) * 0.5f * width *0.8;
+    shapeC.m_p = b2Vec2(0, heightHalf*0.50);
+    
+    // create the fixture
+    fixtureDef.shape = &shapeC; //changed from shape
+    fixtureDef.density = 1.0f;
+    fixtureDef.friction = 0.1f;
+    fixtureDef.userData = (void*)(new userdataFormat(sensorNone,pIndex));
+    fixtureDef.restitution = 0.0f;
+    //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
+    //    fixtureDef.filter.maskBits = 0xffff;
+    body->CreateFixture(&fixtureDef);
+    
+    
     fixtureDef.shape = &shape; //changed from shape
     fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.3f;
+    fixtureDef.friction = 0.1f;
     fixtureDef.userData = (void*)(new userdataFormat(sensorNone,pIndex));
     fixtureDef.restitution = 0.0f;
     //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
@@ -240,17 +249,17 @@ Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int
     sensorFixture.density = 0;
     
     b2Vec2 center;
-    //Right
-    center = b2Vec2(widthHalf, 0);
-    sensorFixture.userData = (void*)(new userdataFormat(sensorRight,pIndex));
-    sensorShape.SetAsBox(widthHalf/4, heightHalf/4.0, center, 0);
-    body->CreateFixture(&sensorFixture);
-    
-    //Left
-    center = b2Vec2(-widthHalf, 0);
-    sensorFixture.userData = (void*)(new userdataFormat(sensorLeft,pIndex));
-    sensorShape.SetAsBox(widthHalf/4, heightHalf/4.0, center, 0);
-    body->CreateFixture(&sensorFixture);
+//    //Right
+//    center = b2Vec2(widthHalf, 0);
+//    sensorFixture.userData = (void*)(new userdataFormat(sensorRight,pIndex));
+//    sensorShape.SetAsBox(widthHalf/4, heightHalf/4.0, center, 0);
+//    body->CreateFixture(&sensorFixture);
+//    
+//    //Left
+//    center = b2Vec2(-widthHalf, 0);
+//    sensorFixture.userData = (void*)(new userdataFormat(sensorLeft,pIndex));
+//    sensorShape.SetAsBox(widthHalf/4, heightHalf/4.0, center, 0);
+//    body->CreateFixture(&sensorFixture);
     
     //Bottom
     center = b2Vec2(0, -heightHalf);
@@ -258,61 +267,27 @@ Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int
     sensorShape.SetAsBox(widthHalf/2, heightHalf/4.0, center, 0);
     body->CreateFixture(&sensorFixture);
     
-    //Top
-    center = b2Vec2(0, heightHalf);
-    sensorFixture.userData = (void*)(new userdataFormat(sensorTop,pIndex));
-    sensorShape.SetAsBox(widthHalf/4, heightHalf/4.0, center, 0);
-    body->CreateFixture(&sensorFixture);
     
     auto ret = Player::create(body,pIndex);
     return ret;
 }
 
-void Player::setIsTouching(int sensorEnum[],int val,bool died)
+void Player::setIsGround(bool val)
 {
-    if(died)
+    if(val == true)
     {
-        this->setIsDied(true);
-    }
-    for(int i =0;i < 4;i ++)
-    {
-        switch (sensorEnum[i]) {
-            case sensorBottom:
-                if(val == true)
-                {
-                    if(_airTime > 1.2) //1.2 is hardcoded
-                    {
-                        //shake screen
-                        //hurt
-                        //play sound
-                        log("Ouch!");
-                    }
-                    _jumping = false;
-                    _airTime = 0.0;
-                    _wallFloorJump = false;
-                    //play sound
-                }
-                _isTouchingFloor = val;
-                break;
-            case sensorLeft:
-            case sensorRight:
-                _isTouchingWall = val;
-                if (val == true) {
-                    _lastWall = sensorEnum[i];
-                    
-                    _walking = false;
-                    _jumping = false;
-                    _airTime = 0;
-                    _wallStickTimer = true;
-                }
-                else
-                {
-                    _lastWall = sensorNone;
-                }
-                break;
-            default:
-                break;
+        _isTouchingFloor ++;
+        if(_airTime > 1.2)
+        {
+            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_OUCH);
         }
+        _jumping = false;
+        _airTime = 0.0;
+    }
+    else
+    {
+        _isTouchingFloor --;
+        log("Checking _isTouchingFloor %d",_isTouchingFloor);
     }
 }
 

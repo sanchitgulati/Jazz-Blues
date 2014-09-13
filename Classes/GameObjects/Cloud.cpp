@@ -1,27 +1,27 @@
 //
-//  Platform.cpp
+//  Cloud.cpp
 //  badazz
 //
 //  Created by Sanchit Gulati on 17/08/14.
 //
 //
 
-#include "Platform.h"
+#include "Cloud.h"
 using namespace cocos2d;
 
-Platform::Platform()
+Cloud::Cloud()
 {
     
 }
 
-Platform::~Platform()
+Cloud::~Cloud()
 {
     
 }
 
-Platform* Platform::create(b2Body* body,float scaleX,float scaleY)
+Cloud* Cloud::create(b2Body* body,float scaleX,float scaleY)
 {
-    Platform *pRet = new Platform();
+    Cloud *pRet = new Cloud();
     if (pRet && pRet->initWithBody(body, scaleX, scaleY))
     {
         pRet->autorelease();
@@ -35,10 +35,9 @@ Platform* Platform::create(b2Body* body,float scaleX,float scaleY)
     }
 }
 
-bool Platform::initWithBody(b2Body* body,float scaleX,float scaleY)
+bool Cloud::initWithBody(b2Body* body,float scaleX,float scaleY)
 {
-    _sprite = LFSpriteNode::create(IMG_PLATFORM);
-    _sprite->setColor(RGB_PLATFORM);
+    _sprite = LFSpriteNode::create(IMG_CLOUD);
     auto contentSize = _sprite->getContentSize();
     _sprite->setTextureRect(Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
     _sprite->setB2Body(body);
@@ -51,7 +50,7 @@ bool Platform::initWithBody(b2Body* body,float scaleX,float scaleY)
 }
 
 
-Platform* Platform::createFixture(b2World* world, TMXLayer* layer, int x, int y, float width, float height,int length,bool vertical)
+Cloud* Cloud::createFixture(b2World* world, TMXLayer* layer, int x, int y, float width, float height,int length,bool vertical)
 {
     auto widthMultiplier = MAX((length*(!vertical)), 1);
     auto heightMultiplier = MAX((length*(vertical)), 1);
@@ -79,12 +78,15 @@ Platform* Platform::createFixture(b2World* world, TMXLayer* layer, int x, int y,
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape;
     fixtureDef.density = 1.0f;
-    fixtureDef.userData = (void*)(new userdataFormat(tmxPlatform));
+    auto userdata = (void*)(new userdataFormat(tmxCloud));
+    fixtureDef.userData = userdata;
     fixtureDef.friction = 0.3f;
     fixtureDef.restitution = 0.0f;
     //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
     fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
-    return Platform::create(body,widthMultiplier,heightMultiplier);
+    auto ret = Cloud::create(body,widthMultiplier,heightMultiplier);
+    ((userdataFormat*)userdata)->node = ret;
+    return ret;
 
 }

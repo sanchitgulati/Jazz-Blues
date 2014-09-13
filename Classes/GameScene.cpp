@@ -7,6 +7,7 @@
 //
 
 #include "GameScene.h"
+#include "LevelSelector.h"
 
 USING_NS_CC;
 
@@ -35,7 +36,7 @@ bool GameScene::init()
         return false;
     }
     _gsGamePlaying = true;
-    kCurrentLevel = 1;
+    kCurrentLevel = UserDefault::getInstance()->getIntegerForKey("continue",1);
     
     _visibleSize = Director::getInstance()->getVisibleSize();
     
@@ -53,7 +54,7 @@ bool GameScene::init()
     
     createPhysicalWorld();
     loadLevel(0);// for testing
-    loadInstuctions();
+//    loadInstuctions();
     
     
     
@@ -103,9 +104,9 @@ bool GameScene::init()
 #endif
     
     /* Entering box2d world */
-    _platformsGroup->setVisible(false);
-    _playerGroup->setVisible(false);
-    _bgGroup->setVisible(false);
+//    _platformsGroup->setVisible(false);
+//    _playerGroup->setVisible(false);
+//    _bgGroup->setVisible(false);
     /*end*/
     
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
@@ -116,12 +117,24 @@ bool GameScene::init()
 
 void GameScene::menuCloseCallback(Ref* pSender)
 {
-    log("sender id %d",((Node*)pSender)->getTag());
-    Director::getInstance()->end();
-    
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    exit(0);
-#endif
+    auto obj = (Node*)pSender;
+    switch (obj->getTag()) {
+        case menuLevel:
+        {
+            auto scene = (Scene*)LevelSelector::create();
+            Director::getInstance()->replaceScene(scene);
+            break;
+        }
+        case menuRefresh:
+        {
+            
+            auto scene = (Scene*)GameScene::create();
+            Director::getInstance()->replaceScene(scene);
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 void GameScene::update(float dt)
@@ -146,6 +159,8 @@ void GameScene::update(float dt)
         if(_male->getAtFinish() && _female->getAtFinish())
         {
             kCurrentLevel ++; //increment level
+            UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
+            UserDefault::getInstance()->flush();
             Director::getInstance()->replaceScene((Scene*)GameScene::create());
         }
         
@@ -356,6 +371,25 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 {
                     auto block = Block::createFixture(_world, layer, x, y, 1.0, 1.0);
                     _platformsGroup->addChild(block);
+                    break;
+                }
+                case tmxTemple:
+                {
+                    auto temple = Temple::createFixture(_world, layer, x, y, 3.0, 3.0);
+                    _platformsGroup->addChild(temple);
+                    break;
+                }
+                case tmxCloud:
+                {
+                    auto cloud = Cloud::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    _platformsGroup->addChild(cloud);
+                    break;
+                }
+                case tmxDoor:
+                {
+                    auto door = Door::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    _platformsGroup->addChild(door);
+                    break;
                 }
                 default:
                     break;
@@ -369,62 +403,57 @@ void GameScene::BeginContact(b2Contact* contact)
 {
     b2Fixture* f1 = contact->GetFixtureA();
     b2Fixture* f2 = contact->GetFixtureB();
+    auto data1 = static_cast<userdataFormat *>(f1->GetUserData());
+    auto data2 = static_cast<userdataFormat *>(f2->GetUserData());
+    
+
     
     if(f1->IsSensor() || f2->IsSensor())
     {
-        auto data1 = static_cast<userdataFormat *>(f1->GetUserData());
-        auto data2 = static_cast<userdataFormat *>(f2->GetUserData());
-        int arraySensor[4] = {sensorNone,sensorNone,sensorNone,sensorNone}; // 4 sensors
-        int count = 0;
-        bool die = false;
-        bool isFinished = false;
-        bool isBottomSet = false;
-        
         if(data1->a == tmxPlatform || data2->a == tmxPlatform )
         {
-            if( data1->a ==  sensorLeft || data2->a == sensorLeft)
+            if(data1->b == pFemale || data2->b == pFemale) //Is Female
             {
-                arraySensor[count++] = sensorLeft;
+                _female->setIsGround(true);
             }
-            else if( data1->a ==  sensorRight || data2->a == sensorRight)
+            else if(data1->b == pMale || data2->b == pMale) //Is Male
             {
-                arraySensor[count++] = sensorRight;
-            }
-            else if( data1->a ==  sensorBottom || data2->a == sensorBottom)
-            {
-                arraySensor[count++] = sensorBottom;
-                isBottomSet = true;
+                _male->setIsGround(true);
             }
         }
-        if(!isBottomSet)
+        if(data1->a == tmxCloud || data2->a == tmxCloud )
         {
-            if(data1->a == tmxBlock || data2->a == tmxBlock )
+            if(data1->b == pFemale || data2->b == pFemale) //Is Female
             {
-                if( data1->a ==  sensorBottom || data2->a == sensorBottom)
-                {
-                    arraySensor[count++] = sensorBottom;
-                }
+                _female->setIsGround(true);
+            }
+            else if(data1->b == pMale || data2->b == pMale) //Is Male
+            {
+                _male->setIsGround(true);
             }
         }
         
         if(data1->a == tmxFire || data2->a == tmxFire)
         {
-            die = true;
+            if(data1->b == pFemale || data2->b == pFemale) //Is Female
+            {
+                _female->setIsDied(true);
+            }
+            else if(data1->b == pMale || data2->b == pMale) //Is Male
+            {
+                _male->setIsDied(true);
+            }
         }
         if(data1->a == tmxWin || data2->a == tmxWin)
         {
-            isFinished = true;
-        }
-        
-        if(data1->b == pFemale || data2->b == pFemale)
-        {
-            _female->setAtFinish(isFinished);
-            _female->setIsTouching(arraySensor,true,die);
-        }
-        else if(data1->b == pMale || data2->b == pMale)
-        {
-            _male->setAtFinish(isFinished);
-            _male->setIsTouching(arraySensor,true,die);
+            if(data1->b == pFemale || data2->b == pFemale) //Is Female
+            {
+                _female->setAtFinish(true);
+            }
+            else if(data1->b == pMale || data2->b == pMale) //Is Male
+            {
+                _male->setAtFinish(true);
+            }
         }
     }
 }
@@ -433,61 +462,54 @@ void GameScene::EndContact(b2Contact* contact)
 {
     b2Fixture* f1 = contact->GetFixtureA();
     b2Fixture* f2 = contact->GetFixtureB();
+    auto data1 = static_cast<userdataFormat *>(f1->GetUserData());
+    auto data2 = static_cast<userdataFormat *>(f2->GetUserData());
+    
     
     if(f1->IsSensor() || f2->IsSensor())
     {
-        auto data1 = static_cast<userdataFormat *>(f1->GetUserData());
-        auto data2 = static_cast<userdataFormat *>(f2->GetUserData());
-        
-        int arraySensor[4] = {sensorNone,sensorNone,sensorNone,sensorNone}; // 4 sensors
-        int count = 0;
-        bool isBottomSet = false;
-        
         if(data1->a == tmxPlatform || data2->a == tmxPlatform )
         {
-            if( data1->a ==  sensorLeft || data2->a == sensorLeft)
+            if(data1->b == pFemale || data2->b == pFemale) //Is Female
             {
-                arraySensor[count++] = sensorLeft;
+                _female->setIsGround(false);
             }
-            else if( data1->a ==  sensorRight || data2->a == sensorRight)
+            else if(data1->b == pMale || data2->b == pMale) //Is Male
             {
-                arraySensor[count++] = sensorRight;
-            }
-            else if( data1->a ==  sensorBottom || data2->a == sensorBottom)
-            {
-                arraySensor[count++] = sensorBottom;
-                isBottomSet = true;
+                _male->setIsGround(false);
             }
         }
-        
-        if(!isBottomSet)
+        if(data1->a == tmxCloud || data2->a == tmxCloud )
         {
-            if(data1->a == tmxBlock || data2->a == tmxBlock )
+            if(data1->b == pFemale || data2->b == pFemale) //Is Female
             {
-                if( data1->a ==  sensorBottom || data2->a == sensorBottom)
-                {
-                    arraySensor[count++] = sensorBottom;
-                }
+                _female->setIsGround(false);
+            }
+            else if(data1->b == pMale || data2->b == pMale) //Is Male
+            {
+                _male->setIsGround(false);
+            }
+            
+            if(data1->a == tmxCloud)
+            {
+                //TODO: Cloud deletion here
+            }
+            else
+            {
+                //TODO: Cloud deletion here
             }
         }
-        
         if(data1->a == tmxWin || data2->a == tmxWin)
         {
-            if(data1->b == pFemale || data2->b == pFemale)
+            if(data1->b == pFemale || data2->b == pFemale) //Is Female
+            {
                 _female->setAtFinish(false);
-            else if(data1->b == pMale || data2->b == pMale)
+            }
+            else if(data1->b == pMale || data2->b == pMale) //Is Male
+            {
                 _male->setAtFinish(false);
+            }
         }
-        
-        if(data1->b == pFemale || data2->b == pFemale)
-        {
-            _female->setIsTouching(arraySensor,false);
-        }
-        else if(data1->b == pMale || data2->b == pMale)
-        {
-            _male->setIsTouching(arraySensor,false);
-        }
-
     }
 }
 

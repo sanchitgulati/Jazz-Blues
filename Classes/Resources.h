@@ -21,9 +21,13 @@
 #define IMG_BODY "images/body.png"
 #define IMG_MALE "images/boy.png"
 #define IMG_PLATFORM "images/platform.png"
+#define IMG_WALL "images/wall.png"
 #define IMG_SPIKE "images/fire.png"
 #define IMG_WIN "images/win.png"
 #define IMG_BLOCK "images/block.png"
+#define IMG_TEMPLE "images/temple.png"
+#define IMG_DOOR "images/door.png"
+#define IMG_CLOUD "images/cloud.png"
 
 #define IMG_BUTTON_LEFT_0 "images/button_left_0.png"
 #define IMG_BUTTON_LEFT_1 "images/button_left_1.png"
@@ -50,12 +54,19 @@
 #define SFX_BG_INTRO "sfx/at_the_window_intro.mp3"
 #define SFX_BG_HAPPY "sfx/at_the_window_happy.mp3"
 
+
+#define SFX_JUMP "sfx/jump_0.mp3"
+#define SFX_OUCH "sfx/ouch.wav"
+#define SFX_WIN "sfx/kiss.wav"
+#define SFX_KEY "sfx/collect_0.mp3"
+
 #define IMG_JAZZ "images/jazz_01.png"
 #define IMG_GAME_LOGO "images/game_logo.png"
 
 #define RGB_BLACK Color3B(20,20,20)
 #define RGB_WHITE Color3B(252,252,252)
 #define RGB_ROSE Color3B(120,25,61)
+#define RGB_PLATFORM Color3B(50,50,50)
 
 #define RGB_BOY Color3B(0,86,185)
 #define RGB_GIRL Color3B(171,71,203)
@@ -68,7 +79,7 @@
 enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zForeground,zHUD,zControl};
-enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxPoison};
+enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison};
 enum playerIndex {pUnknown,pFemale,pMale};
 enum sensorIndex {sensorNone = 100,sensorTop = 101,sensorRight = 102,sensorBottom = 103,sensorLeft = 104};
 enum directionIndex {directionLeft,directionRight};

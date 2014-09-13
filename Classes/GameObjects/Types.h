@@ -15,6 +15,9 @@
 #include "Win.h"
 #include "Block.h"
 #include "Wall.h"
+#include "Temple.h"
+#include "Cloud.h"
+#include "Door.h"
 
 
 #endif

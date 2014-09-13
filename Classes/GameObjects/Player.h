@@ -20,14 +20,8 @@ class Player : public cocos2d::Node
 {
 private:
     float _jumpHeight;
-    bool _wallStickTimer;
-    float _wallStickTime;
-    int _lastWall;
-    bool _wallJumping;
     float _gravity;
     cocos2d::Point _maxspeed;
-    bool _wallFloorJump;
-    cocos2d::Point _wallHit;
     
     LFSpriteNode* _sprite;
     cocos2d::Sprite* _shape;
@@ -53,11 +47,7 @@ private:
     
     int _facing;
     
-    bool _isTouchingFloor;
-    bool _isTouchingWall;
-    
-    bool _isTouchingWallLeft;
-    bool _isTouchingWallRight;
+    int _isTouchingFloor;
     
 protected:
 public:
@@ -70,7 +60,9 @@ public:
     b2Body* getB2Body();
     LFSpriteNode* getSprite();
     
-    void setIsTouching(int sensorEnum[],int val = true,bool died = false);
+//    void setIsTouching(int sensorEnum[],int val = true,bool died = false);
+    void setIsGround(bool val);
+
     bool getIsAlive();
     void setIsDied(bool val);
     
