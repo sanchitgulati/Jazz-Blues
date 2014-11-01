@@ -1,6 +1,5 @@
 #include "AppDelegate.h"
 #include "LogoSplash.h"
-#include "GameScene.h"
 
 USING_NS_CC;
 
@@ -17,34 +16,33 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        //glview = GLView::createWithFullScreen("badazz");
-        glview = GLView::create("badazz");
+        glview = GLView::create("Jazz and Blues");
         director->setOpenGLView(glview);
     }
+    
+    
+    Size designSize = Size(640.0, 1136.0);
+    
+    
+//  Size designSize = Size(1280.0, 2272);
+//  Size designSize = Size(960.0, 1704.0);
+    
+    
+    glview->setDesignResolutionSize(designSize.width, designSize.height, ResolutionPolicy::FIXED_HEIGHT);
 
     // turn on display FPS
     director->setDisplayStats(true);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
-    
-    
-    /* Add this to appDelegate.mm for multitouch */
-    /*
-     [eaglView setMultipleTouchEnabled:YES];
-     */
-    
-    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sfx/jump_0.mp3");
-    CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sfx/bg.mp3");
-    
-    CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(SFX_BG_INTRO);
-    CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(SFX_BG_HAPPY);
-//    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sfx/bg.mp3",true);
-    
 
     // create a scene. it's an autorelease object
-//    auto scene = (Scene*)GameScene::create();
-    auto scene = (Scene*)LogoSplash::create();
+//    auto scene = HelloWorld::createScene();
+    auto scene = Scene::create();
+    auto layer = LogoSplash::create();
+    scene->addChild(layer);
+    
+
 
     // run
     director->runWithScene(scene);
@@ -55,9 +53,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
 // This function will be called when the app is inactive. When comes a phone call,it's be invoked too
 void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
+    
 
     // if you use SimpleAudioEngine, it must be pause
-    CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+    // SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
@@ -65,5 +64,5 @@ void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
 
     // if you use SimpleAudioEngine, it must resume here
-    CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+    // SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
 }

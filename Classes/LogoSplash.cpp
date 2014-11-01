@@ -64,7 +64,6 @@ void LogoSplash::onEnter() {
     
     ActionInterval* pFadeIn = FadeIn::create(1.0f);
     ActionInterval* pFadeOut = FadeOut::create(1.0f);
-    //    ActionInterval* pFadeOut = MoveTo::create(3.0, Point(0,0));
     DelayTime* delayTimeShort = DelayTime::create(1.0f);
     
     FiniteTimeAction* pSeq = CCSequence::create(pFadeIn, delayTimeShort, pFadeOut,nextSceneFunc, NULL );

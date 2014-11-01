@@ -48,11 +48,11 @@
 #define IMG_UNMUTE_0 "images/unmute_0.png"
 #define IMG_UNMUTE_1 "images/unmute_1.png"
 
-#define FONT "fonts/MavenPro-Medium.ttf"
+#define FONT "fonts/hand.ttf"
 #define FONT_BOLD "fonts/MavenPro-Black.ttf"
 
-#define SFX_BG_INTRO "sfx/at_the_window_intro.mp3"
-#define SFX_BG_HAPPY "sfx/at_the_window_happy.mp3"
+#define SFX_BG_INTRO "sfx/Danse_Morialta_Intro.mp3"
+#define SFX_BG_HAPPY "sfx/Danse_Morialta_Happy.mp3"
 
 
 #define SFX_JUMP "sfx/jump_0.mp3"
@@ -60,7 +60,7 @@
 #define SFX_WIN "sfx/kiss.wav"
 #define SFX_KEY "sfx/collect_0.mp3"
 
-#define IMG_JAZZ "images/jazz_01.png"
+#define IMG_JAZZ "images/guitar.png"
 #define IMG_GAME_LOGO "images/game_logo.png"
 
 #define RGB_BLACK Color3B(20,20,20)

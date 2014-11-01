@@ -9,7 +9,6 @@
 #ifndef __adam__Block__
 #define __adam__Block__
 
-#include <iostream>
 #include "cocos2d.h"
 #include "LFSpriteNode.h"
 #include "Resources.h"

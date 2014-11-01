@@ -33,17 +33,14 @@ bool MainMenu::init() {
         
         Size screenSize = Director::getInstance()->getWinSize();
         
-        auto bg = Sprite::create("images/bg.png");
-        bg->setColor(RGB_WHITE);
+        auto bg = Sprite::create("images/paper.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
         bg->setPosition(screenSize.width/2, screenSize.height/2);
-        bg->setScaleX(Util::getScreenRatioWidth(bg));
-        bg->setScaleY(Util::getScreenRatioHeight(bg));
+        bg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
         this->addChild(bg);
         
         auto gameLogo = Sprite::create(IMG_GAME_LOGO);
         gameLogo->setPosition(Point(screenSize.width/2,screenSize.height*0.80));
         gameLogo->setScale(Util::getScreenRatioHeight(gameLogo)*0.4);
-        gameLogo->setColor(RGB_BLACK);
         this->addChild(gameLogo);
         
         
@@ -59,13 +56,10 @@ bool MainMenu::init() {
         menuItemNew->setPositionY(0);
         menuItemNew->setTag(bLevelSelect);
         
-        auto animatingJazzPlayer = Sprite::create(IMG_JAZZ);
-        animatingJazzPlayer->setScale(Util::getScreenRatioHeight(animatingJazzPlayer)*0.7);
-        animatingJazzPlayer->setPosition(screenSize.width*0.70, screenSize.height*0.45);
-        animatingJazzPlayer->setColor(bg->getColor());
-        this->addChild(animatingJazzPlayer);
-        //TODO: Animation
-        
+        auto prop = Sprite::create(IMG_JAZZ);
+        prop->setScale(Util::getScreenRatioHeight(prop));
+        prop->setPosition(screenSize.width*0.70, screenSize.height*0.50);
+        this->addChild(prop);
         
         auto menu = Menu::create(menuItemPlay,menuItemNew, NULL);
         menu->setPosition(screenSize.width*0.30, screenSize.height*0.30);
