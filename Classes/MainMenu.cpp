@@ -8,7 +8,6 @@
 
 #include "MainMenu.h"
 #include "GameScene.h"
-#include "LevelSelector.h"
 
 using namespace cocos2d;
 
@@ -38,10 +37,29 @@ bool MainMenu::init() {
         bg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
         this->addChild(bg);
         
-        auto gameLogo = Sprite::create(IMG_GAME_LOGO);
-        gameLogo->setPosition(Point(screenSize.width/2,screenSize.height*0.80));
-        gameLogo->setScale(Util::getScreenRatioHeight(gameLogo)*0.4);
-        this->addChild(gameLogo);
+        
+        auto delta = 20;
+        auto move = MoveBy::create(8, Vec2(-delta, 0));
+        auto move_reverse = MoveBy::create(8, Vec2(delta, 0));
+        auto sequence = Sequence::create(move,move_reverse,NULL);
+        auto repeat = RepeatForever::create(sequence);
+        
+        
+        _gameLogo = Node::create();
+        this->addChild(_gameLogo);
+        auto gameLogo0 = Sprite::create(IMG_GAME_LOGO_0);
+        gameLogo0->setPosition(Point(screenSize.width/2,screenSize.height*0.80));
+        gameLogo0->setScale(Util::getScreenRatioHeight(gameLogo0)*0.4);
+        _gameLogo->addChild(gameLogo0);
+        
+        auto gameLogo1 = Sprite::create(IMG_GAME_LOGO_1);
+        gameLogo1->setPosition(Point(screenSize.width/2,screenSize.height*0.80));
+        gameLogo1->setScale(Util::getScreenRatioHeight(gameLogo1)*0.4);
+        _gameLogo->addChild(gameLogo1);
+        
+        sequence = Sequence::create(move_reverse,move,NULL);
+        repeat = RepeatForever::create(sequence);
+        gameLogo1->runAction(repeat);
         
         
         auto labelPlay = Label::createWithTTF("Continue", FONT, 64);
@@ -50,20 +68,98 @@ bool MainMenu::init() {
         menuItemPlay->setPositionY(120);
         menuItemPlay->setTag(bPlay);
         
+        
         auto labelNew = Label::createWithTTF("Level Select", FONT, 46);
         labelNew->setColor(RGB_BLACK);
         auto menuItemNew = MenuItemLabel::create(labelNew, CC_CALLBACK_1(MainMenu::menuCallback, this));
         menuItemNew->setPositionY(0);
-        menuItemNew->setTag(bLevelSelect);
+        menuItemNew->setTag(bLevelSelect);        
         
-        auto prop = Sprite::create(IMG_JAZZ);
-        prop->setScale(Util::getScreenRatioHeight(prop));
-        prop->setPosition(screenSize.width*0.70, screenSize.height*0.50);
-        this->addChild(prop);
+        _prop = Node::create();
+        this->addChild(_prop);
         
-        auto menu = Menu::create(menuItemPlay,menuItemNew, NULL);
-        menu->setPosition(screenSize.width*0.30, screenSize.height*0.30);
-        this->addChild(menu);
+        auto prop0 = Sprite::create(IMG_JAZZ_0);
+        prop0->setScale(Util::getScreenRatioHeight(prop0));
+        prop0->setPosition(screenSize.width*0.70, screenSize.height*0.50);
+        _prop->addChild(prop0);
+        delta = 5;
+        move = MoveBy::create(12, Vec2(-delta, 0));
+        move_reverse = MoveBy::create(12, Vec2(delta, 0));
+        sequence = Sequence::create(move,move_reverse,NULL);
+        repeat = RepeatForever::create(sequence);
+        prop0->runAction(repeat);
+        
+        auto prop1 = Sprite::create(IMG_JAZZ_1);
+        prop1->setScale(Util::getScreenRatioHeight(prop1));
+        prop1->setPosition(screenSize.width*0.70, screenSize.height*0.50);
+        _prop->addChild(prop1);
+        
+        delta = 5;
+        move = MoveBy::create(15, Vec2(-delta, 0));
+        sequence = Sequence::create(move,move->reverse(),NULL);
+        repeat = RepeatForever::create(sequence);
+        prop1->runAction(repeat);
+        
+        auto prop2 = Sprite::create(IMG_JAZZ_2);
+        prop2->setScale(Util::getScreenRatioHeight(prop2));
+        prop2->setPosition(screenSize.width*0.70, screenSize.height*0.50);
+        _prop->addChild(prop2);
+        auto rotate = RotateBy::create(10,3);
+        prop2->runAction(RepeatForever::create(Sequence::create(rotate,rotate->reverse(), NULL)));
+        
+        _menu = Menu::create(menuItemPlay,menuItemNew, NULL);
+        _menu->setPosition(screenSize.width*0.30, screenSize.height*0.30);
+        this->addChild(_menu);
+        
+        
+        _table = Node::create();
+        _table->setPosition(Vec2(0,0));
+        _table->setOpacity(0);
+        _table->setVisible(false);
+        this->addChild(_table);
+        
+        
+        cocos2d::Vector<MenuItem *> lvlList;
+        for (int i = 0; i < LVLS; i++) {
+            auto lbl = Label::createWithTTF(level[i].c_str(), FONT_JANE, 42);
+            auto sptr = Sprite::create(IMG_RECORD);
+            auto item = MenuItemSprite::create(sptr,sptr, CC_CALLBACK_1(MainMenu::menuCallback, this));
+            item->setContentSize(Size(screenSize.height*0.24,screenSize.height*0.24));
+            sptr->setScale(Util::getScreenRatioHeight(sptr)*0.15);
+            item->setTag(i+1);
+            lvlList.pushBack(item);
+            lbl->setColor(Color3B::BLACK);
+            lbl->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+            lbl->setPosition(Vec2(sptr->getBoundingBox().size.width,0));
+            sptr->addChild(lbl);
+        }
+        
+        auto margin = 5;
+        
+        auto bracketLeft = Sprite::create(FNT_BRACKET);
+        bracketLeft->setScale(Util::getScreenRatioHeight(bracketLeft)*0.40);
+        bracketLeft->setPosition(0.0 + margin, screenSize.height - margin);
+        bracketLeft->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+        bracketLeft->setOpacity(0);
+        _table->addChild(bracketLeft);
+        
+        auto bracketRight = Sprite::create(FNT_BRACKET);
+        bracketRight->setFlippedX(true);
+        bracketRight->setFlippedY(true);
+        bracketRight->setScale(Util::getScreenRatioHeight(bracketRight)*0.40);
+        bracketRight->setPosition(screenSize.width - margin, 0 + margin);
+        bracketRight->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+        bracketRight->setOpacity(0);
+        _table->addChild(bracketRight);
+        
+        
+        auto menu = Menu::createWithArray(lvlList);
+        menu->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        menu->setPosition(screenSize.width*0.50, screenSize.height*0.55);
+        menu->setTag(3);
+        _table->addChild(menu);
+        menu->alignItemsInColumns(3,3,3,3, NULL);
+        
         
         bRet = true;
     } while(0);
@@ -89,7 +185,6 @@ void MainMenu::onEnter() {
 void MainMenu::menuCallback(cocos2d::Ref* pSender)
 {
     auto obj = (Node*)pSender;
-//    log("Reached menuCallback from %d",obj->getTag());
     
     switch (obj->getTag()) {
         case bPlay:
@@ -100,8 +195,43 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
         }
         case bLevelSelect:
         {
-            auto scene = (Scene*)LevelSelector::create();
-            Director::getInstance()->replaceScene(scene);
+            _table->setVisible(true);
+            for(auto c : _table->getChildren())
+            {
+                if(c->getTag() == 1)
+                    c->runAction(Sequence::create(FadeIn::create(1),FadeOut::create(1), NULL));
+                else if(c->getTag() == 2)
+                    c->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1),FadeOut::create(1), NULL));
+                else if(c->getTag() == 3)
+                {
+                    
+                    for(auto cc : c->getChildren())
+                    {
+                        cc->runAction(Sequence::create(DelayTime::create(1),FadeIn::create(1), NULL));
+                    }
+                }
+                else
+                {
+                    c->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,200), NULL));
+                }
+                    
+            }
+            
+            auto callFunc = CallFunc::create([this](){
+                _menu->setVisible(false);
+            });
+            _menu->runAction(Sequence::create(FadeOut::create(1),callFunc, NULL));
+            
+            _prop->runAction(MoveBy::create(1, Vec2(100, 0)));
+            for(auto c : _prop->getChildren())
+            {
+                c->runAction(FadeOut::create(1));
+            }
+            for(auto c : _gameLogo->getChildren())
+            {
+                c->runAction(FadeOut::create(1));
+            }
+
             break;
         }
         default:

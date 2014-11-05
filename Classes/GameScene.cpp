@@ -7,7 +7,7 @@
 //
 
 #include "GameScene.h"
-#include "LevelSelector.h"
+#include "MainMenu.h"
 
 USING_NS_CC;
 
@@ -121,7 +121,7 @@ void GameScene::menuCloseCallback(Ref* pSender)
     switch (obj->getTag()) {
         case menuLevel:
         {
-            auto scene = (Scene*)LevelSelector::create();
+            auto scene = (Scene*)MainMenu::create();
             Director::getInstance()->replaceScene(scene);
             break;
         }
@@ -253,13 +253,12 @@ void GameScene::loadLevel(int level)
     _bgGroup = Node::create();
     _parent->addChild(_bgGroup,zBackground);
     
+    auto screenSize = Director::getInstance()->getWinSize();
     
-    auto _bg1 = Sprite::create(IMG_BG);
-    _bg1->setColor(RGB_WHITE);
-    _bg1->setPosition(cocos2d::Point(_visibleSize.width/2.0f,_visibleSize.height/2.0f));
-    _bg1->setScaleX( Util::getScreenRatioWidth(_bg1)*1.5);
-    _bg1->setScaleY(Util::getScreenRatioHeight(_bg1)*1.5);
-    _bgGroup->addChild(_bg1);
+    auto bg = Sprite::create("images/paper.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+    bg->setPosition(screenSize.width/2, screenSize.height/2);
+    bg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
+    this->addChild(bg);
     
     auto loadLevelString = StringUtils::format("levels/%d.tmx",kCurrentLevel);
     _tm = TMXTiledMap::create(loadLevelString);
@@ -280,12 +279,6 @@ void GameScene::loadLevel(int level)
     _parent->addChild(_playerGroup);
 
     prepareLayers();
-    
-    _bg1->setAnchorPoint(Point(0.5,0.5));
-    auto bgSize = _platformsGroup->getBoundingBox().size;
-    _bg1->setPosition(bgSize.width/2,bgSize.height/2);
-    
-    
 }
 
 

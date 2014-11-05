@@ -44,7 +44,7 @@ bool LevelSelector::init() {
         bgRight->setScaleY(Util::getScreenRatioHeight(bgRight));
         this->addChild(bgRight);
         
-        auto gameLogo = MenuItemImage::create(IMG_GAME_LOGO,IMG_GAME_LOGO,CC_CALLBACK_1(LevelSelector::menuCallback, this));
+        auto gameLogo = MenuItemImage::create(IMG_GAME_LOGO_0,IMG_GAME_LOGO_0,CC_CALLBACK_1(LevelSelector::menuCallback, this));
         gameLogo->setPosition(Point(screenSize.width/2,screenSize.height*0.80));
         gameLogo->setScale(Util::getScreenRatioHeight(gameLogo)*0.4);
         auto menu = Menu::create(gameLogo, NULL);

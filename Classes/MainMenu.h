@@ -5,6 +5,10 @@
 
 class MainMenu : public cocos2d::LayerColor
 {
+    cocos2d::Node* _table;
+    cocos2d::Node* _prop;
+    cocos2d::Menu* _menu;
+    cocos2d::Node* _gameLogo;
 public:
 	MainMenu();
 	~MainMenu();

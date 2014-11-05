@@ -49,7 +49,7 @@
 #define IMG_UNMUTE_1 "images/unmute_1.png"
 
 #define FONT "fonts/hand.ttf"
-#define FONT_BOLD "fonts/MavenPro-Black.ttf"
+#define FONT_JANE "fonts/jane.ttf"
 
 #define SFX_BG_INTRO "sfx/Danse_Morialta_Intro.mp3"
 #define SFX_BG_HAPPY "sfx/Danse_Morialta_Happy.mp3"
@@ -60,8 +60,18 @@
 #define SFX_WIN "sfx/kiss.wav"
 #define SFX_KEY "sfx/collect_0.mp3"
 
-#define IMG_JAZZ "images/guitar.png"
-#define IMG_GAME_LOGO "images/game_logo.png"
+#define IMG_JAZZ_0 "images/guitar_0.png"
+#define IMG_JAZZ_1 "images/guitar_1.png"
+#define IMG_JAZZ_2 "images/guitar_2.png"
+#define IMG_GAME_LOGO_0 "images/game_logo_0.png"
+#define IMG_GAME_LOGO_1 "images/game_logo_1.png"
+
+#define IMG_RECORD "images/record.png"
+
+//words
+#define FNT_BRACKET "text/bracket.png"
+#define FNT_ONCE "text/once.png"
+#define FNT_NOTSO "text/notso.png"
 
 #define RGB_BLACK Color3B(20,20,20)
 #define RGB_WHITE Color3B(252,252,252)
@@ -71,8 +81,7 @@
 #define RGB_BOY Color3B(0,86,185)
 #define RGB_GIRL Color3B(171,71,203)
 
-#define LVL_A 9
-#define LVL_B 10
+#define LVLS 12
 
 #define VFX_CONSTANT 0.75
 
@@ -90,28 +99,19 @@ const double kSecondsPerUpdate = 0.1;
 struct userdataFormat { int a;int b;int c;cocos2d::Node* node;  userdataFormat(int a,int b = 0,int c = 0,cocos2d::Node* node = nullptr){this->a = a;this->b = b;this->c = c;this->node = node;}};
 
 
-const std::string sideA[LVL_A] = {
-    "We were the world",
-    "Almighty",
-    "Superman",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text"
-};
-const std::string sideB[LVL_B] = {
-    "Sample Text",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text",
-    "Sample Text"
+const std::string level[LVLS] = {
+    "Happy Together",
+    "Present",
+    "Poison",
+    "Present",
+    "Walls & Tunnels",
+    "Upside Down",
+    "The Reason",
+    "Cold Night",
+    "Fire",
+    "Police",
+    "Finale",
+    "End",
 };
 
 #endif
