@@ -18,6 +18,7 @@
 #include "Temple.h"
 #include "Cloud.h"
 #include "Door.h"
+#include "Teddy.h"
 
 
 #endif

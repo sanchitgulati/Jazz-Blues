@@ -27,7 +27,7 @@ Player* Player::create(b2Body* body,int pIndex)
 
 bool Player::initWithBody(b2Body* body,int pIndex)
 {
-    _sprite = LFSpriteNode::create(IMG_WALL);
+    _sprite = LFSpriteNode::create(IMG_WALL); //hack, transparent sprite
     if(pIndex == pFemale)
     {
         _sprite->setColor(RGB_GIRL);
@@ -52,7 +52,7 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     
     _jumpHeight = 1536/kPixelsPerMeter;
     _gravity = -1000/kPixelsPerMeter;
-    _maxspeed = Point(480/kPixelsPerMeter,1020/kPixelsPerMeter);
+    _maxspeed = Point(240/kPixelsPerMeter,1020/kPixelsPerMeter);
     
     //Add Physics Restrictions
         
@@ -93,7 +93,6 @@ Player::Player(float x,float y)
 }
 
 
-
 void Player::update(float dt)
 {
 //    _streak->setPosition(_sprite->getPosition());
@@ -103,12 +102,12 @@ void Player::update(float dt)
     if(_pressedLeft)
     {
         body->ApplyLinearImpulse(b2Vec2((-1*(_pIndex == pFemale ? -1 : 1)*_maxspeed.x)/4.0, 0),body->GetWorldCenter(), true);
-        _facing = directionLeft;
+        _facing = _pIndex == pFemale ? directionRight : directionLeft;
     }
     else if(_pressedRight)
     {
         body->ApplyLinearImpulse(b2Vec2((1*(_pIndex == pFemale ? -1 : 1)*_maxspeed.x)/4.0, 0),body->GetWorldCenter(), true);
-        _facing = directionRight;
+        _facing = _pIndex == pFemale ? directionLeft : directionRight;
     }
     else
     {
@@ -131,35 +130,20 @@ void Player::update(float dt)
         }
     }
     
-    if(_facing == directionRight)
+    auto velocity = body->GetLinearVelocity();
+    if(_jumping && velocity.y < 0)
     {
-        auto velocity = body->GetLinearVelocity();
-        if(_jumping && velocity.y < 0)
-        {
-           body->SetTransform( body->GetPosition(), velocity.y/60 );
-            //angle equals to "invesrse of" velocity.y /60
-        }
-        else
-        {
-            body->SetTransform( body->GetPosition(), 0 );
-            //angle reset to zero
-        }
+        body->SetTransform( body->GetPosition(), velocity.y/60 * (_facing == directionRight ? 1 : -1) );
+        //angle equals to "invesrse of" velocity.y /60
     }
-    else if(_facing == directionLeft)
+    else
     {
-        auto velocity = body->GetLinearVelocity();
-        if(_jumping && velocity.y < 0)
-        {
-            body->SetTransform( body->GetPosition(), -1*velocity.y/60 );
-        }
-        else
-        {
-            body->SetTransform( body->GetPosition(), 0 );
-        }
+        body->SetTransform( body->GetPosition(), 0 );
+        //angle reset to zero
     }
     
     auto finalVelocity = body->GetLinearVelocity();
-    auto clampedVelocity = b2Vec2(clampf(finalVelocity.x, -4*_maxspeed.x, 4*_maxspeed.x), clampf(finalVelocity.y, -4*_maxspeed.y, 4*_maxspeed.y));
+    auto clampedVelocity = b2Vec2(clampf(finalVelocity.x,-1*_maxspeed.x,_maxspeed.x), clampf(finalVelocity.y, -1*_maxspeed.y, 1*_maxspeed.y));
     body->SetLinearVelocity(clampedVelocity);
     
 }

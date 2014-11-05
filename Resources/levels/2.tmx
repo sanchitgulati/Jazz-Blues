@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="25" height="18" tilewidth="32" tileheight="32">
  <properties>
-  <property name="title" value="We summit to new heights everyday"/>
+  <property name="title" value="used everything i could .."/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">
   <image source="tilesheet.jpg" width="192" height="64"/>
  </tileset>
  <layer name="level" width="25" height="18">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NnoC1gh+LhbAcjDnFWEtWTYwcuQIodjFTAhOzAZR8TAT4uALMDnxpS3Y2uF9kOcu0hpIeUtEuK+ciAmLDCZQ+x6tHDihi9xKohJ6zQ9RILSAkrXPFBarrC5kZS0y66HHJYseBxCz5/4ALMUJpe8UGN8okQBgBZ+jSZCAcAAA==
+   H4sIAAAAAAAAA92UUQrAIAxDdXPz/jf2p0IpZG06/TFQZCPZ03bYy151qZMZFbx/SH+GgcQw6oLyGIh3Oc9Ik/HlYfdts5qR5XgZ5t9lvq8V6RXiRP22V5Fs1IN65eXZcxTAQPnMPHbN3Ho045W1/WRM3bKy9252HivuJ68GUhsFOQgHAAA=
   </data>
  </layer>
 </map>

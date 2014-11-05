@@ -53,8 +53,8 @@ bool GameScene::init()
     
     
     createPhysicalWorld();
-    loadLevel(0);// for testing
-//    loadInstuctions();
+    loadLevel(0);
+    loadInstuctions();
     
     
     
@@ -197,31 +197,16 @@ void GameScene::loadInstuctions()
 {
     auto screenSize = Director::getInstance()->getWinSize();
     
-    auto titleBackground = Sprite::create("images/bg.png");
-    titleBackground->setColor(Color3B::BLACK);
-    titleBackground->setPosition(screenSize.width/2, screenSize.height/2);
-    titleBackground->setScaleX(Util::getScreenRatioWidth(titleBackground));
-    titleBackground->setScaleY(Util::getScreenRatioHeight(titleBackground));
-    this->addChild(titleBackground);
-    
+    auto margin = 10;
     auto valuekey = _tm->getProperties();
-    auto labelTitle = Label::createWithTTF(valuekey["title"].asString().c_str(), FONT, 64);
+    auto labelTitle = Label::createWithTTF(valuekey["title"].asString().c_str(), FONT_JANE, 36);
+    labelTitle->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
     labelTitle->setWidth(screenSize.width/2);
-    
-    auto contentSize = titleBackground->getBoundingBox().size;
-    labelTitle->setPosition(Point(contentSize.width/2,contentSize.height/2));
-    labelTitle->setAnchorPoint(Point(0.5,0.5));
-    titleBackground->addChild(labelTitle);
-    
-    
-    auto pos = titleBackground->getPosition();
-    titleBackground->setPositionY(pos.y + contentSize.height);
-    auto awayPos = titleBackground->getPosition();
-    auto easeIn = EaseIn::create(MoveTo::create(1.0, pos), 1.0);
-    auto easesOut = EaseOut::create(MoveTo::create(1.0, awayPos), 1.0);
-    auto delay  = DelayTime::create(1.0f);
-    auto seq = Sequence::create(easeIn,delay,easesOut, NULL);
-    titleBackground->runAction(seq);
+    labelTitle->setColor(RGB_BLACK);
+    labelTitle->setAlignment(TextHAlignment::RIGHT, TextVAlignment::TOP);
+    labelTitle->setPosition(screenSize.width - margin,screenSize.height - margin);
+    this->addChild(labelTitle);
+    labelTitle->runAction(Sequence::create(DelayTime::create(2),EaseExponentialOut::create(FadeOut::create(5)),NULL));
 }
 
 void GameScene::createPhysicalWorld()
@@ -384,6 +369,12 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     _platformsGroup->addChild(door);
                     break;
                 }
+                case tmxTeddy:
+                {
+                    auto teddy = Teddy::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    _platformsGroup->addChild(teddy);
+                    break;
+                }
                 default:
                     break;
             }
@@ -415,6 +406,17 @@ void GameScene::BeginContact(b2Contact* contact)
             }
         }
         if(data1->a == tmxCloud || data2->a == tmxCloud )
+        {
+            if(data1->b == pFemale || data2->b == pFemale) //Is Female
+            {
+                _female->setIsGround(true);
+            }
+            else if(data1->b == pMale || data2->b == pMale) //Is Male
+            {
+                _male->setIsGround(true);
+            }
+        }
+        if(data1->a == tmxBlock || data2->a == tmxBlock )
         {
             if(data1->b == pFemale || data2->b == pFemale) //Is Female
             {
@@ -462,6 +464,17 @@ void GameScene::EndContact(b2Contact* contact)
     if(f1->IsSensor() || f2->IsSensor())
     {
         if(data1->a == tmxPlatform || data2->a == tmxPlatform )
+        {
+            if(data1->b == pFemale || data2->b == pFemale) //Is Female
+            {
+                _female->setIsGround(false);
+            }
+            else if(data1->b == pMale || data2->b == pMale) //Is Male
+            {
+                _male->setIsGround(false);
+            }
+        }
+        if(data1->a == tmxBlock || data2->a == tmxBlock )
         {
             if(data1->b == pFemale || data2->b == pFemale) //Is Female
             {

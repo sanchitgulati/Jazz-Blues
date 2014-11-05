@@ -1,28 +1,28 @@
 //
-//  Block.cpp
+//  Teddy.cpp
 //  adam
 //
 //  Created by Sanchit Gulati on 24/08/14.
 //
 //
 
-#include "Block.h"
+#include "Teddy.h"
 
 using namespace cocos2d;
 
-Block::Block()
+Teddy::Teddy()
 {
     
 }
 
-Block::~Block()
+Teddy::~Teddy()
 {
     
 }
 
-Block* Block::create(b2Body* body)
+Teddy* Teddy::create(b2Body* body)
 {
-    Block *pRet = new Block();
+    Teddy *pRet = new Teddy();
     if (pRet && pRet->initWithBody(body))
     {
         pRet->autorelease();
@@ -36,9 +36,9 @@ Block* Block::create(b2Body* body)
     }
 }
 
-bool Block::initWithBody(b2Body* body)
+bool Teddy::initWithBody(b2Body* body)
 {
-    _sprite = LFSpriteNode::create(IMG_BLOCK);
+    _sprite = LFSpriteNode::create(IMG_TEDDY);
     _sprite->setB2Body(body);
     _sprite->setPTMRatio(kPixelsPerMeter);
     this->addChild(_sprite);
@@ -46,7 +46,7 @@ bool Block::initWithBody(b2Body* body)
 }
 
 
-Block* Block::createFixture(b2World* world, TMXLayer* layer, int x, int y, float width, float height)
+Teddy* Teddy::createFixture(b2World* world, TMXLayer* layer, int x, int y, float width, float height)
 {
     // get position & size
     auto p = layer->getPositionAt(Point(x,y));
@@ -77,13 +77,13 @@ Block* Block::createFixture(b2World* world, TMXLayer* layer, int x, int y, float
     fixtureDef.shape = &shape; //changed from shape
     fixtureDef.density = 5.0f;
     fixtureDef.friction = 0.3f;
-    fixtureDef.userData = (void*)(new userdataFormat(tmxBlock));
+    fixtureDef.userData = (void*)(new userdataFormat(tmxTeddy));
     fixtureDef.restitution = 0.0f;
     //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
     //    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
     
     
-    return Block::create(body);
+    return Teddy::create(body);
     
 }

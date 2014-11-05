@@ -25,6 +25,7 @@
 #define IMG_SPIKE "images/fire.png"
 #define IMG_WIN "images/win.png"
 #define IMG_BLOCK "images/block.png"
+#define IMG_TEDDY "images/teddy.png"
 #define IMG_TEMPLE "images/temple.png"
 #define IMG_DOOR "images/door.png"
 #define IMG_CLOUD "images/cloud.png"
@@ -89,7 +90,7 @@
 enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zForeground,zHUD,zControl};
-enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison};
+enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy};
 enum playerIndex {pUnknown,pFemale,pMale};
 enum sensorIndex {sensorNone = 100,sensorTop = 101,sensorRight = 102,sensorBottom = 103,sensorLeft = 104};
 enum directionIndex {directionLeft,directionRight};
@@ -102,9 +103,9 @@ struct userdataFormat { int a;int b;int c;cocos2d::Node* node;  userdataFormat(i
 
 const std::string level[LVLS] = {
     "Together",
+    "Superman",
     "Present",
     "Poison",
-    "Present",
     "Tunnels",
     "Downside",
     "Reason",
