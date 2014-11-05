@@ -119,20 +119,7 @@ bool MainMenu::init() {
         this->addChild(_table);
         
         
-        cocos2d::Vector<MenuItem *> lvlList;
-        for (int i = 0; i < LVLS; i++) {
-            auto lbl = Label::createWithTTF(level[i].c_str(), FONT_JANE, 42);
-            auto sptr = Sprite::create(IMG_RECORD);
-            auto item = MenuItemSprite::create(sptr,sptr, CC_CALLBACK_1(MainMenu::menuCallback, this));
-            item->setContentSize(Size(screenSize.height*0.24,screenSize.height*0.24));
-            sptr->setScale(Util::getScreenRatioHeight(sptr)*0.15);
-            item->setTag(i+1);
-            lvlList.pushBack(item);
-            lbl->setColor(Color3B::BLACK);
-            lbl->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-            lbl->setPosition(Vec2(sptr->getBoundingBox().size.width,0));
-            sptr->addChild(lbl);
-        }
+
         
         auto margin = 5;
         
@@ -153,12 +140,7 @@ bool MainMenu::init() {
         _table->addChild(bracketRight);
         
         
-        auto menu = Menu::createWithArray(lvlList);
-        menu->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        menu->setPosition(screenSize.width*0.50, screenSize.height*0.55);
-        menu->setTag(3);
-        _table->addChild(menu);
-        menu->alignItemsInColumns(3,3,3,3, NULL);
+
         
         
         bRet = true;
@@ -172,6 +154,39 @@ bool MainMenu::init() {
     return bRet;
 }
 
+void MainMenu::createLevelMenu()
+{
+    Size screenSize = Director::getInstance()->getWinSize();
+    cocos2d::Vector<MenuItem *> lvlList;
+    for (int i = 0; i < LVLS; i++) {
+        auto lbl = Label::createWithTTF(level[i].c_str(), FONT_JANE, 24);
+        auto sptr = Sprite::create(IMG_RECORD);
+        auto item = MenuItemSprite::create(sptr,sptr, CC_CALLBACK_1(MainMenu::levelCallback, this));
+        item->setContentSize(Size(screenSize.height*0.24,screenSize.height*0.20));
+        sptr->setScale(Util::getScreenRatioHeight(sptr)*0.15);
+        item->setTag(i+1);
+        lvlList.pushBack(item);
+        lbl->setColor(RGB_ROSE); //229,31,46
+        lbl->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+        lbl->setPosition(Vec2(0,0));
+        item->addChild(lbl);
+        sptr->setOpacity(0);
+        lbl->setOpacity(0);
+        sptr->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        sptr->setPosition(item->getBoundingBox().size.width/2, item->getBoundingBox().size.height/2);
+        auto time = 3 + random()%3;
+        sptr->runAction(RepeatForever::create(RotateBy::create(time, 360)));
+        sptr->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,255), NULL));
+        lbl->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,255), NULL));
+    }
+    auto menu = Menu::createWithArray(lvlList);
+    menu->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    menu->setPosition(screenSize.width*0.50, screenSize.height*0.50);
+    menu->setTag(3);
+    _table->addChild(menu);
+    menu->alignItemsInColumns(3,3,3,3, NULL);
+}
+
 
 void MainMenu::onEnter() {
     
@@ -180,6 +195,16 @@ void MainMenu::onEnter() {
 
 }
 
+
+void MainMenu::levelCallback(cocos2d::Ref *pSender)
+{
+    auto obj = (Node*)pSender;
+    UserDefault::getInstance()->setIntegerForKey("continue",obj->getTag());
+    UserDefault::getInstance()->flush();
+    auto scene = (Scene*)GameScene::create();
+    auto t = TransitionFade::create(1.0f, scene, Color3B::WHITE);
+    Director::getInstance()->replaceScene(t);
+}
 
 // a selector callback
 void MainMenu::menuCallback(cocos2d::Ref* pSender)
@@ -190,11 +215,13 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
         case bPlay:
         {
             auto scene = (Scene*)GameScene::create();
-            Director::getInstance()->replaceScene(scene);
+            auto t = TransitionFade::create(1.0f, scene, Color3B::WHITE);
+            Director::getInstance()->replaceScene(t);
             break;
         }
         case bLevelSelect:
         {
+            createLevelMenu();
             _table->setVisible(true);
             for(auto c : _table->getChildren())
             {
@@ -204,11 +231,7 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
                     c->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1),FadeOut::create(1), NULL));
                 else if(c->getTag() == 3)
                 {
-                    
-                    for(auto cc : c->getChildren())
-                    {
-                        cc->runAction(Sequence::create(DelayTime::create(1),FadeIn::create(1), NULL));
-                    }
+                    //was buggy, using new approach now.
                 }
                 else
                 {

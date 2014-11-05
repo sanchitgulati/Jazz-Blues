@@ -75,8 +75,9 @@
 
 #define RGB_BLACK Color3B(20,20,20)
 #define RGB_WHITE Color3B(252,252,252)
-#define RGB_ROSE Color3B(120,25,61)
+#define RGB_ROSE Color3B(229,11,26)
 #define RGB_PLATFORM Color3B(50,50,50)
+
 
 #define RGB_BOY Color3B(0,86,185)
 #define RGB_GIRL Color3B(171,71,203)
@@ -100,14 +101,14 @@ struct userdataFormat { int a;int b;int c;cocos2d::Node* node;  userdataFormat(i
 
 
 const std::string level[LVLS] = {
-    "Happy Together",
+    "Together",
     "Present",
     "Poison",
     "Present",
-    "Walls & Tunnels",
-    "Upside Down",
-    "The Reason",
-    "Cold Night",
+    "Tunnels",
+    "Downside",
+    "Reason",
+    "Night",
     "Fire",
     "Police",
     "Finale",

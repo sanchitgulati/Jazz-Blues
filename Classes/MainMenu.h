@@ -9,6 +9,8 @@ class MainMenu : public cocos2d::LayerColor
     cocos2d::Node* _prop;
     cocos2d::Menu* _menu;
     cocos2d::Node* _gameLogo;
+    
+    void createLevelMenu();
 public:
 	MainMenu();
 	~MainMenu();
@@ -20,6 +22,7 @@ public:
     
     // a selector callback
     void menuCallback(cocos2d::Ref* pSender);
+    void levelCallback(cocos2d::Ref* pSender);
     
     
     CREATE_FUNC(MainMenu);
