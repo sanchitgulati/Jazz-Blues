@@ -85,5 +85,9 @@ Teddy* Teddy::createFixture(b2World* world, TMXLayer* layer, int x, int y, float
     
     
     return Teddy::create(body);
-    
+}
+
+LFSpriteNode* Teddy::getSprite()
+{
+    return _sprite;
 }

@@ -25,6 +25,6 @@ public:
     ~Teddy();
     static Teddy* create(b2Body* body);
     bool initWithBody(b2Body* body);
-    //    void update(float dt);
+    LFSpriteNode* getSprite();
 };
 #endif /* defined(__adam__Teddy__) */

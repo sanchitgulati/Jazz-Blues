@@ -104,9 +104,9 @@ bool GameScene::init()
 #endif
     
     /* Entering box2d world */
-//    _platformsGroup->setVisible(false);
-//    _playerGroup->setVisible(false);
-//    _bgGroup->setVisible(false);
+    _platformsGroup->setVisible(false);
+    _playerGroup->setVisible(false);
+    _bgGroup->setVisible(false);
     /*end*/
     
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
@@ -243,7 +243,7 @@ void GameScene::loadLevel(int level)
     auto bg = Sprite::create("images/paper.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
     bg->setPosition(screenSize.width/2, screenSize.height/2);
     bg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
-    this->addChild(bg);
+    _bgGroup->addChild(bg);
     
     auto loadLevelString = StringUtils::format("levels/%d.tmx",kCurrentLevel);
     _tm = TMXTiledMap::create(loadLevelString);
@@ -373,6 +373,43 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 {
                     auto teddy = Teddy::createFixture(_world, layer, x, y, 1.0, 1.0);
                     _platformsGroup->addChild(teddy);
+                    
+                    auto p = layer->getPositionAt(Point(x,y));
+                    b2Body* link;
+                    link = teddy->getSprite()->getB2Body();
+                    for (int i = 1; i <= 10; i++) {
+                        b2BodyDef bodyDef;
+                        bodyDef.position.Set(
+                                             (p.x + (32 / 2.0f)) / kPixelsPerMeter,
+                                             (p.y + i*0.1 + (32 / 2.0f)) / kPixelsPerMeter
+                                             );
+                        
+                        b2PolygonShape polyBox;
+                        polyBox.SetAsBox(0.1, 0.5);
+                        
+                        b2FixtureDef fixtureDef;
+                        fixtureDef.density = 0.0;
+                        fixtureDef.shape = &polyBox;
+                        auto b = _world->CreateBody(&bodyDef);
+                        
+                        
+                        b2RevoluteJointDef revoluteJointDef;
+                        revoluteJointDef.bodyA = link;
+                        revoluteJointDef.localAnchorA.Set( 0.75,0);
+                        revoluteJointDef.localAnchorB.Set(-0.75,0);
+                        revoluteJointDef.bodyB = b;
+                        revoluteJointDef.collideConnected = false;
+                        _world->CreateJoint(&revoluteJointDef);
+                        
+                        link = b;
+                        
+                    }
+                    b2RevoluteJointDef revoluteJointDef;
+                    revoluteJointDef.bodyA = link;
+                    revoluteJointDef.bodyB = _male->getB2Body();
+                    revoluteJointDef.collideConnected = false;
+                    _world->CreateJoint(&revoluteJointDef);
+                    
                     break;
                 }
                 default:
