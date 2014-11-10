@@ -22,6 +22,7 @@
 #define IMG_MALE "images/boy.png"
 #define IMG_PLATFORM "images/platform.png"
 #define IMG_WALL "images/wall.png"
+#define IMG_TUNNEL "images/platform.png"
 #define IMG_SPIKE "images/fire.png"
 #define IMG_WIN "images/win.png"
 #define IMG_BLOCK "images/block.png"
@@ -49,6 +50,8 @@
 #define IMG_UNMUTE_0 "images/unmute_0.png"
 #define IMG_UNMUTE_1 "images/unmute_1.png"
 
+#define IMG_POISON "images/poison.png"
+
 #define FONT "fonts/hand.ttf"
 #define FONT_JANE "fonts/jane.ttf"
 
@@ -60,6 +63,7 @@
 #define SFX_OUCH "sfx/ouch.wav"
 #define SFX_WIN "sfx/kiss.wav"
 #define SFX_KEY "sfx/collect_0.mp3"
+
 
 #define IMG_JAZZ_0 "images/guitar_0.png"
 #define IMG_JAZZ_1 "images/guitar_1.png"
@@ -90,7 +94,7 @@
 enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zForeground,zHUD,zControl};
-enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy};
+enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel};
 enum playerIndex {pUnknown,pFemale,pMale};
 enum sensorIndex {sensorNone = 100,sensorTop = 101,sensorRight = 102,sensorBottom = 103,sensorLeft = 104};
 enum directionIndex {directionLeft,directionRight};

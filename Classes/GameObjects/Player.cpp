@@ -198,7 +198,7 @@ Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int
     
     //define top
     shapeC.m_radius = (tileSize.width / kPixelsPerMeter) * 0.5f * width *0.8;
-    shapeC.m_p = b2Vec2(0, heightHalf*0.50);
+    shapeC.m_p = b2Vec2(0, heightHalf*0.20);
     
     // create the fixture
     fixtureDef.shape = &shapeC; //changed from shape

@@ -16,11 +16,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLView::createWithFullScreen("Jazz and Blues");
-//        glview = GLView::create("Jazz and Blues");
+//        glview = GLView::createWithFullScreen("Jazz and Blues");
+        glview = GLView::create("Jazz and Blues");
         director->setOpenGLView(glview);
     }
 
+    
     // turn on display FPS
     director->setDisplayStats(false);
     // set FPS. the default value is 1.0/60 if you don't call this

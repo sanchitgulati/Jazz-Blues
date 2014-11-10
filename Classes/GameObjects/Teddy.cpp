@@ -56,7 +56,6 @@ Teddy* Teddy::createFixture(b2World* world, TMXLayer* layer, int x, int y, float
     // create the body
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
-    bodyDef.fixedRotation = true;
     bodyDef.position.Set(
                          (p.x + (tileSize.width / 2.0f)) / kPixelsPerMeter,
                          (p.y + (tileSize.height / 2.0f)) / kPixelsPerMeter
@@ -75,8 +74,8 @@ Teddy* Teddy::createFixture(b2World* world, TMXLayer* layer, int x, int y, float
     // create the fixture
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape; //changed from shape
-    fixtureDef.density = 5.0f;
-    fixtureDef.friction = 0.3f;
+    fixtureDef.density = 0.01f;
+    fixtureDef.friction = 0.0f;
     fixtureDef.userData = (void*)(new userdataFormat(tmxTeddy));
     fixtureDef.restitution = 0.0f;
     //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;

@@ -104,9 +104,9 @@ bool GameScene::init()
 #endif
     
     /* Entering box2d world */
-    _platformsGroup->setVisible(false);
-    _playerGroup->setVisible(false);
-    _bgGroup->setVisible(false);
+//    _platformsGroup->setVisible(false);
+//    _playerGroup->setVisible(false);
+//    _bgGroup->setVisible(false);
     /*end*/
     
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
@@ -151,7 +151,8 @@ void GameScene::update(float dt)
         auto diffX = fabs(_male->getSprite()->getPosition().x - _female->getSprite()->getPosition().x);
         auto diffY = fabs( _male->getSprite()->getPosition().y - _female->getSprite()->getPosition().y);
         auto maxScale = MAX(diffX, diffY);
-        _parent->setScale((((_parent->getContentSize().width-maxScale)/_parent->getContentSize().width)*0.5)+0.9);
+//        _parent->setScale((((_parent->getContentSize().width-maxScale)/_parent->getContentSize().width)*0.5)+0.9);
+        _parent->setScale(_visibleSize.height/(_parent->getContentSize().height + (maxScale*0.5)));
         
         
         //End 
@@ -195,7 +196,7 @@ void GameScene::loadData()
 
 void GameScene::loadInstuctions()
 {
-    auto screenSize = Director::getInstance()->getWinSize();
+    auto screenSize = Director::getInstance()->getVisibleSize();
     
     auto margin = 10;
     auto valuekey = _tm->getProperties();
@@ -236,9 +237,10 @@ void GameScene::loadLevel(int level)
     
     //load bg
     _bgGroup = Node::create();
-    _parent->addChild(_bgGroup,zBackground);
+    this->addChild(_bgGroup,zBackground);
     
-    auto screenSize = Director::getInstance()->getWinSize();
+    auto screenSize = Director::getInstance()->getVisibleSize();
+    log("screenSize %f %f",screenSize.width,screenSize.height);
     
     auto bg = Sprite::create("images/paper.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
     bg->setPosition(screenSize.width/2, screenSize.height/2);
@@ -369,6 +371,12 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     _platformsGroup->addChild(door);
                     break;
                 }
+                case tmxPoison:
+                {
+                    auto poison = Poison::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    _platformsGroup->addChild(poison);
+                    break;
+                }
                 case tmxTeddy:
                 {
                     auto teddy = Teddy::createFixture(_world, layer, x, y, 1.0, 1.0);
@@ -377,26 +385,27 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     auto p = layer->getPositionAt(Point(x,y));
                     b2Body* link;
                     link = teddy->getSprite()->getB2Body();
-                    for (int i = 1; i <= 10; i++) {
+                    for (int i = 1; i <= 3; i++) {
                         b2BodyDef bodyDef;
                         bodyDef.position.Set(
-                                             (p.x + (32 / 2.0f)) / kPixelsPerMeter,
-                                             (p.y + i*0.1 + (32 / 2.0f)) / kPixelsPerMeter
+                                             (p.x + i*8 + (32 / 2.0f)) / kPixelsPerMeter,
+                                             (p.y + (32 / 2.0f)) / kPixelsPerMeter
                                              );
                         
                         b2PolygonShape polyBox;
-                        polyBox.SetAsBox(0.1, 0.5);
+                        bodyDef.type = b2_dynamicBody;
+                        polyBox.SetAsBox(0.1, 0.1);
                         
                         b2FixtureDef fixtureDef;
-                        fixtureDef.density = 0.0;
+                        fixtureDef.density = 0.001;
                         fixtureDef.shape = &polyBox;
                         auto b = _world->CreateBody(&bodyDef);
                         
                         
                         b2RevoluteJointDef revoluteJointDef;
                         revoluteJointDef.bodyA = link;
-                        revoluteJointDef.localAnchorA.Set( 0.75,0);
-                        revoluteJointDef.localAnchorB.Set(-0.75,0);
+                        revoluteJointDef.localAnchorA.Set( 0.1,0);
+                        revoluteJointDef.localAnchorB.Set(-0.1,0);
                         revoluteJointDef.bodyB = b;
                         revoluteJointDef.collideConnected = false;
                         _world->CreateJoint(&revoluteJointDef);
@@ -410,6 +419,13 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     revoluteJointDef.collideConnected = false;
                     _world->CreateJoint(&revoluteJointDef);
                     
+                    break;
+                }
+                case tmxTunnel:
+                {
+                    
+                    auto tunnel = Tunnel::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    _platformsGroup->addChild(tunnel);
                     break;
                 }
                 default:
