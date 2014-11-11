@@ -39,6 +39,8 @@ bool GameScene::init()
     kCurrentLevel = UserDefault::getInstance()->getIntegerForKey("continue",1);
     
     _visibleSize = Director::getInstance()->getVisibleSize();
+    _screenOutPosition = Vec2(_visibleSize.width/2,-1*_visibleSize.height/2);
+    _screenInPosition = Vec2(_visibleSize.width/2,_visibleSize.height/2);
     
     _eventDispatcher = Director::getInstance()->getEventDispatcher();
     _eventDispatcher->removeAllEventListeners();
@@ -47,16 +49,17 @@ bool GameScene::init()
     listener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
     
+    _male = nullptr;
+    _female = nullptr;
+    
     _parent = Node::create();
     _parent->setAnchorPoint(Point(0.5,0.5));
     this->addChild(_parent,zGame);
-    
+
     
     createPhysicalWorld();
     loadLevel(0);
     loadInstuctions();
-    
-    
     
     // schedule the update
     this->schedule(schedule_selector(GameScene::update), kUpdateInterval);
@@ -147,44 +150,43 @@ void GameScene::update(float dt)
     _world->Step(dt, 8, 1);
     if(_gsGamePlaying)
     {
-        //Dynamic Scaling
-        auto diffX = fabs(_male->getSprite()->getPosition().x - _female->getSprite()->getPosition().x);
-        auto diffY = fabs( _male->getSprite()->getPosition().y - _female->getSprite()->getPosition().y);
-        auto maxScale = MAX(diffX, diffY);
-//        _parent->setScale((((_parent->getContentSize().width-maxScale)/_parent->getContentSize().width)*0.5)+0.9);
-        _parent->setScale(_visibleSize.height/(_parent->getContentSize().height + (maxScale*0.5)));
-        
-        
-        //End 
-        
-        if(_male->getAtFinish() && _female->getAtFinish())
+        if(_female != nullptr)
         {
-            kCurrentLevel ++; //increment level
-            UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
-            UserDefault::getInstance()->flush();
-            Director::getInstance()->replaceScene((Scene*)GameScene::create());
-        }
-        
-        if(!_male->getIsAlive())
-        {
-            auto emitter = ParticleSystemQuad::create("particle_texture.plist");
-            _playerGroup->addChild(emitter, 999);
-            emitter->setPosition(_male->getSprite()->getPosition());
-            _world->DestroyBody(_male->getB2Body());
-            _male->removeFromParentAndCleanup(true);
-            _gsGamePlaying = false;
-        }
-        if(!_female->getIsAlive())
-        {
-            auto emitter = ParticleSystemQuad::create("particle_texture.plist");
-            _playerGroup->addChild(emitter, 999);
-            emitter->setPosition(_female->getSprite()->getPosition());
-            _world->DestroyBody(_female->getB2Body());
-            _female->removeFromParentAndCleanup(true);
-            _gsGamePlaying = false;
+            //Dynamic Scaling
+            auto diffX = fabs(_male->getSprite()->getPosition().x - _female->getSprite()->getPosition().x);
+            auto diffY = fabs( _male->getSprite()->getPosition().y - _female->getSprite()->getPosition().y);
+            auto maxScale = MAX(diffX, diffY);
+            _parent->setScale(_visibleSize.height/(_parent->getContentSize().height + (maxScale*0.5)));
             
+            //End
+            if(_male->getAtFinish() && _female->getAtFinish())
+            {
+                kCurrentLevel ++; //increment level
+                UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
+                UserDefault::getInstance()->flush();
+                loadInstuctionsEnd();
+            }
+            
+            if(!_male->getIsAlive())
+            {
+                auto emitter = ParticleSystemQuad::create("particle_texture.plist");
+                _platformsGroup->addChild(emitter, 999);
+                emitter->setPosition(_male->getSprite()->getPosition());
+                _world->DestroyBody(_male->getB2Body());
+                _male->removeFromParentAndCleanup(true);
+                _gsGamePlaying = false;
+            }
+            if(!_female->getIsAlive())
+            {
+                auto emitter = ParticleSystemQuad::create("particle_texture.plist");
+                _platformsGroup->addChild(emitter, 999);
+                emitter->setPosition(_female->getSprite()->getPosition());
+                _world->DestroyBody(_female->getB2Body());
+                _female->removeFromParentAndCleanup(true);
+                _gsGamePlaying = false;
+                
+            }
         }
-        
     }
 }
 
@@ -198,16 +200,44 @@ void GameScene::loadInstuctions()
 {
     auto screenSize = Director::getInstance()->getVisibleSize();
     
-    auto margin = 10;
     auto valuekey = _tm->getProperties();
-    auto labelTitle = Label::createWithTTF(valuekey["title"].asString().c_str(), FONT_JANE, 36);
-    labelTitle->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
+    auto labelTitle = Label::createWithTTF(valuekey["start"].asString().c_str(), FONT_JANE, 36);
     labelTitle->setWidth(screenSize.width/2);
     labelTitle->setColor(RGB_BLACK);
-    labelTitle->setAlignment(TextHAlignment::RIGHT, TextVAlignment::TOP);
-    labelTitle->setPosition(screenSize.width - margin,screenSize.height - margin);
+    
+//    auto margin = 10;
+//    labelTitle->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
+//    labelTitle->setAlignment(TextHAlignment::RIGHT, TextVAlignment::TOP);
+//    labelTitle->setPosition(screenSize.width - margin,screenSize.height - margin);
+    
+    labelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
+    labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
+    
+    auto callFunc = CallFunc::create([this](){_parent->setVisible(true);});
     this->addChild(labelTitle);
-    labelTitle->runAction(Sequence::create(DelayTime::create(2),EaseExponentialOut::create(FadeOut::create(5)),NULL));
+    labelTitle->runAction(Sequence::create(DelayTime::create(2),FadeOut::create(3),callFunc,NULL));
+    _parent->runAction(Sequence::create(DelayTime::create(3),EaseCubicActionOut::create(MoveTo::create(1, _screenInPosition)),NULL));
+}
+
+void GameScene::loadInstuctionsEnd()
+{
+    unschedule(schedule_selector(GameScene::update));
+    auto screenSize = Director::getInstance()->getVisibleSize();
+    
+    auto valuekey = _tm->getProperties();
+    auto labelTitle = Label::createWithTTF(valuekey["end"].asString().c_str(), FONT_JANE, 36);
+    labelTitle->setWidth(screenSize.width/2);
+    labelTitle->setColor(RGB_BLACK);
+    
+    labelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
+    labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
+    
+    auto callFunc = CallFunc::create([this](){Director::getInstance()->replaceScene((Scene*)GameScene::create());});
+    this->addChild(labelTitle);
+    labelTitle->runAction(Sequence::create(FadeIn::create(5),callFunc,NULL));
+    _parent->runAction(MoveTo::create(1, _screenOutPosition));
 }
 
 void GameScene::createPhysicalWorld()
@@ -253,7 +283,7 @@ void GameScene::loadLevel(int level)
     _platformsGroup = Node::create();
     _parent->addChild(_platformsGroup);
     
-    _parent->setPosition(Point(_visibleSize.width/2,_visibleSize.height/2));
+    _parent->setPosition(_screenOutPosition);
     _parent->setContentSize(Size(_tm->getMapSize().width * _tm->getTileSize().width,
                                  _tm->getMapSize().height * _tm->getTileSize().height));
     _platformsGroup->setContentSize(_parent->getContentSize());
@@ -322,11 +352,11 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 }
                 case tmxFemale:
                     _female = Player::createPlayerFixture(_world,layer, x, y, 1.0f, 2.0f,pFemale);
-                    _playerGroup->addChild(_female);
+                    _platformsGroup->addChild(_female);
                     break;
                 case tmxMale:
                     _male = Player::createPlayerFixture(_world,layer, x, y, 1.0f, 2.0f,pMale);
-                    _playerGroup->addChild(_male);
+                    _platformsGroup->addChild(_male);
                     break;
                 case tmxFire:
                 {
@@ -577,12 +607,14 @@ void GameScene::EndContact(b2Contact* contact)
 void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
     _male->onKeyPressed(keyCode, event);
+    if(_female != nullptr)
     _female->onKeyPressed(keyCode, event);
 }
 
 void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 {
     _male->onKeyReleased(keyCode, event);
+    if(_female != nullptr)
     _female->onKeyReleased(keyCode, event);
     switch (keyCode) {
         case EventKeyboard::KeyCode::KEY_R:

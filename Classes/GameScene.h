@@ -49,6 +49,9 @@ private:
     
     cocos2d::Point _origin;
     cocos2d::Size _visibleSize;
+    cocos2d::Vec2 _screenOutPosition;
+    cocos2d::Vec2 _screenInPosition;
+    
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     virtual bool init();
     void update(float dt);
@@ -58,6 +61,7 @@ protected:
     void loadData();
     void loadLevel(int level);
     void loadInstuctions();
+    void loadInstuctionsEnd();
     
     void setupObjects();
     void addObjects();

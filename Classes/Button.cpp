@@ -62,6 +62,7 @@ bool Button::onTouchBegan(Touch* touch, Event* event)
         _selectedSprite->setVisible(true);
         _normalSprite->setVisible(false);
         static_cast<Player *>(_target1)->onButtonPressed(getUserData());
+        if(_target2 != nullptr)
         static_cast<Player *>(_target2)->onButtonPressed(getUserData());
         return true;
     }
@@ -76,6 +77,7 @@ void Button::onTouchEnded(Touch* touch, Event* event)
     _selectedSprite->setVisible(false);
     _normalSprite->setVisible(true);
     static_cast<Player *>(_target1)->onButtonReleased(getUserData());
+    if(_target2 != nullptr)
     static_cast<Player *>(_target2)->onButtonReleased(getUserData());
 }
 

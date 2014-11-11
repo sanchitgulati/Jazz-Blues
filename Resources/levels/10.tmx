@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="25" height="18" tilewidth="32" tileheight="32">
  <properties>
-  <property name="end" value="laugh at me .."/>
-  <property name="start" value="... let them "/>
+  <property name="end" value="we used the telephone"/>
+  <property name="start" value="police came after me"/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">
   <image source="tilesheet.jpg" width="192" height="96"/>
  </tileset>
  <layer name="level" width="25" height="18">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NnYGBgZ6ANYEfCtAQj2Q4WCuzgIVEvqXYwUgnjs4OWYCDtICYsiA0/cvzBSqJ6eoYVNdMRLjvIAcTaQ2lYEWMPNeIDlz3MVLQD2R5sdlG7LMGVPwCRgyYcCAcAAA==
+   H4sIAAAAAAAAA82U0QoAEBAECfn/P5aiJGW3dZepKw/sHF1qsKWOYijAniQ6WKYjGtZ6D4v8cHC85OZQe0cdSu+sY66RmVUdCIxjP4e8v+Jg+M3hMbsq2cGx5nn/V1b0/AZF8Fo6CAcAAA==
   </data>
  </layer>
 </map>
