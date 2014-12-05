@@ -353,6 +353,24 @@ void GameScene::loadLevel(int level)
     bg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
     _bgGroup->addChild(bg);
     
+    auto fg = Sprite::create("images/rain01.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+    
+
+    
+    fg->setPosition(screenSize.width/2, screenSize.height/2);
+    fg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
+    fg->setOpacity(100);
+    this->addChild(fg,999);
+    auto animation = Animation::create();
+    animation->setDelayPerUnit(0.33);
+    
+    
+    animation->addSpriteFrameWithTexture(fg1->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+    animation->addSpriteFrameWithTexture(fg2->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+    animation->addSpriteFrameWithTexture(fg3->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+    auto animate = Animate::create(animation);
+    fg->runAction(RepeatForever::create(animate));
+    
     auto loadLevelString = StringUtils::format("levels/%d.tmx",kCurrentLevel);
     _tm = TMXTiledMap::create(loadLevelString);
     _tm->setVisible(false);
