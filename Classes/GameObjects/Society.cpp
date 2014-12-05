@@ -111,6 +111,7 @@ void Society::laugh()
         l->runAction(Sequence::create(FadeOut::create(val3),callFunc, NULL));
         l->runAction(MoveBy::create(val3-0.2, Vec2(0, 5)));
         _sprite->addChild(l);
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_HAHA);
         log("va1 %f  va2 %f  va3 %f",val1,val2,val3);
     }
 }

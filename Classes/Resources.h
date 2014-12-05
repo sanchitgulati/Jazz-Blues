@@ -70,7 +70,7 @@
 #define SFX_TYPE01 "sfx/type01.wav"
 #define SFX_TYPE02 "sfx/type02.wav"
 #define SFX_TYPE_END "sfx/type03.wav"
-
+#define SFX_HAHA "sfx/haha.wav"
 
 #define IMG_JAZZ_0 "images/guitar_0.png"
 #define IMG_JAZZ_1 "images/guitar_1.png"
