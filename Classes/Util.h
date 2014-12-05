@@ -18,5 +18,7 @@ public:
     static float getScreenRatio(cocos2d::Node*);
     static float getScreenRatioWidth(cocos2d::Node*);
     static float getScreenRatioHeight(cocos2d::Node*);
+    static float randf();
+    static bool toss();
 };
 #endif /* defined(__jazz__Util__) */

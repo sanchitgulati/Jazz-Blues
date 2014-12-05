@@ -193,7 +193,7 @@ void GameScene::update(float dt)
 
 void GameScene::loadData()
 {
-    //todo: leaderboards
+    //todo:
 }
 
 void GameScene::loadInstuctions()
@@ -201,32 +201,70 @@ void GameScene::loadInstuctions()
     auto screenSize = Director::getInstance()->getVisibleSize();
     
     auto valuekey = _tm->getProperties();
-    auto labelTitle = Label::createWithTTF(valuekey["start"].asString().c_str(), FONT_JANE, 36);
+    auto labelTitle = Label::createWithBMFont(BMP_FONT, valuekey["start"].asString().c_str());
     labelTitle->setWidth(screenSize.width/2);
     labelTitle->setColor(RGB_BLACK);
-    
-//    auto margin = 10;
-//    labelTitle->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
-//    labelTitle->setAlignment(TextHAlignment::RIGHT, TextVAlignment::TOP);
-//    labelTitle->setPosition(screenSize.width - margin,screenSize.height - margin);
-    
+    auto len = valuekey["start"].asString().length() - 1;
     labelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
     labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
     
-    auto callFunc = CallFunc::create([this](){_parent->setVisible(true);});
+    auto fadeOutMessage = CallFunc::create([labelTitle](){
+        labelTitle->runAction(FadeOut::create(0.2));
+    });
+    
+    for(int i = 1; i <= len;i++)
+    {
+        auto c = labelTitle->getLetter(i);
+        if(c == nullptr || c == NULL)
+            continue;
+        c->setOpacity(0);
+        c->setColor(RGB_BLACK);
+        auto dt = DelayTime::create(i*0.25);
+        auto fi = FadeIn::create(0.16);
+        
+        CallFunc* cf;
+        
+        if(i == len)
+        {
+            cf = CallFunc::create([this]()
+                                  {
+                                      CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE_END);
+                                      this->animateMapIn();
+                                  });
+            
+            c->runAction(Sequence::create(dt,cf,fi,fadeOutMessage,NULL));
+        }
+        else
+        {
+            cf = CallFunc::create([this]()
+                                  {
+                                      auto toss = Util::toss();
+                                      if(toss)
+                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE01);
+                                      else
+                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE02);
+                                  });
+            
+            c->runAction(Sequence::create(dt,cf,fi, NULL));
+        }
+        
+        
+    }
+    
+    
     this->addChild(labelTitle);
-    labelTitle->runAction(Sequence::create(DelayTime::create(2),FadeOut::create(3),callFunc,NULL));
-    _parent->runAction(Sequence::create(DelayTime::create(3),EaseCubicActionOut::create(MoveTo::create(1, _screenInPosition)),NULL));
+    
 }
 
 void GameScene::loadInstuctionsEnd()
 {
+    animateMapOut();
     unschedule(schedule_selector(GameScene::update));
     auto screenSize = Director::getInstance()->getVisibleSize();
     
     auto valuekey = _tm->getProperties();
-    auto labelTitle = Label::createWithTTF(valuekey["end"].asString().c_str(), FONT_JANE, 36);
+    auto labelTitle = Label::createWithBMFont(BMP_FONT, valuekey["end"].asString().c_str());
     labelTitle->setWidth(screenSize.width/2);
     labelTitle->setColor(RGB_BLACK);
     
@@ -234,10 +272,48 @@ void GameScene::loadInstuctionsEnd()
     labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
     labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
     
-    auto callFunc = CallFunc::create([this](){Director::getInstance()->replaceScene((Scene*)GameScene::create());});
+    auto len = valuekey["end"].asString().length() - 1;
+    
+    for(int i = 1; i <= len;i++)
+    {
+        auto c = labelTitle->getLetter(i);
+        if(c == nullptr || c == NULL)
+            continue;
+        c->setOpacity(0);
+        c->setColor(RGB_BLACK);
+        auto dt = DelayTime::create(i*0.25);
+        auto fi = FadeIn::create(0.16);
+        
+        CallFunc* cf;
+        
+        if(i == len)
+        {
+            cf = CallFunc::create([this]()
+                                  {
+                                      Director::getInstance()->replaceScene((Scene*)GameScene::create());
+                                  });
+            
+            c->runAction(Sequence::create(dt,fi,cf,NULL));
+        }
+        else
+        {
+            cf = CallFunc::create([this]()
+                                  {
+                                      auto toss = Util::toss();
+                                      if(toss)
+                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE01);
+                                      else
+                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE02);
+                                  });
+            
+            c->runAction(Sequence::create(dt,cf,fi, NULL));
+        }
+        
+        
+    }
+    
+    
     this->addChild(labelTitle);
-    labelTitle->runAction(Sequence::create(FadeIn::create(5),callFunc,NULL));
-    _parent->runAction(MoveTo::create(1, _screenOutPosition));
 }
 
 void GameScene::createPhysicalWorld()
@@ -347,115 +423,83 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 case tmxPlatform: // platform
                 {
                     auto platform = Platform::createFixture(_world,layer, x, y, 1.0f, 1.0f);
-                    _platformsGroup->addChild(platform);
+                    _platformsGroup->addChild(platform,0);
                     break;
                 }
                 case tmxFemale:
                     _female = Player::createPlayerFixture(_world,layer, x, y, 1.0f, 2.0f,pFemale);
-                    _platformsGroup->addChild(_female);
+                    _platformsGroup->addChild(_female,2);
                     break;
                 case tmxMale:
                     _male = Player::createPlayerFixture(_world,layer, x, y, 1.0f, 2.0f,pMale);
-                    _platformsGroup->addChild(_male);
+                    _platformsGroup->addChild(_male,2);
                     break;
                 case tmxFire:
                 {
                     auto death = Death::createFixture(_world, layer, x, y, 1.0, 1.0);
-                    _platformsGroup->addChild(death);
+                    _platformsGroup->addChild(death,1);
                     break;
                 }
                 case tmxWin:
                 {
                     auto win = Win::createFixture(_world, layer, x, y, 3.0, 3.0); //bcoz image is 96*96
-                    _platformsGroup->addChild(win);
+                    _platformsGroup->addChild(win,1);
                     break;
                 }
                 case tmxWall:
                 {
                     auto wall = Wall::createFixture(_world,layer, x, y, 1.0f, 1.0f);
-                    _platformsGroup->addChild(wall);
+                    _platformsGroup->addChild(wall,1);
                     break;
                     
                 }
                 case tmxBlock:
                 {
                     auto block = Block::createFixture(_world, layer, x, y, 1.0, 1.0);
-                    _platformsGroup->addChild(block);
+                    _platformsGroup->addChild(block,1);
                     break;
                 }
                 case tmxTemple:
                 {
                     auto temple = Temple::createFixture(_world, layer, x, y, 3.0, 3.0);
-                    _platformsGroup->addChild(temple);
+                    _platformsGroup->addChild(temple,1);
                     break;
                 }
                 case tmxCloud:
                 {
                     auto cloud = Cloud::createFixture(_world, layer, x, y, 1.0, 1.0);
-                    _platformsGroup->addChild(cloud);
+                    _platformsGroup->addChild(cloud,1);
                     break;
                 }
                 case tmxDoor:
                 {
                     auto door = Door::createFixture(_world, layer, x, y, 1.0, 1.0);
-                    _platformsGroup->addChild(door);
+                    _platformsGroup->addChild(door,1);
                     break;
                 }
                 case tmxPoison:
                 {
                     auto poison = Poison::createFixture(_world, layer, x, y, 1.0, 1.0);
-                    _platformsGroup->addChild(poison);
+                    _platformsGroup->addChild(poison,1);
                     break;
                 }
                 case tmxTeddy:
                 {
                     auto teddy = Teddy::createFixture(_world, layer, x, y, 1.0, 1.0);
-                    _platformsGroup->addChild(teddy);
-                    
-                    auto p = layer->getPositionAt(Point(x,y));
-                    b2Body* link;
-                    link = teddy->getSprite()->getB2Body();
-                    for (int i = 1; i <= 3; i++) {
-                        b2BodyDef bodyDef;
-                        bodyDef.position.Set(
-                                             (p.x + i*8 + (32 / 2.0f)) / kPixelsPerMeter,
-                                             (p.y + (32 / 2.0f)) / kPixelsPerMeter
-                                             );
-                        
-                        b2PolygonShape polyBox;
-                        bodyDef.type = b2_dynamicBody;
-                        polyBox.SetAsBox(0.1, 0.1);
-                        
-                        b2FixtureDef fixtureDef;
-                        fixtureDef.density = 0.001;
-                        fixtureDef.shape = &polyBox;
-                        auto b = _world->CreateBody(&bodyDef);
-                        
-                        
-                        b2RevoluteJointDef revoluteJointDef;
-                        revoluteJointDef.bodyA = link;
-                        revoluteJointDef.localAnchorA.Set( 0.1,0);
-                        revoluteJointDef.localAnchorB.Set(-0.1,0);
-                        revoluteJointDef.bodyB = b;
-                        revoluteJointDef.collideConnected = false;
-                        _world->CreateJoint(&revoluteJointDef);
-                        
-                        link = b;
-                        
-                    }
-                    b2RevoluteJointDef revoluteJointDef;
-                    revoluteJointDef.bodyA = link;
-                    revoluteJointDef.bodyB = _male->getB2Body();
-                    revoluteJointDef.collideConnected = false;
-                    _world->CreateJoint(&revoluteJointDef);
-                    
+                    _platformsGroup->addChild(teddy,1);
                     break;
                 }
                 case tmxTunnel:
                 {
                     
                     auto tunnel = Tunnel::createFixture(_world, layer, x, y, 1.0, 1.0);
-                    _platformsGroup->addChild(tunnel);
+                    _platformsGroup->addChild(tunnel,1);
+                    break;
+                }
+                case tmxSociety:
+                {
+                    _society = Society::createFixture(_world, layer, x, y, 3.0, 2.0);
+                    _platformsGroup->addChild(_society,0);
                     break;
                 }
                 default:
@@ -465,6 +509,15 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
     }
 }
 
+void GameScene::animateMapIn()
+{
+    _parent->runAction(Sequence::create(DelayTime::create(1.0f),EaseCubicActionOut::create(MoveTo::create(1, _screenInPosition)),NULL));
+}
+
+void GameScene::animateMapOut()
+{
+    _parent->runAction(MoveTo::create(1, _screenOutPosition));
+}
 
 void GameScene::BeginContact(b2Contact* contact)
 {
@@ -532,6 +585,10 @@ void GameScene::BeginContact(b2Contact* contact)
             {
                 _male->setAtFinish(true);
             }
+        }
+        if(data1->a == tmxSociety || data2->a == tmxSociety)
+        {
+            _society->laugh();
         }
     }
 }

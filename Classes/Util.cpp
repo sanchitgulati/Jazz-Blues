@@ -37,3 +37,13 @@ float Util::getScreenRatioHeight(Node* obj)
     Size winSize = Director::getInstance()->getWinSize();
     return (winSize.height/obj->getBoundingBox().size.height);
 }
+
+float Util::randf()
+{
+    return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
+bool Util::toss()
+{
+    return ((Util::randf() > 0.5 ) ? true : false);
+}

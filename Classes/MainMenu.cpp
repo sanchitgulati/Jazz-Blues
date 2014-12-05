@@ -159,7 +159,7 @@ void MainMenu::createLevelMenu()
     Size screenSize = Director::getInstance()->getWinSize();
     cocos2d::Vector<MenuItem *> lvlList;
     for (int i = 0; i < LVLS; i++) {
-        auto lbl = Label::createWithTTF(level[i].c_str(), FONT_JANE, 24);
+        auto lbl = Label::createWithTTF(level[i].c_str(), FONT_JANE, 21);
         auto sptr = Sprite::create(IMG_RECORD);
         auto item = MenuItemSprite::create(sptr,sptr, CC_CALLBACK_1(MainMenu::levelCallback, this));
         item->setContentSize(Size(screenSize.height*0.24,screenSize.height*0.20));
@@ -167,8 +167,8 @@ void MainMenu::createLevelMenu()
         item->setTag(i+1);
         lvlList.pushBack(item);
         lbl->setColor(RGB_ROSE); //229,31,46
-        lbl->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-        lbl->setPosition(Vec2(0,0));
+        lbl->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        lbl->setPosition(Vec2(item->getBoundingBox().size.width/2,0));
         item->addChild(lbl);
         sptr->setOpacity(0);
         lbl->setOpacity(0);

@@ -23,6 +23,8 @@ class GameScene : public cocos2d::Layer, public b2ContactListener
 private:
     Player* _male;
     Player* _female;
+    Society* _society;
+    
     
     cocos2d::Node* _parent;
     cocos2d::Node* _playerGroup;
@@ -62,6 +64,10 @@ protected:
     void loadLevel(int level);
     void loadInstuctions();
     void loadInstuctionsEnd();
+    
+    
+    void animateMapIn();
+    void animateMapOut();
     
     void setupObjects();
     void addObjects();

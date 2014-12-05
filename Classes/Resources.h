@@ -22,6 +22,7 @@
 #define IMG_MALE "images/boy.png"
 #define IMG_PLATFORM "images/platform.png"
 #define IMG_WALL "images/wall.png"
+#define IMG_SOCIETY "images/society.png"
 #define IMG_TUNNEL "images/platform.png"
 #define IMG_SPIKE "images/fire.png"
 #define IMG_WIN "images/win.png"
@@ -52,8 +53,11 @@
 
 #define IMG_POISON "images/poison.png"
 
-#define FONT "fonts/hand.ttf"
-#define FONT_JANE "fonts/jane.ttf"
+#define IMG_LAUGH "images/laugh.png"
+
+#define FONT "fonts/travel.ttf"
+#define FONT_JANE "fonts/travel.ttf"
+#define BMP_FONT "fonts/travel.fnt"
 
 #define SFX_BG_INTRO "sfx/Danse_Morialta_Intro.mp3"
 #define SFX_BG_HAPPY "sfx/Danse_Morialta_Happy.mp3"
@@ -63,6 +67,9 @@
 #define SFX_OUCH "sfx/ouch.wav"
 #define SFX_WIN "sfx/kiss.wav"
 #define SFX_KEY "sfx/collect_0.mp3"
+#define SFX_TYPE01 "sfx/type01.wav"
+#define SFX_TYPE02 "sfx/type02.wav"
+#define SFX_TYPE_END "sfx/type03.wav"
 
 
 #define IMG_JAZZ_0 "images/guitar_0.png"
@@ -94,7 +101,7 @@
 enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zForeground,zHUD,zControl};
-enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel};
+enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel,tmxSociety};
 enum playerIndex {pUnknown,pFemale,pMale};
 enum sensorIndex {sensorNone = 100,sensorTop = 101,sensorRight = 102,sensorBottom = 103,sensorLeft = 104};
 enum directionIndex {directionLeft,directionRight};
@@ -106,18 +113,18 @@ struct userdataFormat { int a;int b;int c;cocos2d::Node* node;  userdataFormat(i
 
 
 const std::string level[LVLS] = {
-    "Together",
-    "Superman",
-    "Present",
-    "Poison",
-    "Tunnels",
-    "Downside",
-    "Reason",
-    "Night",
-    "Fire",
-    "Police",
-    "Finale",
-    "End",
+    "I. Together",
+    "II. Superman",
+    "III. Present",
+    "IV. Poison",
+    "V. Tunnels",
+    "VI. Downside",
+    "VII. Reason",
+    "VIII. Night",
+    "IX. Fire",
+    "X. Police",
+    "XI. Finale",
+    "XII. End",
 };
 
 #endif

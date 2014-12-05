@@ -20,6 +20,7 @@
 #include "Door.h"
 #include "Teddy.h"
 #include "Poison.h"
+#include "Society.h"
 #include "Tunnel.h"
 
 

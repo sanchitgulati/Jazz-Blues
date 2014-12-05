@@ -64,20 +64,23 @@ Teddy* Teddy::createFixture(b2World* world, TMXLayer* layer, int x, int y, float
     
     
     // define the shape
-    b2PolygonShape shape;
-    shape.SetAsBox(
-                   (tileSize.width / kPixelsPerMeter) * 0.50f * width,
-                   (tileSize.height / kPixelsPerMeter) * 0.50f * height
-                   );
+//    b2PolygonShape shape;
+//    shape.SetAsBox(
+//                   (tileSize.width / kPixelsPerMeter) * 0.50f * width,
+//                   (tileSize.height / kPixelsPerMeter) * 0.50f * height
+//                   );
+    
+    b2CircleShape shape;
+    shape.m_radius = (tileSize.width / kPixelsPerMeter) * 0.50f * width;
     
     
     // create the fixture
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape; //changed from shape
     fixtureDef.density = 0.01f;
-    fixtureDef.friction = 0.0f;
+    fixtureDef.friction = 0.2f;
     fixtureDef.userData = (void*)(new userdataFormat(tmxTeddy));
-    fixtureDef.restitution = 0.0f;
+    fixtureDef.restitution = 0.8f;
     //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
     //    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);

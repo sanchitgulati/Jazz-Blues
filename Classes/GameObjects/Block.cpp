@@ -75,7 +75,7 @@ Block* Block::createFixture(b2World* world, TMXLayer* layer, int x, int y, float
     // create the fixture
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape; //changed from shape
-    fixtureDef.density = 5.0f;
+    fixtureDef.density = 2.0f;
     fixtureDef.friction = 0.3f;
     fixtureDef.userData = (void*)(new userdataFormat(tmxBlock));
     fixtureDef.restitution = 0.0f;
