@@ -360,7 +360,15 @@ void GameScene::loadLevel(int level)
     fg->setPosition(screenSize.width/2, screenSize.height/2);
     fg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
     fg->setOpacity(100);
-    this->addChild(fg,999);
+    this->addChild(fg,zRain);
+    
+    auto fg1 = Sprite::create("images/rain01.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+    auto fg2 = Sprite::create("images/rain02.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+    auto fg3 = Sprite::create("images/rain03.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+    fg1->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
+    fg2->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
+    fg3->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
+    
     auto animation = Animation::create();
     animation->setDelayPerUnit(0.33);
     

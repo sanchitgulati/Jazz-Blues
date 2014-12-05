@@ -100,7 +100,7 @@
 
 enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle};
 enum zButtonIndex {bLeft,bRight,bUp};
-enum zIndex {zBackground,zGame,zForeground,zHUD,zControl};
+enum zIndex {zBackground,zGame,zRain,zForeground,zHUD,zControl};
 enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel,tmxSociety};
 enum playerIndex {pUnknown,pFemale,pMale};
 enum sensorIndex {sensorNone = 100,sensorTop = 101,sensorRight = 102,sensorBottom = 103,sensorLeft = 104};
