@@ -63,7 +63,7 @@ Platform* Platform::createFixture(b2World* world, TMXLayer* layer, int x, int y,
     // create the body
     b2BodyDef bodyDef;
     bodyDef.type = b2_staticBody;
-    bodyDef.fixedRotation = true;
+//    bodyDef.fixedRotation = true;
     bodyDef.position.Set(
                          (p.x + (tileSize.width * widthMultiplier / 2.0f)) / kPixelsPerMeter,
                          (p.y + tileSize.height/2 + (vertical*tileSize.height/2) + (-1*vertical)*(tileSize.height * heightMultiplier / 2.0f)) / kPixelsPerMeter

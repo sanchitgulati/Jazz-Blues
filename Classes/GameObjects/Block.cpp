@@ -67,15 +67,15 @@ Block* Block::createFixture(b2World* world, TMXLayer* layer, int x, int y, float
     // define the shape
     b2PolygonShape shape;
     shape.SetAsBox(
-                   (tileSize.width / kPixelsPerMeter) * 0.50f * width,
-                   (tileSize.height / kPixelsPerMeter) * 0.50f * height
+                   (tileSize.width / kPixelsPerMeter) * 0.48f * width,
+                   (tileSize.height / kPixelsPerMeter) * 0.48f * height
                    );
     
     
     // create the fixture
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape; //changed from shape
-    fixtureDef.density = 4.0f;
+    fixtureDef.density = 0.1f;
     fixtureDef.friction = 0.3f;
     fixtureDef.userData = (void*)(new userdataFormat(tmxBlock));
     fixtureDef.restitution = 0.0f;

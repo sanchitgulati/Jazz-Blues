@@ -38,6 +38,7 @@ bool Player::initWithBody(b2Body* body,int pIndex)
         _sprite->setColor(RGB_BOY);
         _shape = Sprite::create(IMG_MALE);
     }
+    _shape->setColor(RGB_SKIN);
     
     _pIndex = pIndex;
     _sprite->setB2Body(body);
@@ -68,6 +69,9 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     _pressedLeft = false;
     _pressedRight = false;
     _pressedUp = false;
+    
+    _isPoisonStarted = false;
+    _isPoisonFinished = false;
     
     _isTouchingFloor = 0;
     _facing = directionRight;
@@ -124,6 +128,8 @@ void Player::update(float dt)
         if(_isTouchingFloor > 0)
         {
             auto jumpHeight = b2Vec2(0,_jumpHeight);
+            if(_isPoisonFinished)
+                jumpHeight.y *= 1.2;
             body->ApplyLinearImpulse(jumpHeight,body->GetWorldCenter(),true);
             
             CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_JUMP);
@@ -143,8 +149,15 @@ void Player::update(float dt)
     }
     
     auto finalVelocity = body->GetLinearVelocity();
-    auto clampedVelocity = b2Vec2(clampf(finalVelocity.x,-1*_maxspeed.x,_maxspeed.x), clampf(finalVelocity.y, -1*_maxspeed.y, 1*_maxspeed.y));
+    auto clampedVelocity = b2Vec2(clampf(finalVelocity.x,-1*_maxspeed.x,1*_maxspeed.x), clampf(finalVelocity.y, -1*_maxspeed.y, 1*_maxspeed.y));
     body->SetLinearVelocity(clampedVelocity);
+    
+    if(_isPoisonFinished)
+    {
+        auto finalVelocity = body->GetLinearVelocity();
+        auto clampedVelocity = b2Vec2(clampf(finalVelocity.x,-0.25*_maxspeed.x,0.25*_maxspeed.x), clampf(finalVelocity.y, -2*_maxspeed.y, 2*_maxspeed.y));
+        body->SetLinearVelocity(clampedVelocity);
+    }
     
 }
 
@@ -314,6 +327,19 @@ void Player::setAtFinish(bool val)
 bool Player::getAtFinish()
 {
     return _isAtFinish;
+}
+
+void Player::poison()
+{
+    if(!_isPoisonStarted)
+    {
+        _isPoisonStarted = true;
+        auto callFunc = CallFunc::create([this](){
+            this->_isPoisonFinished = true;
+        });
+        auto tint = TintTo::create(5, 0, 162, 0);
+        _shape->runAction(Sequence::create(tint,callFunc, NULL));
+    }
 }
 
 void Player::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)

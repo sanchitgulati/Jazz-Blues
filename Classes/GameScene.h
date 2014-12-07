@@ -18,6 +18,10 @@
 #include "Button.h"
 #include "GLESDebugDraw.h"
 
+enum GameState { gsIntro, gsStart, gsDied, gsEnd};
+
+enum tags {tagIntro};
+
 class GameScene : public cocos2d::Layer, public b2ContactListener
 {
 private:
@@ -40,8 +44,7 @@ private:
     bool _quit;
     cocos2d::TMXTiledMap* _tm;
     
-    bool _gsGamePlaying;
-    
+    int _gameState;
     int kCurrentLevel;
     
     //Box2d
@@ -64,6 +67,7 @@ protected:
     void loadLevel(int level);
     void loadInstuctions();
     void loadInstuctionsEnd();
+    void loadDiedEnd();
     
     
     void animateMapIn();
@@ -81,6 +85,9 @@ protected:
     
     void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+    
+    bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
+    void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
     //Rendering
     
     virtual void draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags)override;

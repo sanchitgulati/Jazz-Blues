@@ -94,6 +94,8 @@
 #define RGB_BOY Color3B(0,86,185)
 #define RGB_GIRL Color3B(171,71,203)
 
+#define RGB_SKIN Color3B(250,215,129)
+
 #define LVLS 12
 
 #define VFX_CONSTANT 0.75
@@ -101,7 +103,7 @@
 enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zRain,zForeground,zHUD,zControl};
-enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel,tmxSociety};
+enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel,tmxSociety,tmxHalf,tmxOtherHalf};
 enum playerIndex {pUnknown,pFemale,pMale};
 enum sensorIndex {sensorNone = 100,sensorTop = 101,sensorRight = 102,sensorBottom = 103,sensorLeft = 104};
 enum directionIndex {directionLeft,directionRight};

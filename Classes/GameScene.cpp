@@ -35,7 +35,7 @@ bool GameScene::init()
     {
         return false;
     }
-    _gsGamePlaying = true;
+    _gameState = gsIntro;
     kCurrentLevel = UserDefault::getInstance()->getIntegerForKey("continue",1);
     
     _visibleSize = Director::getInstance()->getVisibleSize();
@@ -48,6 +48,10 @@ bool GameScene::init()
     listener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
     listener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+    auto touchlistener = EventListenerTouchOneByOne::create();
+    touchlistener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
+    touchlistener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(touchlistener, this);
     
     _male = nullptr;
     _female = nullptr;
@@ -148,7 +152,7 @@ void GameScene::update(float dt)
 #endif
     /* End */
     _world->Step(dt, 8, 1);
-    if(_gsGamePlaying)
+    if(_gameState == gsStart)
     {
         if(_female != nullptr)
         {
@@ -157,6 +161,11 @@ void GameScene::update(float dt)
             auto diffY = fabs( _male->getSprite()->getPosition().y - _female->getSprite()->getPosition().y);
             auto maxScale = MAX(diffX, diffY);
             _parent->setScale(_visibleSize.height/(_parent->getContentSize().height + (maxScale*0.5)));
+            
+            if( (_female->getB2Body()->GetPosition().y <= -100/32) || (_male->getB2Body()->GetPosition().y <= -100/32))
+            {
+                loadDiedEnd();
+            }
             
             //End
             if(_male->getAtFinish() && _female->getAtFinish())
@@ -174,7 +183,7 @@ void GameScene::update(float dt)
                 emitter->setPosition(_male->getSprite()->getPosition());
                 _world->DestroyBody(_male->getB2Body());
                 _male->removeFromParentAndCleanup(true);
-                _gsGamePlaying = false;
+                _gameState = gsDied;
             }
             if(!_female->getIsAlive())
             {
@@ -183,7 +192,7 @@ void GameScene::update(float dt)
                 emitter->setPosition(_female->getSprite()->getPosition());
                 _world->DestroyBody(_female->getB2Body());
                 _female->removeFromParentAndCleanup(true);
-                _gsGamePlaying = false;
+                _gameState = gsDied;
                 
             }
         }
@@ -231,6 +240,7 @@ void GameScene::loadInstuctions()
                                   {
                                       CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE_END);
                                       this->animateMapIn();
+                                      this->_gameState = gsStart;
                                   });
             
             c->runAction(Sequence::create(dt,cf,fi,fadeOutMessage,NULL));
@@ -252,13 +262,14 @@ void GameScene::loadInstuctions()
         
     }
     
-    
+    labelTitle->setTag(tagIntro);
     this->addChild(labelTitle);
     
 }
 
 void GameScene::loadInstuctionsEnd()
 {
+    _gameState = gsEnd;
     animateMapOut();
     unschedule(schedule_selector(GameScene::update));
     auto screenSize = Director::getInstance()->getVisibleSize();
@@ -311,8 +322,64 @@ void GameScene::loadInstuctionsEnd()
         
         
     }
+    this->addChild(labelTitle);
+}
+
+void GameScene::loadDiedEnd()
+{
+    _gameState = gsEnd;
+    animateMapOut();
+    unschedule(schedule_selector(GameScene::update));
+    auto screenSize = Director::getInstance()->getVisibleSize();
     
+    auto valuekey = _tm->getProperties();
+    auto labelTitle = Label::createWithBMFont(BMP_FONT, valuekey["end"].asString().c_str());
+    labelTitle->setWidth(screenSize.width/2);
+    labelTitle->setColor(RGB_BLACK);
     
+    labelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
+    labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
+    
+    auto len = valuekey["end"].asString().length() - 1;
+    
+    for(int i = 1; i <= len;i++)
+    {
+        auto c = labelTitle->getLetter(i);
+        if(c == nullptr || c == NULL)
+            continue;
+        c->setOpacity(0);
+        c->setColor(RGB_BLACK);
+        auto dt = DelayTime::create(i*0.25);
+        auto fi = FadeIn::create(0.16);
+        
+        CallFunc* cf;
+        
+        if(i == len)
+        {
+            cf = CallFunc::create([this]()
+                                  {
+                                      Director::getInstance()->replaceScene((Scene*)GameScene::create());
+                                  });
+            
+            c->runAction(Sequence::create(dt,fi,cf,NULL));
+        }
+        else
+        {
+            cf = CallFunc::create([this]()
+                                  {
+                                      auto toss = Util::toss();
+                                      if(toss)
+                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE01);
+                                      else
+                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE02);
+                                  });
+            
+            c->runAction(Sequence::create(dt,cf,fi, NULL));
+        }
+        
+        
+    }
     this->addChild(labelTitle);
 }
 
@@ -494,6 +561,9 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 case tmxCloud:
                 {
                     auto cloud = Cloud::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    auto steps = (Util::toss() ? -1 : 1)*Util::randf()*(kPixelsPerMeter*2);
+                    auto move = EaseBackInOut::create(MoveBy::create(5 + Util::randf()*4, Vec2(steps,0)));
+                    cloud->runAction(RepeatForever::create(Sequence::create(move,move->reverse(), NULL)));
                     _platformsGroup->addChild(cloud,1);
                     break;
                 }
@@ -612,6 +682,17 @@ void GameScene::BeginContact(b2Contact* contact)
                 _male->setAtFinish(true);
             }
         }
+        if(data1->a == tmxPoison || data2->a == tmxPoison )
+        {
+            if(data1->b == pFemale || data2->b == pFemale) //Is Female
+            {
+                _female->poison();
+            }
+            else if(data1->b == pMale || data2->b == pMale) //Is Male
+            {
+                _male->poison();
+            }
+        }
         if(data1->a == tmxSociety || data2->a == tmxSociety)
         {
             _society->laugh();
@@ -708,6 +789,28 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
     }
 }
 
+bool GameScene::onTouchBegan(Touch* touch, Event* event)
+{
+    return true;
+}
+
+
+void GameScene::onTouchEnded(Touch* touch, Event* event)
+{
+    if(_gameState == gsIntro)
+    {
+        auto c = getChildByTag(tagIntro);
+        c->stopAllActions();
+        c->setVisible(false);
+        this->animateMapIn();
+        this->_gameState = gsStart;
+        CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+    }
+    if(_gameState == gsEnd)
+    {
+        Director::getInstance()->replaceScene((Scene*)GameScene::create());
+    }
+}
 
 void GameScene::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
