@@ -48,6 +48,7 @@ private:
     int _facing;
     bool _isPoisonStarted;
     bool _isPoisonFinished;
+    int _invert;
     
     int _isTouchingFloor;
     
@@ -65,6 +66,7 @@ public:
 //    void setIsTouching(int sensorEnum[],int val = true,bool died = false);
     void setIsGround(bool val);
     void poison();
+    void invert();
     bool getIsAlive();
     void setIsDied(bool val);
     

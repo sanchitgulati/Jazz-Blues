@@ -116,6 +116,15 @@ bool GameScene::init()
 //    _bgGroup->setVisible(false);
     /*end*/
     
+    
+    auto valuekey = _tm->getProperties();
+    auto invert = valuekey["invert"].asString().c_str();
+    if(strcmp(invert,"true") == 0)
+    {
+        _male->invert();
+        _female->invert();
+    }
+    log("value %s",invert);
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_HAPPY,true);
     return true;

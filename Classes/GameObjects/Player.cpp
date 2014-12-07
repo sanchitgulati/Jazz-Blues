@@ -74,6 +74,7 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     _isPoisonFinished = false;
     
     _isTouchingFloor = 0;
+    _invert = 1;
     _facing = directionRight;
     
     
@@ -105,12 +106,12 @@ void Player::update(float dt)
     //control mechanics
     if(_pressedLeft)
     {
-        body->ApplyLinearImpulse(b2Vec2((-1*(_pIndex == pFemale ? -1 : 1)*_maxspeed.x)/4.0, 0),body->GetWorldCenter(), true);
+        body->ApplyLinearImpulse(b2Vec2((-1*(_pIndex == pFemale ? -1 : 1)*_invert*_maxspeed.x)/4.0, 0),body->GetWorldCenter(), true);
         _facing = _pIndex == pFemale ? directionRight : directionLeft;
     }
     else if(_pressedRight)
     {
-        body->ApplyLinearImpulse(b2Vec2((1*(_pIndex == pFemale ? -1 : 1)*_maxspeed.x)/4.0, 0),body->GetWorldCenter(), true);
+        body->ApplyLinearImpulse(b2Vec2((1*(_pIndex == pFemale ? -1 : 1)*_invert*_maxspeed.x)/4.0, 0),body->GetWorldCenter(), true);
         _facing = _pIndex == pFemale ? directionLeft : directionRight;
     }
     else
@@ -327,6 +328,11 @@ void Player::setAtFinish(bool val)
 bool Player::getAtFinish()
 {
     return _isAtFinish;
+}
+
+void Player::invert()
+{
+    _invert *= -1;
 }
 
 void Player::poison()
