@@ -184,6 +184,7 @@ void GameScene::update(float dt)
                 _world->DestroyBody(_male->getB2Body());
                 _male->removeFromParentAndCleanup(true);
                 _gameState = gsDied;
+                loadDiedEnd();
             }
             if(!_female->getIsAlive())
             {
@@ -193,6 +194,7 @@ void GameScene::update(float dt)
                 _world->DestroyBody(_female->getB2Body());
                 _female->removeFromParentAndCleanup(true);
                 _gameState = gsDied;
+                loadDiedEnd();
                 
             }
         }
@@ -589,7 +591,7 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 {
                     
                     auto tunnel = Tunnel::createFixture(_world, layer, x, y, 1.0, 1.0);
-                    _platformsGroup->addChild(tunnel,1);
+                    _platformsGroup->addChild(tunnel,3);
                     break;
                 }
                 case tmxSociety:
@@ -612,7 +614,7 @@ void GameScene::animateMapIn()
 
 void GameScene::animateMapOut()
 {
-    _parent->runAction(MoveTo::create(1, _screenOutPosition));
+    _parent->runAction(Sequence::create(DelayTime::create(0.5),MoveTo::create(1, _screenOutPosition),NULL));
 }
 
 void GameScene::BeginContact(b2Contact* contact)
