@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="25" height="18" tilewidth="32" tileheight="32">
  <properties>
+  <property name="bg" value="autumn"/>
   <property name="end" value="and all was worth it"/>
   <property name="start" value="used everything i could .."/>
  </properties>
@@ -9,7 +10,7 @@
  </tileset>
  <layer name="level" width="25" height="18">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA92U2woAIQhEa2/9/x/3YiCyk45bLzsgUYyd0qiVvWoSf2ZUsH6T/gwDiWHUBeExEO9w5kiDMfOw57a5mpHleDnM22X214rUCnGiflurSG7Ug2rl5bP3KC+MGSfTj109tx7NeGS8PjKGThnZPzfbjxX/kxcdBGhqmAgHAAA=
+   H4sIAAAAAAAAA92U2woAIQhEa2/9/x/3oiCyk5fNlx2QKMZOaTRarQbFnxkdrN9Bf4aBFGH0DWExEO8w5kjMWHmi59a5kpHlWDmRtxvZX8pTK8Tx+nWtPLleD6qVlR+9R3thrDiZflT1XHsk46Hx+shgnTRW/7nM2PE/WTEBaxfDZwgHAAA=
   </data>
  </layer>
 </map>

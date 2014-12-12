@@ -431,31 +431,30 @@ void GameScene::loadLevel(int level)
     bg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
     _bgGroup->addChild(bg);
     
-    auto fg = Sprite::create("images/rain01.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-    
 
     
-    fg->setPosition(screenSize.width/2, screenSize.height/2);
-    fg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
-    fg->setOpacity(100);
-    this->addChild(fg,zRain);
-    
-    auto fg1 = Sprite::create("images/rain01.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-    auto fg2 = Sprite::create("images/rain02.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-    auto fg3 = Sprite::create("images/rain03.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-    fg1->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
-    fg2->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
-    fg3->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
-    
-    auto animation = Animation::create();
-    animation->setDelayPerUnit(0.33);
-    
-    
-    animation->addSpriteFrameWithTexture(fg1->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-    animation->addSpriteFrameWithTexture(fg2->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-    animation->addSpriteFrameWithTexture(fg3->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-    auto animate = Animate::create(animation);
-    fg->runAction(RepeatForever::create(animate));
+//    auto fg = Sprite::create("images/rain01.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+//    fg->setPosition(screenSize.width/2, screenSize.height/2);
+//    fg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
+//    fg->setOpacity(100);
+//    this->addChild(fg,zRain);
+//    
+//    auto fg1 = Sprite::create("images/rain01.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+//    auto fg2 = Sprite::create("images/rain02.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+//    auto fg3 = Sprite::create("images/rain03.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+//    fg1->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
+//    fg2->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
+//    fg3->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
+//    
+//    auto animation = Animation::create();
+//    animation->setDelayPerUnit(0.33);
+//    
+//    
+//    animation->addSpriteFrameWithTexture(fg1->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+//    animation->addSpriteFrameWithTexture(fg2->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+//    animation->addSpriteFrameWithTexture(fg3->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
+//    auto animate = Animate::create(animation);
+//    fg->runAction(RepeatForever::create(animate));
     
     auto loadLevelString = StringUtils::format("levels/%d.tmx",kCurrentLevel);
     _tm = TMXTiledMap::create(loadLevelString);
@@ -471,6 +470,21 @@ void GameScene::loadLevel(int level)
     
     
     _tm->retain();
+    
+    
+    std::string background_particle = "particle/autumn_texture.plist";
+    auto valuekey = _tm->getProperties();
+    auto val = valuekey["bg"].asString().c_str();
+    if(strcmp(val,"") != 0)
+        background_particle = StringUtils::format("particle/%s_texture.plist",val);
+    
+    auto particle_bg = ParticleSystemQuad::create(background_particle.c_str());
+    particle_bg->setPosition(screenSize.width/2,screenSize.height);
+    particle_bg->setPosVar(Vec2(screenSize.width/2, screenSize.height*0.25));
+    int z = zRain;
+    if(strcmp(val, "autumn") == 0)
+        z = zBackground;
+    this->addChild(particle_bg,z);
     
     _playerGroup = Node::create();
     _parent->addChild(_playerGroup);
