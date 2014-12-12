@@ -73,7 +73,7 @@ bool MainMenu::init() {
         labelNew->setColor(RGB_BLACK);
         auto menuItemNew = MenuItemLabel::create(labelNew, CC_CALLBACK_1(MainMenu::menuCallback, this));
         menuItemNew->setPositionY(0);
-        menuItemNew->setTag(bLevelSelect);        
+        menuItemNew->setTag(bLevelSelect);
         
         _prop = Node::create();
         this->addChild(_prop);
@@ -119,7 +119,7 @@ bool MainMenu::init() {
         this->addChild(_table);
         
         
-
+        
         
         auto margin = 5;
         
@@ -140,7 +140,7 @@ bool MainMenu::init() {
         _table->addChild(bracketRight);
         
         
-
+        
         
         
         bRet = true;
@@ -192,7 +192,7 @@ void MainMenu::onEnter() {
     
     Layer::onEnter();
     
-
+    
 }
 
 
@@ -201,9 +201,10 @@ void MainMenu::levelCallback(cocos2d::Ref *pSender)
     auto obj = (Node*)pSender;
     UserDefault::getInstance()->setIntegerForKey("continue",obj->getTag());
     UserDefault::getInstance()->flush();
-    auto scene = (Scene*)GameScene::create();
-    auto t = TransitionFade::create(1.0f, scene, Color3B::WHITE);
-    Director::getInstance()->replaceScene(t);
+    //    auto scene = (Scene*)GameScene::create();
+    //    auto t = TransitionFade::create(1.0f, scene, Color3B::WHITE);
+    //    Director::getInstance()->replaceScene(t);
+    transitionToGameScene();
 }
 
 // a selector callback
@@ -237,7 +238,7 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
                 {
                     c->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,200), NULL));
                 }
-                    
+                
             }
             
             auto callFunc = CallFunc::create([this](){
@@ -254,7 +255,7 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
             {
                 c->runAction(FadeOut::create(1));
             }
-
+            
             break;
         }
         default:
@@ -270,4 +271,50 @@ void MainMenu::onExit() {
 void MainMenu::update(float delta)
 {
     
+}
+
+void MainMenu::transitionToGameScene()
+{
+    auto size = Director::getInstance()->getWinSize();		//get the windows size.
+    
+    auto clipper = ClippingNode::create();		// create the ClippingNode object
+    
+    auto stencil = DrawNode::create();		// create the DrawNode object which can draw dots, segments and polygons.
+    
+    Point triangle[3];		// init the  triangle vertexes.
+    triangle[0] = Point(-size.width * 1.5f, -size.height / 2);
+    triangle[1] = Point(size.width * 1.5f, -size.height / 2);
+    triangle[2] = Point(0, size.height);
+    Color4F green(0, 1, 0, 1);
+    
+    stencil->drawPolygon(triangle, 3, green, 0, green);		//use the drawNode to draw the triangle to cut the ClippingNode.
+    
+    clipper->setAnchorPoint(Point(0.5f, 0.5f));		// set the ClippingNode anchorPoint, to make sure the drawNode at the center of ClippingNode
+    clipper->setPosition(size.width / 2, size.height / 2);
+    clipper->setAlphaThreshold(0.05f);
+    clipper->setInverted(true);		//make sure the content is show right side.
+    
+    Sprite* blackRect = Sprite::create("images/black_screen.png");		//create a black screen sprite to make sure the bottom is black.
+    blackRect->setScale(size.width/blackRect->getContentSize().width, size.height/blackRect->getContentSize().height);
+    clipper->addChild(blackRect);	//to make sure the bottom is black.
+    
+    
+    auto heart = Sprite::create("images/heart.png");
+    heart->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    heart->setScale(2);
+    clipper->setStencil(heart);	//set the cut triangle in the ClippingNode.
+    
+    this->addChild(clipper, 500);
+    
+    // the Clipping node triangle  add some actions to make the triangle scale and rotate.
+    heart->runAction(EaseSineOut::create(Spawn::create(ScaleTo::create(2.5f, 0.0f, 0.0f), RotateBy::create(2.5f, 540),
+                                                       Sequence::create(DelayTime::create(2.5), CallFunc::create(this, callfunc_selector(MainMenu::toGameScene)), NULL), NULL)));
+    
+}
+
+void MainMenu::toGameScene()
+{
+    //get the game scene and run it.
+    auto scene = GameScene::createScene();
+    Director::getInstance()->replaceScene(scene);
 }

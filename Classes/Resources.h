@@ -52,6 +52,7 @@
 #define IMG_UNMUTE_1 "images/unmute_1.png"
 
 #define IMG_POISON "images/poison.png"
+#define IMG_POISON_ALT "images/poisonalt.png"
 
 #define IMG_LAUGH "images/laugh.png"
 

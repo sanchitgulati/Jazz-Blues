@@ -44,6 +44,16 @@ bool Poison::initWithBody(b2Body* body,float scaleX,float scaleY)
     _sprite->setB2Body(body);
     _sprite->setPTMRatio(kPixelsPerMeter);
     this->addChild(_sprite);
+    
+    auto animation = Animation::create();
+    animation->setDelayPerUnit(0.33);
+    
+    
+    animation->addSpriteFrameWithFile(IMG_POISON);
+    animation->addSpriteFrameWithFile(IMG_POISON_ALT);
+    auto animate = Animate::create(animation);
+    _sprite->runAction(RepeatForever::create(animate));
+
 
     _sprite->getTexture()->setTexParameters({GL_LINEAR,GL_LINEAR,GL_REPEAT,GL_REPEAT});
     return true;

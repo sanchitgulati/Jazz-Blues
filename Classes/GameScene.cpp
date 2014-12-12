@@ -59,7 +59,7 @@ bool GameScene::init()
     _parent = Node::create();
     _parent->setAnchorPoint(Point(0.5,0.5));
     this->addChild(_parent,zGame);
-
+    
     
     createPhysicalWorld();
     loadLevel(0);
@@ -72,11 +72,11 @@ bool GameScene::init()
     auto levelSelector = MenuItemImage::create(IMG_LEVEL_SELECTOR_0, IMG_LEVEL_SELECTOR_1,CC_CALLBACK_1(GameScene::menuCloseCallback, this));
     levelSelector->setTag(menuLevel);
     auto margin = levelSelector->getContentSize().width*1.2;
-    levelSelector->setPositionX(margin);
+    levelSelector->setPositionX(margin*-1);
     
     auto refresh = MenuItemImage::create(IMG_REFRESH_0,IMG_REFRESH_1,CC_CALLBACK_1(GameScene::menuCloseCallback, this));
     refresh->setTag(menuRefresh);
-    refresh->setPositionX(margin*2);
+    refresh->setPositionX(0);
     
     auto unmute = MenuItemImage::create(IMG_UNMUTE_0,IMG_UNMUTE_1);
     unmute->setTag(menuUnmute);
@@ -86,10 +86,10 @@ bool GameScene::init()
     
     auto sfxToggle = MenuItemToggle::createWithCallback(CC_CALLBACK_1(GameScene::menuCloseCallback, this), mute,unmute, NULL);
     sfxToggle->setTag(menuToggle);
-    sfxToggle->setPositionX(margin*3);
+    sfxToggle->setPositionX(margin);
     
     auto menu = Menu::create(levelSelector,refresh,sfxToggle, NULL);
-    menu->setPosition(Point(0,_visibleSize.height-margin));
+    menu->setPosition(Vec2(_visibleSize.width/2,_visibleSize.height-margin));
     this->addChild(menu,zHUD);
     
     //setting up on-screen button for mobile
@@ -111,9 +111,9 @@ bool GameScene::init()
 #endif
     
     /* Entering box2d world */
-//    _platformsGroup->setVisible(false);
-//    _playerGroup->setVisible(false);
-//    _bgGroup->setVisible(false);
+    //    _platformsGroup->setVisible(false);
+    //    _playerGroup->setVisible(false);
+    //    _bgGroup->setVisible(false);
     /*end*/
     
     
@@ -127,6 +127,9 @@ bool GameScene::init()
     log("value %s",invert);
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_HAPPY,true);
+//
+    
+    this->toGameScene();
     return true;
 }
 
@@ -143,9 +146,7 @@ void GameScene::menuCloseCallback(Ref* pSender)
         }
         case menuRefresh:
         {
-            
-            auto scene = (Scene*)GameScene::create();
-            Director::getInstance()->replaceScene(scene);
+            transitionToGameScene();
             break;
         }
         default:
@@ -312,7 +313,7 @@ void GameScene::loadInstuctionsEnd()
         {
             cf = CallFunc::create([this]()
                                   {
-                                      Director::getInstance()->replaceScene((Scene*)GameScene::create());
+                                      transitionToGameScene();
                                   });
             
             c->runAction(Sequence::create(dt,fi,cf,NULL));
@@ -370,7 +371,7 @@ void GameScene::loadDiedEnd()
         {
             cf = CallFunc::create([this]()
                                   {
-                                      Director::getInstance()->replaceScene((Scene*)GameScene::create());
+                                      transitionToGameScene();
                                   });
             
             c->runAction(Sequence::create(dt,fi,cf,NULL));
@@ -405,12 +406,12 @@ void GameScene::createPhysicalWorld()
     uint32 flags = 0;
     flags += b2Draw::e_shapeBit;
     flags += b2Draw::e_jointBit;
-//    flags += b2Draw::e_aabbBit;
-//    flags += b2Draw::e_pairBit;
-//    flags += b2Draw::e_centerOfMassBit;
+    //    flags += b2Draw::e_aabbBit;
+    //    flags += b2Draw::e_pairBit;
+    //    flags += b2Draw::e_centerOfMassBit;
     _debugDraw->SetFlags(flags);
     
-
+    
 }
 
 void GameScene::loadLevel(int level)
@@ -430,32 +431,7 @@ void GameScene::loadLevel(int level)
     bg->setPosition(screenSize.width/2, screenSize.height/2);
     bg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
     _bgGroup->addChild(bg);
-    
-
-    
-//    auto fg = Sprite::create("images/rain01.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-//    fg->setPosition(screenSize.width/2, screenSize.height/2);
-//    fg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
-//    fg->setOpacity(100);
-//    this->addChild(fg,zRain);
-//    
-//    auto fg1 = Sprite::create("images/rain01.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-//    auto fg2 = Sprite::create("images/rain02.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-//    auto fg3 = Sprite::create("images/rain03.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-//    fg1->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
-//    fg2->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
-//    fg3->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
-//    
-//    auto animation = Animation::create();
-//    animation->setDelayPerUnit(0.33);
-//    
-//    
-//    animation->addSpriteFrameWithTexture(fg1->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-//    animation->addSpriteFrameWithTexture(fg2->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-//    animation->addSpriteFrameWithTexture(fg3->getTexture(),cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-//    auto animate = Animate::create(animation);
-//    fg->runAction(RepeatForever::create(animate));
-    
+        
     auto loadLevelString = StringUtils::format("levels/%d.tmx",kCurrentLevel);
     _tm = TMXTiledMap::create(loadLevelString);
     _tm->setVisible(false);
@@ -488,7 +464,7 @@ void GameScene::loadLevel(int level)
     
     _playerGroup = Node::create();
     _parent->addChild(_playerGroup);
-
+    
     prepareLayers();
 }
 
@@ -506,8 +482,8 @@ void GameScene::addObjects()
             auto type = properties.at("type");
             if (!type.isNull())
             {
-//                this->addObject(type.asString().c_str(), properties);
-//                this->objectCount++;
+                //                this->addObject(type.asString().c_str(), properties);
+                //                this->objectCount++;
             }
         }
     }
@@ -647,7 +623,7 @@ void GameScene::BeginContact(b2Contact* contact)
     auto data1 = static_cast<userdataFormat *>(f1->GetUserData());
     auto data2 = static_cast<userdataFormat *>(f2->GetUserData());
     
-
+    
     
     if(f1->IsSensor() || f2->IsSensor())
     {
@@ -797,17 +773,17 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
     _male->onKeyPressed(keyCode, event);
     if(_female != nullptr)
-    _female->onKeyPressed(keyCode, event);
+        _female->onKeyPressed(keyCode, event);
 }
 
 void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 {
     _male->onKeyReleased(keyCode, event);
     if(_female != nullptr)
-    _female->onKeyReleased(keyCode, event);
+        _female->onKeyReleased(keyCode, event);
     switch (keyCode) {
         case EventKeyboard::KeyCode::KEY_R:
-            Director::getInstance()->replaceScene((Scene*)GameScene::create());
+            transitionToGameScene();
             break;
         default:
             break;
@@ -833,8 +809,81 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
     }
     if(_gameState == gsEnd)
     {
-        Director::getInstance()->replaceScene((Scene*)GameScene::create());
+        transitionToGameScene();
     }
+}
+
+void GameScene::toGameScene()
+{
+    auto size = Director::getInstance()->getWinSize();		// get the win size.
+    
+    auto clipper = ClippingNode::create();	// get the clipping node.
+    
+  
+    
+    clipper->setAnchorPoint(Point(0.5f, 0.5f)); // set the ClippingNode anchorPoint, to make sure the drawNode at the center of ClippingNode
+    clipper->setPosition(size.width/2, size.height/2);
+    clipper->setAlphaThreshold(0.05f);
+    clipper->setInverted(true);		//make sure the content is show right side.
+    
+    Sprite* blackRect = Sprite::create("images/black_screen.png");
+    blackRect->setScale(size.width/blackRect->getContentSize().width, size.height/blackRect->getContentSize().height);
+    
+    clipper->addChild(blackRect);//to make sure the bottom is black.
+    
+    auto heart = Sprite::create("images/heart.png");
+    heart->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    clipper->setStencil(heart);	//set the cut triangle in the ClippingNode.
+    
+    this->addChild(clipper, 500);
+    
+    
+    heart->setScale(0.0f);
+    clipper->setStencil(heart);	//set the cut triangle in the ClippingNode.
+    heart->runAction(EaseSineIn::create(Spawn::create(ScaleTo::create(2.5f, 2.0f, 2.0f), RotateBy::create(2.5f, 540),
+                                                        Sequence::create(DelayTime::create(1.0), CallFunc::create(this, callfunc_selector(GameScene::startGame)), NULL) , NULL)));
+    
+}
+
+void GameScene::transitionToGameScene()
+{
+    auto size = Director::getInstance()->getWinSize();		//get the windows size.
+    
+    auto clipper = ClippingNode::create();		// create the ClippingNode object
+
+    clipper->setAnchorPoint(Point(0.5f, 0.5f));		// set the ClippingNode anchorPoint, to make sure the drawNode at the center of ClippingNode
+    clipper->setPosition(size.width / 2, size.height / 2);
+    clipper->setAlphaThreshold(0.05f);
+    clipper->setInverted(true);		//make sure the content is show right side.
+    
+    Sprite* blackRect = Sprite::create("images/black_screen.png");		//create a black screen sprite to make sure the bottom is black.
+    blackRect->setScale(size.width/blackRect->getContentSize().width, size.height/blackRect->getContentSize().height);
+    clipper->addChild(blackRect);	//to make sure the bottom is black.
+    
+    
+    auto heart = Sprite::create("images/heart.png");
+    heart->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    heart->setScale(2);
+    clipper->setStencil(heart);	//set the cut triangle in the ClippingNode.
+    
+    this->addChild(clipper, 500);
+    
+    // the Clipping node triangle  add some actions to make the triangle scale and rotate.
+    heart->runAction(EaseSineOut::create(Spawn::create(ScaleTo::create(2.5f, 0.0f, 0.0f), RotateBy::create(2.5f, 540),
+                                                         Sequence::create(DelayTime::create(2.5), CallFunc::create(this, callfunc_selector(MainMenu::toGameScene)), NULL), NULL)));
+    
+}
+
+void GameScene::restartScene()
+{
+    //get the game scene and run it.
+    auto scene = GameScene::createScene();
+    Director::getInstance()->replaceScene(scene);
+}
+
+
+void GameScene::startGame()
+{
 }
 
 void GameScene::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)

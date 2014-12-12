@@ -89,7 +89,10 @@ protected:
     bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
     void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
     //Rendering
-    
+    void transitionToGameScene();
+    void restartScene();
+    void startGame();
+    void toGameScene();
     virtual void draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags)override;
     void onDraw(const cocos2d::Mat4 &transform, uint32_t flags);
     

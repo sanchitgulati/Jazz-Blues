@@ -19,6 +19,8 @@ public:
     void onExit();
     
     void update(float delta);
+    void transitionToGameScene();
+    void toGameScene();
     
     // a selector callback
     void menuCallback(cocos2d::Ref* pSender);
