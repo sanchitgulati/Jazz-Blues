@@ -345,7 +345,7 @@ void GameScene::loadDiedEnd()
     auto screenSize = Director::getInstance()->getVisibleSize();
     
     auto valuekey = _tm->getProperties();
-    auto labelTitle = Label::createWithBMFont(BMP_FONT, valuekey["end"].asString().c_str());
+    auto labelTitle = Label::createWithBMFont(BMP_FONT, win[(int)floor(Util::randf()*LOSE_QOUTES+1)].c_str());
     labelTitle->setWidth(screenSize.width/2);
     labelTitle->setColor(RGB_BLACK);
     
@@ -353,45 +353,6 @@ void GameScene::loadDiedEnd()
     labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
     labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
     
-    auto len = valuekey["end"].asString().length() - 1;
-    
-    for(int i = 1; i <= len;i++)
-    {
-        auto c = labelTitle->getLetter(i);
-        if(c == nullptr || c == NULL)
-            continue;
-        c->setOpacity(0);
-        c->setColor(RGB_BLACK);
-        auto dt = DelayTime::create(i*0.25);
-        auto fi = FadeIn::create(0.16);
-        
-        CallFunc* cf;
-        
-        if(i == len)
-        {
-            cf = CallFunc::create([this]()
-                                  {
-                                      transitionToGameScene();
-                                  });
-            
-            c->runAction(Sequence::create(dt,fi,cf,NULL));
-        }
-        else
-        {
-            cf = CallFunc::create([this]()
-                                  {
-                                      auto toss = Util::toss();
-                                      if(toss)
-                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE01);
-                                      else
-                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE02);
-                                  });
-            
-            c->runAction(Sequence::create(dt,cf,fi, NULL));
-        }
-        
-        
-    }
     this->addChild(labelTitle);
 }
 

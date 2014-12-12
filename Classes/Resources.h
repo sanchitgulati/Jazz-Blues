@@ -98,6 +98,8 @@
 #define RGB_SKIN Color3B(250,215,129)
 
 #define LVLS 12
+#define WIN_QOUTES 8
+#define LOSE_QOUTES 8
 
 #define VFX_CONSTANT 0.75
 
@@ -128,6 +130,29 @@ const std::string level[LVLS] = {
     "X. Police",
     "XI. Finale",
     "XII. End",
+};
+
+
+const std::string win[WIN_QOUTES] = {
+    "And in her smile I see something more beautiful than the stars",
+    "I never loved you any more than I do, right this second. And I’ll never love you any less than I do, right this second",
+    "Sometimes I can’t see myself when I’m with you. I can only just see you",
+    "I am catastrophically in love with you",
+    "I love you. Remember. They cannot take it",
+    "And I’ve realized that the Beatles got it wrong. Love isn’t all we need—love is all there is",
+    "We come to love not by finding a perfect person, but by learning to see an imperfect person perfectly",
+    "Take my hand and we'll make it"
+};
+
+const std::string lose[LOSE_QOUTES] = {
+    "I’d do it all over again, if I had the choice. No regrets",
+    "I can't live, with or without you",
+    "I know the sun will swallow the only earth we’ll ever have, and I am in love with you",
+    "I don’t care how hard being together is, nothing is worse than being apart",
+    "But you’ve slipped under my skin, invaded my blood and seized my heart",
+    "Sometimes people put up walls, not to keep others out, but to see who cares enough to break them down",
+    "Remember to let her into your heart",
+    "I'd trade all my tomorrows for one single yesterday"
 };
 
 #endif
