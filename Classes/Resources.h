@@ -57,7 +57,7 @@
 #define IMG_LAUGH "images/laugh.png"
 
 #define FONT "fonts/travel.ttf"
-#define FONT_JANE "fonts/travel.ttf"
+#define FONT_JANE "fonts/hand.ttf"
 #define BMP_FONT "fonts/travel.fnt"
 
 #define SFX_BG_INTRO "sfx/Danse_Morialta_Intro.mp3"
@@ -89,6 +89,7 @@
 #define RGB_BLACK Color3B(20,20,20)
 #define RGB_WHITE Color3B(252,252,252)
 #define RGB_ROSE Color3B(229,11,26)
+#define RGB_BLUE Color3B(0,243,236)
 #define RGB_PLATFORM Color3B(50,50,50)
 
 
@@ -97,13 +98,16 @@
 
 #define RGB_SKIN Color3B(250,215,129)
 
+#define MAX_SFX 0.50
+#define MAX_BG 0.90
+
 #define LVLS 12
 #define WIN_QOUTES 8
 #define LOSE_QOUTES 8
 
 #define VFX_CONSTANT 0.75
 
-enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle};
+enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle,menuSkip};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zRain,zForeground,zHUD,zControl};
 enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel,tmxSociety,tmxHalf,tmxOtherHalf};

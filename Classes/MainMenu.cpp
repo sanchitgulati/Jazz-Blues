@@ -159,7 +159,7 @@ void MainMenu::createLevelMenu()
     Size screenSize = Director::getInstance()->getWinSize();
     cocos2d::Vector<MenuItem *> lvlList;
     for (int i = 0; i < LVLS; i++) {
-        auto lbl = Label::createWithTTF(level[i].c_str(), FONT_JANE, 21);
+        auto lbl = Label::createWithTTF(level[i].c_str(), FONT, 21);
         auto sptr = Sprite::create(IMG_RECORD);
         auto item = MenuItemSprite::create(sptr,sptr, CC_CALLBACK_1(MainMenu::levelCallback, this));
         item->setContentSize(Size(screenSize.height*0.24,screenSize.height*0.20));
@@ -170,14 +170,19 @@ void MainMenu::createLevelMenu()
         lbl->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         lbl->setPosition(Vec2(item->getBoundingBox().size.width/2,0));
         item->addChild(lbl);
-        sptr->setOpacity(0);
-        lbl->setOpacity(0);
+//        sptr->setOpacity(0);
+//        lbl->setOpacity(0);
         sptr->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         sptr->setPosition(item->getBoundingBox().size.width/2, item->getBoundingBox().size.height/2);
         auto time = 3 + random()%3;
         sptr->runAction(RepeatForever::create(RotateBy::create(time, 360)));
-        sptr->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,255), NULL));
-        lbl->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,255), NULL));
+        item->setScale(0.8);
+        item->setVisible(false);
+        auto popOut = EaseBounceOut::create(ScaleTo::create(1, 1));
+        auto callFunc = CallFunc::create([item](){item->setVisible(true);});
+        item->runAction(Sequence::create(DelayTime::create(1),callFunc, popOut,NULL));
+//        sptr->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,255), NULL));
+//        lbl->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,255), NULL));
     }
     auto menu = Menu::createWithArray(lvlList);
     menu->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -215,9 +220,16 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
     switch (obj->getTag()) {
         case bPlay:
         {
-            auto scene = (Scene*)GameScene::create();
-            auto t = TransitionFade::create(1.0f, scene, Color3B::WHITE);
-            Director::getInstance()->replaceScene(t);
+            _prop->runAction(MoveBy::create(1, Vec2(100, 0)));
+            for(auto c : _prop->getChildren())
+            {
+                c->runAction(FadeOut::create(1));
+            }
+            for(auto c : _gameLogo->getChildren())
+            {
+                c->runAction(FadeOut::create(1));
+            }
+            transitionToGameScene();
             break;
         }
         case bLevelSelect:
@@ -275,40 +287,29 @@ void MainMenu::update(float delta)
 
 void MainMenu::transitionToGameScene()
 {
-    auto size = Director::getInstance()->getWinSize();		//get the windows size.
+    auto size = Director::getInstance()->getWinSize();
+    auto clipper = ClippingNode::create();
     
-    auto clipper = ClippingNode::create();		// create the ClippingNode object
-    
-    auto stencil = DrawNode::create();		// create the DrawNode object which can draw dots, segments and polygons.
-    
-    Point triangle[3];		// init the  triangle vertexes.
-    triangle[0] = Point(-size.width * 1.5f, -size.height / 2);
-    triangle[1] = Point(size.width * 1.5f, -size.height / 2);
-    triangle[2] = Point(0, size.height);
-    Color4F green(0, 1, 0, 1);
-    
-    stencil->drawPolygon(triangle, 3, green, 0, green);		//use the drawNode to draw the triangle to cut the ClippingNode.
-    
-    clipper->setAnchorPoint(Point(0.5f, 0.5f));		// set the ClippingNode anchorPoint, to make sure the drawNode at the center of ClippingNode
+    clipper->setAnchorPoint(Point(0.5f, 0.5f));
     clipper->setPosition(size.width / 2, size.height / 2);
     clipper->setAlphaThreshold(0.05f);
-    clipper->setInverted(true);		//make sure the content is show right side.
+    clipper->setInverted(true);
     
-    Sprite* blackRect = Sprite::create("images/black_screen.png");		//create a black screen sprite to make sure the bottom is black.
+    Sprite* blackRect = Sprite::create("images/black_screen.png");
     blackRect->setScale(size.width/blackRect->getContentSize().width, size.height/blackRect->getContentSize().height);
-    clipper->addChild(blackRect);	//to make sure the bottom is black.
-    
+    clipper->addChild(blackRect);
     
     auto heart = Sprite::create("images/heart.png");
     heart->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    heart->setScale(2);
+    heart->setScale((size.width/heart->getContentSize().width)*1.3);
     clipper->setStencil(heart);	//set the cut triangle in the ClippingNode.
     
     this->addChild(clipper, 500);
-    
-    // the Clipping node triangle  add some actions to make the triangle scale and rotate.
-    heart->runAction(EaseSineOut::create(Spawn::create(ScaleTo::create(2.5f, 0.0f, 0.0f), RotateBy::create(2.5f, 540),
-                                                       Sequence::create(DelayTime::create(2.5), CallFunc::create(this, callfunc_selector(MainMenu::toGameScene)), NULL), NULL)));
+    auto callFunc = CallFuncN::create(CC_CALLBACK_0(MainMenu::toGameScene,this));
+    heart->runAction(EaseSineOut::create(Spawn::create(ScaleTo::create(2.5f, 0.0f, 0.0f),
+                                                       RotateBy::create(2.5f, 540),
+                                                       Sequence::create(DelayTime::create(2.5),
+                                                                        callFunc, NULL), NULL)));
     
 }
 

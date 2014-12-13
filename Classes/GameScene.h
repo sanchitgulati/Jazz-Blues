@@ -20,7 +20,7 @@
 
 enum GameState { gsIntro, gsStart, gsDied, gsEnd};
 
-enum tags {tagIntro};
+enum tags {tagIntro,tagMenu};
 
 
 class GameScene : public cocos2d::Layer, public b2ContactListener

@@ -76,7 +76,7 @@ bool GameScene::init()
     
     auto refresh = MenuItemImage::create(IMG_REFRESH_0,IMG_REFRESH_1,CC_CALLBACK_1(GameScene::menuCloseCallback, this));
     refresh->setTag(menuRefresh);
-    refresh->setPositionX(0);
+    refresh->setPositionX(margin);
     
     auto unmute = MenuItemImage::create(IMG_UNMUTE_0,IMG_UNMUTE_1);
     unmute->setTag(menuUnmute);
@@ -86,10 +86,15 @@ bool GameScene::init()
     
     auto sfxToggle = MenuItemToggle::createWithCallback(CC_CALLBACK_1(GameScene::menuCloseCallback, this), mute,unmute, NULL);
     sfxToggle->setTag(menuToggle);
-    sfxToggle->setPositionX(margin);
+    sfxToggle->setPositionX(0);
     
     auto menu = Menu::create(levelSelector,refresh,sfxToggle, NULL);
-    menu->setPosition(Vec2(_visibleSize.width/2,_visibleSize.height-margin));
+    if(kCurrentLevel == 5) //tunnel
+        menu->setPosition(Vec2(_visibleSize.width/2,margin));
+    else
+        menu->setPosition(Vec2(_visibleSize.width/2,_visibleSize.height-margin));
+    menu->setTag(tagMenu);
+    menu->setOpacity(0);
     this->addChild(menu,zHUD);
     
     //setting up on-screen button for mobile
@@ -147,6 +152,32 @@ void GameScene::menuCloseCallback(Ref* pSender)
         case menuRefresh:
         {
             transitionToGameScene();
+            break;
+        }
+        case menuSkip:
+        {
+            obj->setVisible(false);
+            auto c = getChildByTag(tagIntro);
+            for(auto child : c->getChildren())
+                child->stopAllActions();
+            c->stopAllActions();
+            c->setVisible(false);
+            this->animateMapIn();
+            this->_gameState = gsStart;
+            CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+            break;
+        }
+        case menuToggle:
+        {
+            auto vol  = CocosDenshion::SimpleAudioEngine::getInstance()->getEffectsVolume();
+            if(vol == 0){
+                CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(MAX_SFX);
+                CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(MAX_BG);
+            }
+            else{
+                CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(0);
+                CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0);
+            }
             break;
         }
         default:
@@ -230,6 +261,18 @@ void GameScene::loadInstuctions()
     labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
     labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
     
+    
+    
+    auto menuLbl = Label::createWithTTF("- skip story -", FONT, 36);
+    menuLbl->setColor(RGB_ROSE);
+    auto menuItem = MenuItemLabel::create(menuLbl, CC_CALLBACK_1(GameScene::menuCloseCallback,this));
+    menuItem->setTag(menuSkip);
+    auto menu = Menu::create(menuItem,NULL);
+    menu->setPosition(Vec2(screenSize.width/2,screenSize.height*0.30));
+    labelTitle->setTag(tagIntro);
+    this->addChild(labelTitle);
+    this->addChild(menu);
+    
     auto fadeOutMessage = CallFunc::create([labelTitle](){
         labelTitle->runAction(FadeOut::create(0.2));
     });
@@ -248,10 +291,11 @@ void GameScene::loadInstuctions()
         
         if(i == len)
         {
-            cf = CallFunc::create([this]()
+            cf = CallFunc::create([this,menu]()
                                   {
                                       CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE_END);
                                       this->animateMapIn();
+                                      menu->setVisible(false);
                                       this->_gameState = gsStart;
                                   });
             
@@ -274,9 +318,6 @@ void GameScene::loadInstuctions()
         
     }
     
-    labelTitle->setTag(tagIntro);
-    this->addChild(labelTitle);
-    
 }
 
 void GameScene::loadInstuctionsEnd()
@@ -295,46 +336,31 @@ void GameScene::loadInstuctionsEnd()
     labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
     labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
     
-    auto len = valuekey["end"].asString().length() - 1;
+    auto str = StringUtils::format("\"%s\"",win[(int)floor((Util::randf()*WIN_QOUTES)+1)].c_str());
+    auto winnerTitle = Label::createWithTTF(str, FONT_JANE, 54);
+    winnerTitle->setWidth(screenSize.width*0.90);
+    winnerTitle->setColor(RGB_ROSE);
     
-    for(int i = 1; i <= len;i++)
-    {
-        auto c = labelTitle->getLetter(i);
-        if(c == nullptr || c == NULL)
-            continue;
-        c->setOpacity(0);
-        c->setColor(RGB_BLACK);
-        auto dt = DelayTime::create(i*0.25);
-        auto fi = FadeIn::create(0.16);
-        
-        CallFunc* cf;
-        
-        if(i == len)
-        {
-            cf = CallFunc::create([this]()
-                                  {
-                                      transitionToGameScene();
-                                  });
-            
-            c->runAction(Sequence::create(dt,fi,cf,NULL));
-        }
-        else
-        {
-            cf = CallFunc::create([this]()
-                                  {
-                                      auto toss = Util::toss();
-                                      if(toss)
-                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE01);
-                                      else
-                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE02);
-                                  });
-            
-            c->runAction(Sequence::create(dt,cf,fi, NULL));
-        }
-        
-        
-    }
+    winnerTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    winnerTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
+    winnerTitle->setPosition(screenSize.width/2,screenSize.height*0.70);
+    
+    auto menuLbl = Label::createWithTTF("- next chapter-",FONT,36);
+    menuLbl->setColor(RGB_ROSE);
+    auto menuItem = MenuItemLabel::create(menuLbl, CC_CALLBACK_1(GameScene::menuCloseCallback,this));
+    menuItem->setTag(menuRefresh);
+    auto menu = Menu::create(menuItem,NULL);
+    menu->setPosition(Vec2(screenSize.width/2,screenSize.height*0.30));
+    
+    this->addChild(winnerTitle);
     this->addChild(labelTitle);
+    this->addChild(menu);
+    winnerTitle->setOpacity(0);
+    labelTitle->setOpacity(0);
+    menuLbl->setOpacity(0);
+    labelTitle->runAction(Sequence::create(DelayTime::create(1),FadeIn::create(1), NULL));
+    winnerTitle->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1), NULL));
+    menuLbl->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1), NULL));
 }
 
 void GameScene::loadDiedEnd()
@@ -344,16 +370,30 @@ void GameScene::loadDiedEnd()
     unschedule(schedule_selector(GameScene::update));
     auto screenSize = Director::getInstance()->getVisibleSize();
     
-    auto valuekey = _tm->getProperties();
-    auto labelTitle = Label::createWithBMFont(BMP_FONT, win[(int)floor(Util::randf()*LOSE_QOUTES+1)].c_str());
+    auto str = StringUtils::format("\"%s\"",lose[(int)floor((Util::randf()*LOSE_QOUTES)+1)].c_str());
+    auto labelTitle = Label::createWithTTF(str, FONT_JANE, 54);
     labelTitle->setWidth(screenSize.width/2);
-    labelTitle->setColor(RGB_BLACK);
+    labelTitle->setColor(RGB_ROSE);
     
     labelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
-    labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
+    labelTitle->setPosition(screenSize.width/2,screenSize.height*0.70);
     
+    auto menuLbl = Label::createWithTTF("- retry chapter-",FONT,36);
+    menuLbl->setColor(RGB_ROSE);
+    auto menuItem = MenuItemLabel::create(menuLbl, CC_CALLBACK_1(GameScene::menuCloseCallback,this));
+    menuItem->setTag(menuRefresh);
+    auto menu = Menu::create(menuItem,NULL);
+    menu->setPosition(Vec2(screenSize.width/2,screenSize.height*0.30));
+    
+    
+    labelTitle->setOpacity(0);
+    menuLbl->setOpacity(0);
     this->addChild(labelTitle);
+    this->addChild(menu);
+    
+    labelTitle->runAction(Sequence::create(DelayTime::create(1),FadeIn::create(1), NULL));
+    menuLbl->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1), NULL));
 }
 
 void GameScene::createPhysicalWorld()
@@ -759,79 +799,62 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 
 void GameScene::onTouchEnded(Touch* touch, Event* event)
 {
-    if(_gameState == gsIntro)
-    {
-        auto c = getChildByTag(tagIntro);
-        c->stopAllActions();
-        c->setVisible(false);
-        this->animateMapIn();
-        this->_gameState = gsStart;
-        CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
-    }
-    if(_gameState == gsEnd)
-    {
-        transitionToGameScene();
-    }
 }
 
 void GameScene::toGameScene()
 {
-    auto size = Director::getInstance()->getWinSize();		// get the win size.
     
-    auto clipper = ClippingNode::create();	// get the clipping node.
+    auto size = Director::getInstance()->getWinSize();
+    auto clipper = ClippingNode::create();
     
-  
-    
-    clipper->setAnchorPoint(Point(0.5f, 0.5f)); // set the ClippingNode anchorPoint, to make sure the drawNode at the center of ClippingNode
-    clipper->setPosition(size.width/2, size.height/2);
+    clipper->setAnchorPoint(Point(0.5f, 0.5f));
+    clipper->setPosition(size.width / 2, size.height / 2);
     clipper->setAlphaThreshold(0.05f);
-    clipper->setInverted(true);		//make sure the content is show right side.
+    clipper->setInverted(true);
     
     Sprite* blackRect = Sprite::create("images/black_screen.png");
     blackRect->setScale(size.width/blackRect->getContentSize().width, size.height/blackRect->getContentSize().height);
-    
-    clipper->addChild(blackRect);//to make sure the bottom is black.
+    clipper->addChild(blackRect);
     
     auto heart = Sprite::create("images/heart.png");
     heart->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    heart->setScale(0.0);
     clipper->setStencil(heart);	//set the cut triangle in the ClippingNode.
     
     this->addChild(clipper, 500);
-    
-    
-    heart->setScale(0.0f);
-    clipper->setStencil(heart);	//set the cut triangle in the ClippingNode.
-    heart->runAction(EaseSineIn::create(Spawn::create(ScaleTo::create(2.5f, 2.0f, 2.0f), RotateBy::create(2.5f, 540),
-                                                        Sequence::create(DelayTime::create(1.0), CallFunc::create(this, callfunc_selector(GameScene::startGame)), NULL) , NULL)));
+    auto callFunc = CallFuncN::create(CC_CALLBACK_0(GameScene::startGame,this));
+    heart->runAction(EaseSineOut::create(Spawn::create(ScaleTo::create(2.5f, (size.width/heart->getContentSize().width)*1.3),
+                                                       RotateBy::create(2.5f, 540),
+                                                       Sequence::create(DelayTime::create(2.5),
+                                                                        callFunc, NULL), NULL)));
     
 }
 
 void GameScene::transitionToGameScene()
 {
-    auto size = Director::getInstance()->getWinSize();		//get the windows size.
+    auto size = Director::getInstance()->getWinSize();
+    auto clipper = ClippingNode::create();
     
-    auto clipper = ClippingNode::create();		// create the ClippingNode object
-
-    clipper->setAnchorPoint(Point(0.5f, 0.5f));		// set the ClippingNode anchorPoint, to make sure the drawNode at the center of ClippingNode
+    clipper->setAnchorPoint(Point(0.5f, 0.5f));
     clipper->setPosition(size.width / 2, size.height / 2);
     clipper->setAlphaThreshold(0.05f);
-    clipper->setInverted(true);		//make sure the content is show right side.
+    clipper->setInverted(true);
     
-    Sprite* blackRect = Sprite::create("images/black_screen.png");		//create a black screen sprite to make sure the bottom is black.
+    Sprite* blackRect = Sprite::create("images/black_screen.png");
     blackRect->setScale(size.width/blackRect->getContentSize().width, size.height/blackRect->getContentSize().height);
-    clipper->addChild(blackRect);	//to make sure the bottom is black.
-    
+    clipper->addChild(blackRect);
     
     auto heart = Sprite::create("images/heart.png");
     heart->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    heart->setScale(2);
+    heart->setScale((size.width/heart->getContentSize().width)*1.3);
     clipper->setStencil(heart);	//set the cut triangle in the ClippingNode.
     
     this->addChild(clipper, 500);
-    
-    // the Clipping node triangle  add some actions to make the triangle scale and rotate.
-    heart->runAction(EaseSineOut::create(Spawn::create(ScaleTo::create(2.5f, 0.0f, 0.0f), RotateBy::create(2.5f, 540),
-                                                         Sequence::create(DelayTime::create(2.5), CallFunc::create(this, callfunc_selector(MainMenu::toGameScene)), NULL), NULL)));
+    auto callFunc = CallFuncN::create(CC_CALLBACK_0(GameScene::restartScene,this));
+    heart->runAction(EaseSineOut::create(Spawn::create(ScaleTo::create(2.5f, 0.0f, 0.0f),
+                                                       RotateBy::create(2.5f, 540),
+                                                       Sequence::create(DelayTime::create(2.5),
+                                                                        callFunc, NULL), NULL)));
     
 }
 
@@ -845,6 +868,9 @@ void GameScene::restartScene()
 
 void GameScene::startGame()
 {
+    //TODO : something
+    auto obj = getChildByTag(tagMenu);
+    obj->runAction(FadeIn::create(1));
 }
 
 void GameScene::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)

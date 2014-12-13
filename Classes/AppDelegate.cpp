@@ -1,5 +1,6 @@
 #include "AppDelegate.h"
 #include "LogoSplash.h"
+#include "Resources.h"
 
 USING_NS_CC;
 
@@ -20,7 +21,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
         glview = GLView::create("Jazz and Blues");
         director->setOpenGLView(glview);
     }
-
+    
+    CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(MAX_BG);
+    CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(MAX_SFX);
     
     // turn on display FPS
     director->setDisplayStats(false);
