@@ -5,7 +5,7 @@
 	<key>angle</key>
 	<real>-109</real>
 	<key>angleVariance</key>
-	<real>4</real>
+	<integer>190</integer>
 	<key>blendFuncDestination</key>
 	<integer>771</integer>
 	<key>blendFuncSource</key>

@@ -17,8 +17,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLView::createWithFullScreen("Jazz and Blues");
-//        glview = GLView::create("Jazz and Blues");
+//        glview = GLView::createWithFullScreen("Jazz and Blues");
+        glview = GLView::create("Jazz and Blues");
         director->setOpenGLView(glview);
     }
     

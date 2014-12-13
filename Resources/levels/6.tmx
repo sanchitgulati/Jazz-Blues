@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="25" height="18" tilewidth="32" tileheight="32">
  <properties>
+  <property name="bg" value="rain"/>
   <property name="end" value="everything was diffrent"/>
   <property name="invert" value="true"/>
   <property name="start" value="... things changed ..."/>

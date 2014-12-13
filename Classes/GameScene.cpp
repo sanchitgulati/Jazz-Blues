@@ -444,8 +444,6 @@ void GameScene::loadLevel(int level)
                                  _tm->getMapSize().height * _tm->getTileSize().height));
     _platformsGroup->setContentSize(_parent->getContentSize());
     
-    
-    
     _tm->retain();
     
     
@@ -457,10 +455,15 @@ void GameScene::loadLevel(int level)
     
     auto particle_bg = ParticleSystemQuad::create(background_particle.c_str());
     particle_bg->setPosition(screenSize.width/2,screenSize.height);
-    particle_bg->setPosVar(Vec2(screenSize.width/2, screenSize.height*0.25));
     int z = zRain;
+    Vec2 posVar = Vec2(screenSize.width/2, screenSize.height*0.75);
     if(strcmp(val, "autumn") == 0)
+    {
         z = zBackground;
+        posVar = Vec2(screenSize.width/2, screenSize.height*0.25);
+        
+    }
+    particle_bg->setPosVar(posVar);
     this->addChild(particle_bg,z);
     
     _playerGroup = Node::create();
@@ -562,10 +565,7 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 }
                 case tmxCloud:
                 {
-                    auto cloud = Cloud::createFixture(_world, layer, x, y, 1.0, 1.0);
-                    auto steps = (Util::toss() ? -1 : 1)*Util::randf()*(kPixelsPerMeter*2);
-                    auto move = EaseBackInOut::create(MoveBy::create(5 + Util::randf()*4, Vec2(steps,0)));
-                    cloud->runAction(RepeatForever::create(Sequence::create(move,move->reverse(), NULL)));
+                    auto cloud = Cloud::createFixture(_world, layer, x, y, 2.0, 1.0);
                     _platformsGroup->addChild(cloud,1);
                     break;
                 }

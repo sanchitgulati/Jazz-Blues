@@ -37,15 +37,37 @@ Cloud* Cloud::create(b2Body* body,float scaleX,float scaleY)
 
 bool Cloud::initWithBody(b2Body* body,float scaleX,float scaleY)
 {
-    _sprite = LFSpriteNode::create(IMG_CLOUD);
+    _sprite = LFSpriteNode::create(IMG_CLOUD_0);
     auto contentSize = _sprite->getContentSize();
     _sprite->setTextureRect(Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
     _sprite->setB2Body(body);
-    _sprite->setRotation((rand()%4)*90); //0-3 * 90degree, can give 0,90,180,270
+//    _sprite->setRotation((rand()%4)*90); //0-3 * 90degree, can give 0,90,180,270
     _sprite->setPTMRatio(kPixelsPerMeter);
     this->addChild(_sprite);
+    
+    auto animation = Animation::create();
+    animation->setDelayPerUnit(0.5);
+    
+    
+    animation->addSpriteFrameWithFile(IMG_CLOUD_0);
+    animation->addSpriteFrameWithFile(IMG_CLOUD_1);
+    animation->addSpriteFrameWithFile(IMG_CLOUD_2);
+    animation->addSpriteFrameWithFile(IMG_CLOUD_3);
+    animation->addSpriteFrameWithFile(IMG_CLOUD_4);
+    animation->addSpriteFrameWithFile(IMG_CLOUD_3);
+    animation->addSpriteFrameWithFile(IMG_CLOUD_2);
+    animation->addSpriteFrameWithFile(IMG_CLOUD_1);
+    animation->addSpriteFrameWithFile(IMG_CLOUD_0);
+    auto animate = Animate::create(animation);
+    _sprite->runAction(RepeatForever::create(animate));
+    
+    /*
+     
+     auto steps = (Util::toss() ? -1 : 1)*Util::randf()*(kPixelsPerMeter*2);
+     auto move = EaseBackInOut::create(MoveBy::create(5 + Util::randf()*4, Vec2(steps,0)));
+     cloud->runAction(RepeatForever::create(Sequence::create(move,move->reverse(), NULL)));
+     */
 
-    _sprite->getTexture()->setTexParameters({GL_LINEAR,GL_LINEAR,GL_REPEAT,GL_REPEAT});
     return true;
 }
 
