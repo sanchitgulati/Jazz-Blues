@@ -37,7 +37,7 @@ Door* Door::create(b2Body* body,float scaleX,float scaleY)
 
 bool Door::initWithBody(b2Body* body,float scaleX,float scaleY)
 {
-    _sprite = LFSpriteNode::create(IMG_DOOR);
+    _sprite = LFSpriteNode::create(IMG_PLATFORM);
 //    _sprite->setColor(Color3B(50,50,50));
     auto contentSize = _sprite->getContentSize();
     _sprite->setTextureRect(Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
