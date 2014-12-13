@@ -345,7 +345,7 @@ void GameScene::loadInstuctionsEnd()
     winnerTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
     winnerTitle->setPosition(screenSize.width/2,screenSize.height*0.70);
     
-    auto menuLbl = Label::createWithTTF("- next chapter-",FONT,36);
+    auto menuLbl = Label::createWithTTF("- next chapter -",FONT,36);
     menuLbl->setColor(RGB_ROSE);
     auto menuItem = MenuItemLabel::create(menuLbl, CC_CALLBACK_1(GameScene::menuCloseCallback,this));
     menuItem->setTag(menuRefresh);
@@ -823,7 +823,7 @@ void GameScene::toGameScene()
     
     this->addChild(clipper, 500);
     auto callFunc = CallFuncN::create(CC_CALLBACK_0(GameScene::startGame,this));
-    heart->runAction(EaseSineOut::create(Spawn::create(ScaleTo::create(2.5f, (size.width/heart->getContentSize().width)*1.3),
+    heart->runAction(EaseSineIn::create(Spawn::create(ScaleTo::create(2.5f, (size.width/heart->getContentSize().width)*1.3),
                                                        RotateBy::create(2.5f, 540),
                                                        Sequence::create(DelayTime::create(2.5),
                                                                         callFunc, NULL), NULL)));
