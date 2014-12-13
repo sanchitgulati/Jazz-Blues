@@ -112,3 +112,14 @@ Cloud* Cloud::createFixture(b2World* world, TMXLayer* layer, int x, int y, float
     return ret;
 
 }
+
+void Cloud::del()
+{
+    auto random = DelayTime::create(Util::randf()*3);
+    auto del = CallFunc::create([this](){
+        auto world = this->_sprite->getB2Body()->GetWorld();
+        world->DestroyBody(_sprite->getB2Body());
+        _sprite->removeFromParentAndCleanup(true);
+    });
+    _sprite->runAction(Sequence::create(random,del, NULL));
+}

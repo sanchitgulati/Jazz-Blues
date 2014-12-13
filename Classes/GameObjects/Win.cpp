@@ -87,3 +87,13 @@ Win* Win::createFixture(b2World* world, TMXLayer* layer, int x, int y, float wid
     return Win::create(body);
     
 }
+
+void Win::convert()
+{
+    auto random = DelayTime::create(Util::randf()*3);
+    auto fall = CallFunc::create([this](){
+        this->_sprite->getB2Body()->SetType(b2BodyType::b2_dynamicBody);
+        this->_sprite->getB2Body()->GetFixtureList()[0].SetSensor(false);
+    });
+    _sprite->runAction(Sequence::create(random,fall, NULL));
+}

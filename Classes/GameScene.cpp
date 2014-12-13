@@ -541,6 +541,7 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 case tmxWin:
                 {
                     auto win = Win::createFixture(_world, layer, x, y, 3.0, 3.0); //bcoz image is 96*96
+                    _win = win;
                     _platformsGroup->addChild(win,1);
                     break;
                 }
@@ -560,6 +561,7 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 case tmxTemple:
                 {
                     auto temple = Temple::createFixture(_world, layer, x, y, 3.0, 3.0);
+                    _temple = temple;
                     _platformsGroup->addChild(temple,1);
                     break;
                 }
@@ -572,6 +574,7 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 case tmxDoor:
                 {
                     auto door = Door::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    _listOfDoors.pushBack(door);
                     _platformsGroup->addChild(door,1);
                     break;
                 }
@@ -699,6 +702,15 @@ void GameScene::BeginContact(b2Contact* contact)
         {
             _society->laugh();
         }
+        
+        if(data1->a == tmxTemple || data2->a == tmxTemple)
+        {
+            for (auto c : _listOfDoors) {
+                c->fall();
+            }
+//            _temple->removeFromParentAndCleanup(true);
+            _win->convert();
+        }
     }
 }
 
@@ -747,11 +759,11 @@ void GameScene::EndContact(b2Contact* contact)
             
             if(data1->a == tmxCloud)
             {
-                //TODO: Cloud deletion here
+                static_cast<Cloud*>(data1->node)->del();
             }
             else
             {
-                //TODO: Cloud deletion here
+                static_cast<Cloud*>(data2->node)->del();
             }
         }
         if(data1->a == tmxWin || data2->a == tmxWin)

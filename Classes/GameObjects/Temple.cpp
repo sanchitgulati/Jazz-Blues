@@ -62,7 +62,6 @@ Temple* Temple::createFixture(b2World* world, TMXLayer* layer, int x, int y, flo
                          );
     b2Body* body = world->CreateBody(&bodyDef);
     
-    
     // define the shape
     b2PolygonShape shape;
     shape.SetAsBox(

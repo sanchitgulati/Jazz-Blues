@@ -13,6 +13,7 @@
 #include "cocos2d.h"
 #include "LFSpriteNode.h"
 #include "Resources.h"
+#include "Util.h"
 
 class Win: public cocos2d::Node
 {
@@ -26,6 +27,7 @@ public:
     ~Win();
     static Win* create(b2Body* body);
     bool initWithBody(b2Body* body);
+    void convert();
     //    void update(float dt);
 };
 

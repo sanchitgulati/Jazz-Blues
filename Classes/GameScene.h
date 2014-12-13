@@ -29,6 +29,8 @@ private:
     Player* _male;
     Player* _female;
     Society* _society;
+    Win* _win;
+    Temple* _temple;
     
     
     cocos2d::Node* _parent;
@@ -40,6 +42,8 @@ private:
     
     cocos2d::Node* _bgGroup;
     cocos2d::Node* _fgGroup;
+    
+    cocos2d::Vector<Door*> _listOfDoors;
     
     // have we quit in some way?
     bool _quit;

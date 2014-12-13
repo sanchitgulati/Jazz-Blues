@@ -14,6 +14,7 @@
 #include "box2d/box2d.h"
 #include "Resources.h"
 #include "LFSpriteNode.h"
+#include "Util.h"
 
 class Cloud : public cocos2d::Node
 {
@@ -25,6 +26,7 @@ public:
 //    void reset(float x,float y);
     static Cloud* createFixture(b2World* world,cocos2d::TMXLayer* layer, int x, int y, float width, float height,int length = 1,bool vertical = false);
     ~Cloud();
+    void del();
     static Cloud* create(b2Body* body,float scaleX,float scaleY);
     bool initWithBody(b2Body* body,float scaleX,float scaleY);
 //    void update(float dt);

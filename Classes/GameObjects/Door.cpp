@@ -88,3 +88,11 @@ Door* Door::createFixture(b2World* world, TMXLayer* layer, int x, int y, float w
     return Door::create(body,widthMultiplier,heightMultiplier);
 
 }
+
+void Door::fall()
+{
+    auto random = DelayTime::create(Util::randf()*3);
+    auto fall = CallFunc::create([this](){this->_sprite->getB2Body()->SetType(b2BodyType::b2_dynamicBody);});
+    _sprite->runAction(Sequence::create(random,fall, NULL));
+    
+}
