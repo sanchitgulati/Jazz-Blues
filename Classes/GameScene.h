@@ -39,6 +39,7 @@ private:
     cocos2d::Sprite* _night;
     int _playTimes;
     bool _arrested;
+    bool _god;
     
     // stuff the player overlaps for overlap check will go here in this group!
     cocos2d::Node* _overlapGroup;

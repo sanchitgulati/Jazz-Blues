@@ -37,8 +37,8 @@ Door* Door::create(b2Body* body,float scaleX,float scaleY)
 
 bool Door::initWithBody(b2Body* body,float scaleX,float scaleY)
 {
-    _sprite = LFSpriteNode::create(IMG_PLATFORM);
-    _sprite->setColor(Color3B(0,0,240));
+    _sprite = LFSpriteNode::create(IMG_SPIKE);
+    _sprite->setColor(Color3B(0,243,236));
     auto contentSize = _sprite->getContentSize();
     _sprite->setTextureRect(Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
     _sprite->setB2Body(body);
@@ -93,6 +93,7 @@ void Door::fall()
 {
     auto random = DelayTime::create(Util::randf()*3);
     auto fall = CallFunc::create([this](){this->_sprite->getB2Body()->SetType(b2BodyType::b2_dynamicBody);});
-    _sprite->runAction(Sequence::create(random,fall, NULL));
+    auto fadeOut = FadeOut::create(1 + Util::randf());
+    _sprite->runAction(Sequence::create(random,Spawn::create(fall,fadeOut, NULL), NULL));
     
 }

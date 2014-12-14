@@ -38,6 +38,7 @@ bool GameScene::init()
     _night = nullptr;
     _playTimes = 0;
     _arrested = false;
+    _god = false;
     _gameState = gsIntro;
     kCurrentLevel = UserDefault::getInstance()->getIntegerForKey("continue",1);
     
@@ -433,7 +434,7 @@ void GameScene::loadDiedEnd()
     
     auto str = StringUtils::format("\"%s\"",lose[(int)floor((Util::randf()*LOSE_QOUTES)+1)].c_str());
     auto labelTitle = Label::createWithTTF(str, FONT_JANE, 54);
-    labelTitle->setWidth(screenSize.width/2);
+    labelTitle->setWidth(screenSize.width*0.90);
     labelTitle->setColor(RGB_ROSE);
     
     labelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -816,12 +817,18 @@ void GameScene::BeginContact(b2Contact* contact)
         }
         if(data1->a == tmxTemple || data2->a == tmxTemple)
         {
-            for (auto c : _listOfDoors) {
-                c->fall();
+            if(!_god)
+            {
+                _god = true;
+                for (auto c : _listOfDoors) {
+                    c->fall();
+                }
+                _temple->setVisible(false);
+                auto callFunc = CallFunc::create([this](){
+                    this->loadInstuctionsEnd();
+                });
+                runAction(Sequence::create(DelayTime::create(5),callFunc, NULL));
             }
-            _temple->setVisible(false);
-//            _temple->removeFromParentAndCleanup(true);
-//            _win->convert();
         }
     }
 }
