@@ -81,7 +81,7 @@ Society* Society::createFixture(b2World* world, TMXLayer* layer, int x, int y, f
     fixtureDef.friction = 0.3f;
     fixtureDef.isSensor = true;
     fixtureDef.restitution = 0.0f;
-        fixtureDef.filter.categoryBits = 0x0004;
+    fixtureDef.filter.categoryBits = 0x0004;
 //    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
     return Society::create(body,widthMultiplier,heightMultiplier);
@@ -90,7 +90,7 @@ Society* Society::createFixture(b2World* world, TMXLayer* layer, int x, int y, f
 
 void Society::update(float dt)
 {
-    lastLaugh++;
+    lastLaugh+=dt;
 }
 
 void Society::laugh()
@@ -115,3 +115,12 @@ void Society::laugh()
         log("va1 %f  va2 %f  va3 %f",val1,val2,val3);
     }
 }
+
+
+void Society::move()
+{
+    auto pos = _sprite->getB2Body()->GetPosition();
+    pos.x += 0.1;
+    _sprite->getB2Body()->SetTransform(pos, 0);
+}
+

@@ -221,6 +221,7 @@ void GameScene::update(float dt)
     _world->Step(dt, 8, 1);
     if(_gameState == gsStart)
     {
+        _society->move();
         if(_female != nullptr)
         {
             //Dynamic Scaling
@@ -371,7 +372,7 @@ void GameScene::loadInstuctionsEnd()
     Label* winnerTitle = nullptr;
     if(kCurrentLevel == 12)
     {
-        str = "This game is a dedication.\nTo Jazz, From Blues.\nMusic By ------";
+        str = "This game is a dedication.\nTo Jazz, From Blues.";
         winnerTitle = Label::createWithTTF(str, FONT, 36);
         winnerTitle->setWidth(screenSize.width*0.90);
         winnerTitle->setColor(RGB_ROSE);
@@ -653,7 +654,6 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 }
                 case tmxTunnel:
                 {
-                    
                     auto tunnel = Tunnel::createFixture(_world, layer, x, y, 1.0, 1.0);
                     _platformsGroup->addChild(tunnel,3);
                     break;
@@ -668,6 +668,7 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 {
                     auto police = Police::createFixture(_world, layer, x, y, 1.0, 2.0);
                     _platformsGroup->addChild(police,0);
+                    break;
                 }
                 default:
                     break;

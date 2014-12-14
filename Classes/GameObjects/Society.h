@@ -29,6 +29,7 @@ public:
     static Society* create(b2Body* body,float scaleX,float scaleY);
     bool initWithBody(b2Body* body,float scaleX,float scaleY);
     void laugh();
+    void move();
     void update(float dt);
 };
 #endif /* defined(__badazz__Society__) */
