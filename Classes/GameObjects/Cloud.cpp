@@ -37,7 +37,7 @@ Cloud* Cloud::create(b2Body* body,float scaleX,float scaleY)
 
 bool Cloud::initWithBody(b2Body* body,float scaleX,float scaleY)
 {
-    _sprite = LFSpriteNode::create(IMG_CLOUD_0);
+    _sprite = LFSpriteNode::create(IMG_CLOUD);
     auto contentSize = _sprite->getContentSize();
     _sprite->setTextureRect(Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
     _sprite->setB2Body(body);
@@ -45,22 +45,22 @@ bool Cloud::initWithBody(b2Body* body,float scaleX,float scaleY)
     _sprite->setPTMRatio(kPixelsPerMeter);
     this->addChild(_sprite);
     
-    auto animation = Animation::create();
-    animation->setDelayPerUnit(0.5);
-    
-    
-    animation->addSpriteFrameWithFile(IMG_CLOUD_0);
-    animation->addSpriteFrameWithFile(IMG_CLOUD_1);
-    animation->addSpriteFrameWithFile(IMG_CLOUD_2);
-    animation->addSpriteFrameWithFile(IMG_CLOUD_3);
-    animation->addSpriteFrameWithFile(IMG_CLOUD_4);
-    animation->addSpriteFrameWithFile(IMG_CLOUD_3);
-    animation->addSpriteFrameWithFile(IMG_CLOUD_2);
-    animation->addSpriteFrameWithFile(IMG_CLOUD_1);
-    animation->addSpriteFrameWithFile(IMG_CLOUD_0);
-    auto animate = Animate::create(animation);
-    _sprite->runAction(RepeatForever::create(animate));
-    
+//    auto animation = Animation::create();
+//    animation->setDelayPerUnit(0.5);
+//    
+//    
+//    animation->addSpriteFrameWithFile(IMG_CLOUD_0);
+//    animation->addSpriteFrameWithFile(IMG_CLOUD_1);
+//    animation->addSpriteFrameWithFile(IMG_CLOUD_2);
+//    animation->addSpriteFrameWithFile(IMG_CLOUD_3);
+//    animation->addSpriteFrameWithFile(IMG_CLOUD_4);
+//    animation->addSpriteFrameWithFile(IMG_CLOUD_3);
+//    animation->addSpriteFrameWithFile(IMG_CLOUD_2);
+//    animation->addSpriteFrameWithFile(IMG_CLOUD_1);
+//    animation->addSpriteFrameWithFile(IMG_CLOUD_0);
+//    auto animate = Animate::create(animation);
+//    _sprite->runAction(RepeatForever::create(animate));
+//    
     /*
      
      auto steps = (Util::toss() ? -1 : 1)*Util::randf()*(kPixelsPerMeter*2);

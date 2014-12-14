@@ -751,8 +751,9 @@ void GameScene::BeginContact(b2Contact* contact)
             for (auto c : _listOfDoors) {
                 c->fall();
             }
+            _temple->setVisible(false);
 //            _temple->removeFromParentAndCleanup(true);
-            _win->convert();
+//            _win->convert();
         }
     }
 }

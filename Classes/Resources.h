@@ -30,6 +30,7 @@
 #define IMG_TEDDY "images/teddy.png"
 #define IMG_TEMPLE "images/temple.png"
 #define IMG_DOOR "images/door.png"
+#define IMG_CLOUD "images/cloud.png"
 #define IMG_CLOUD_0 "images/cloud01.png"
 #define IMG_CLOUD_1 "images/cloud02.png"
 #define IMG_CLOUD_2 "images/cloud03.png"
