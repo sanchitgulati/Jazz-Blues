@@ -92,7 +92,7 @@ bool GameScene::init()
     sfxToggle->setPositionX(0);
     
     auto menu = Menu::create(levelSelector,refresh,sfxToggle, NULL);
-    if(kCurrentLevel == 5 || kCurrentLevel == 10) //tunnel
+    if(kCurrentLevel == 5 || kCurrentLevel == 10 || kCurrentLevel == 12) //tunnel
         menu->setPosition(Vec2(_visibleSize.width/2,margin));
     else
         menu->setPosition(Vec2(_visibleSize.width/2,_visibleSize.height-margin));
@@ -150,6 +150,14 @@ bool GameScene::init()
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_HAPPY,true);
 //
+    
+    if(kCurrentLevel == 12)
+    {
+        auto callFunc = CallFunc::create([this](){
+            this->loadInstuctionsEnd();
+        });
+        runAction(Sequence::create(DelayTime::create(25),callFunc, NULL));
+    }
     
     this->toGameScene();
     return true;
@@ -362,20 +370,46 @@ void GameScene::loadInstuctionsEnd()
     labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
     
     auto str = StringUtils::format("\"%s\"",win[(int)floor((Util::randf()*WIN_QOUTES)+1)].c_str());
-    auto winnerTitle = Label::createWithTTF(str, FONT_JANE, 54);
-    winnerTitle->setWidth(screenSize.width*0.90);
-    winnerTitle->setColor(RGB_ROSE);
+    Label* winnerTitle = nullptr;
+    if(kCurrentLevel == 12)
+    {
+        str = "This game is a dedication.\nTo Jazz, From Blues.\nMusic By ------";
+        winnerTitle = Label::createWithTTF(str, FONT, 36);
+        winnerTitle->setWidth(screenSize.width*0.90);
+        winnerTitle->setColor(RGB_ROSE);
+        
+        winnerTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        winnerTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
+        winnerTitle->setPosition(screenSize.width/2,screenSize.height*0.70);
+    }
+    else
+    {
+        winnerTitle = Label::createWithTTF(str, FONT_JANE, 54);
+        winnerTitle->setWidth(screenSize.width*0.90);
+        winnerTitle->setColor(RGB_ROSE);
+        
+        winnerTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        winnerTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
+        winnerTitle->setPosition(screenSize.width/2,screenSize.height*0.70);
+    }
     
-    winnerTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    winnerTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
-    winnerTitle->setPosition(screenSize.width/2,screenSize.height*0.70);
+    std::string nextText = "- next chapter -";
+    if(kCurrentLevel == 12)
+    {
+        nextText = StringUtils::format("- home -");
+    }
     
-    auto menuLbl = Label::createWithTTF("- next chapter -",FONT,36);
+    auto menuLbl = Label::createWithTTF(nextText.c_str(),FONT,36);
     menuLbl->setColor(RGB_ROSE);
     auto menuItem = MenuItemLabel::create(menuLbl, CC_CALLBACK_1(GameScene::menuCloseCallback,this));
     menuItem->setTag(menuRefresh);
     auto menu = Menu::create(menuItem,NULL);
     menu->setPosition(Vec2(screenSize.width/2,screenSize.height*0.30));
+    
+    if(kCurrentLevel == 12)
+    {
+        menuItem->setTag(menuLevel);
+    }
     
     this->addChild(winnerTitle);
     this->addChild(labelTitle);
@@ -386,6 +420,8 @@ void GameScene::loadInstuctionsEnd()
     labelTitle->runAction(Sequence::create(DelayTime::create(1),FadeIn::create(1), NULL));
     winnerTitle->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1), NULL));
     menuLbl->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1), NULL));
+    
+
 }
 
 void GameScene::loadDiedEnd()
