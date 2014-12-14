@@ -221,7 +221,8 @@ void GameScene::update(float dt)
     _world->Step(dt, 8, 1);
     if(_gameState == gsStart)
     {
-        _society->move();
+        if(_society != nullptr)
+            _society->move();
         if(_female != nullptr)
         {
             //Dynamic Scaling
