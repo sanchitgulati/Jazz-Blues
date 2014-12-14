@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="25" height="18" tilewidth="32" tileheight="32">
  <properties>
+  <property name="bg" value="autumn"/>
   <property name="end" value="laugh at me .."/>
   <property name="start" value="... let them "/>
  </properties>
@@ -9,7 +10,7 @@
  </tileset>
  <layer name="level" width="25" height="18">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NnYGBgpzEeBdQHbAT41Daf2vawodGExKllPrn2sBDQT8gf6PLMBOwjpJ9UdTDASASmRD0Dkhg2OVIAPnPw2U+qHdQwh9aAdaAdQCEgJt0MJAAAMvdHWQgHAAA=
+   H4sIAAAAAAAAA2NnYGBgpwOmJRi1Y9SOUTtGjh30LK9YoDQPFrfAAB8OcWTAjMUfhAAuNcTqBWFGGmJ62UEPAABb4RW/CAcAAA==
   </data>
  </layer>
 </map>

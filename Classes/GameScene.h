@@ -36,6 +36,8 @@ private:
     cocos2d::Node* _parent;
     cocos2d::Node* _playerGroup;
     cocos2d::Node* _platformsGroup;
+    cocos2d::Sprite* _night;
+    int _playTimes;
     
     // stuff the player overlaps for overlap check will go here in this group!
     cocos2d::Node* _overlapGroup;

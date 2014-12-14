@@ -35,6 +35,8 @@ bool GameScene::init()
     {
         return false;
     }
+    _night = nullptr;
+    _playTimes = 0;
     _gameState = gsIntro;
     kCurrentLevel = UserDefault::getInstance()->getIntegerForKey("continue",1);
     
@@ -130,6 +132,20 @@ bool GameScene::init()
         _female->invert();
     }
     log("value %s",invert);
+    
+    auto night = valuekey["time"].asString().c_str();
+    _night = nullptr;
+    if(strcmp(night,"night") == 0)
+    {
+        _night = Sprite::create(IMG_BG);
+        _night->setScale(_visibleSize.width/_night->getBoundingBox().size.width, _visibleSize.height/_night->getBoundingBox().size.height);
+        _night->setColor(Color3B::BLACK);
+        _night->setOpacity(100);
+        _night->setPosition(Vec2(_visibleSize.width/2, _visibleSize.height/2));
+        this->addChild(_night,zNight);
+    }
+    log("value %s",night);
+    
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_HAPPY,true);
 //
@@ -210,6 +226,14 @@ void GameScene::update(float dt)
             
             //End
             if(_male->getAtFinish() && _female->getAtFinish())
+            {
+                kCurrentLevel ++; //increment level
+                UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
+                UserDefault::getInstance()->flush();
+                loadInstuctionsEnd();
+            }
+            
+            if(_playTimes == 10)
             {
                 kCurrentLevel ++; //increment level
                 UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
@@ -612,12 +636,30 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
 
 void GameScene::animateMapIn()
 {
+    if(_night != nullptr)
+    {
+        auto thunder = CallFunc::create([this](){ CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_THUNDER);});
+        _night->runAction(FadeTo::create(0.7, 250));
+        _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(8),thunder, NULL)));
+        _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(10),FadeTo::create(0.3, 100),FadeTo::create(0.3, 250), NULL)));
+        _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(3),FadeTo::create(0.1, 100),FadeTo::create(0.1, 250), NULL)));
+    }
     _parent->runAction(Sequence::create(DelayTime::create(1.0f),EaseCubicActionOut::create(MoveTo::create(1, _screenInPosition)),NULL));
 }
 
 void GameScene::animateMapOut()
 {
-    _parent->runAction(Sequence::create(DelayTime::create(0.5),MoveTo::create(1, _screenOutPosition),NULL));
+    if(_night == nullptr)
+    {
+        _parent->runAction(Sequence::create(DelayTime::create(0.5),MoveTo::create(1, _screenOutPosition),NULL));
+    }
+    else
+    {
+        _parent->runAction(Sequence::create(DelayTime::create(0.5),MoveTo::create(1, _screenOutPosition),NULL));
+        _night->stopAllActions();
+        _night->setOpacity(250);
+        _night->runAction(Sequence::create(DelayTime::create(1.5),FadeTo::create(1,100),NULL));
+    }
 }
 
 void GameScene::BeginContact(b2Contact* contact)
@@ -700,6 +742,7 @@ void GameScene::BeginContact(b2Contact* contact)
         }
         if(data1->a == tmxSociety || data2->a == tmxSociety)
         {
+            _playTimes++;
             _society->laugh();
         }
         

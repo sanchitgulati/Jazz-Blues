@@ -81,8 +81,8 @@ Society* Society::createFixture(b2World* world, TMXLayer* layer, int x, int y, f
     fixtureDef.friction = 0.3f;
     fixtureDef.isSensor = true;
     fixtureDef.restitution = 0.0f;
-    //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
-    fixtureDef.filter.maskBits = 0xffff;
+        fixtureDef.filter.categoryBits = 0x0004;
+//    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
     return Society::create(body,widthMultiplier,heightMultiplier);
     

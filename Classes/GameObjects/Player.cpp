@@ -220,7 +220,7 @@ Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int
     fixtureDef.friction = 0.1f;
     fixtureDef.userData = (void*)(new userdataFormat(sensorNone,pIndex));
     fixtureDef.restitution = 0.0f;
-    //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
+        fixtureDef.filter.categoryBits = 0x0004;
     //    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
     
@@ -230,7 +230,7 @@ Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int
     fixtureDef.friction = 0.1f;
     fixtureDef.userData = (void*)(new userdataFormat(sensorNone,pIndex));
     fixtureDef.restitution = 0.0f;
-    //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
+        fixtureDef.filter.categoryBits = 0x0004;
     //    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
     

@@ -82,8 +82,8 @@ Platform* Platform::createFixture(b2World* world, TMXLayer* layer, int x, int y,
     fixtureDef.userData = (void*)(new userdataFormat(tmxPlatform));
     fixtureDef.friction = 0.3f;
     fixtureDef.restitution = 0.0f;
-    //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
-    fixtureDef.filter.maskBits = 0xffff;
+        fixtureDef.filter.categoryBits = 0x0004;
+//    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
     return Platform::create(body,widthMultiplier,heightMultiplier);
 

@@ -76,6 +76,7 @@
 #define SFX_TYPE02 "sfx/type02.wav"
 #define SFX_TYPE_END "sfx/type03.wav"
 #define SFX_HAHA "sfx/haha.wav"
+#define SFX_THUNDER "sfx/lightning_bolt.wav"
 
 #define IMG_JAZZ_0 "images/guitar_0.png"
 #define IMG_JAZZ_1 "images/guitar_1.png"
@@ -113,7 +114,7 @@
 
 enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle,menuSkip};
 enum zButtonIndex {bLeft,bRight,bUp};
-enum zIndex {zBackground,zGame,zRain,zForeground,zHUD,zControl};
+enum zIndex {zBackground,zGame,zNight,zRain,zForeground,zHUD,zControl};
 enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel,tmxSociety,tmxHalf,tmxOtherHalf};
 enum playerIndex {pUnknown,pFemale,pMale};
 enum sensorIndex {sensorNone = 100,sensorTop = 101,sensorRight = 102,sensorBottom = 103,sensorLeft = 104};
