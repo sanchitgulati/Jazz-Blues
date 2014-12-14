@@ -81,6 +81,7 @@
 #define SFX_HAHA "sfx/haha.wav"
 #define SFX_THUNDER "sfx/lightning_bolt.wav"
 #define SFX_POLICE "sfx/police.wav"
+#define SFX_NO "sfx/no.wav"
 
 #define IMG_JAZZ_0 "images/guitar_0.png"
 #define IMG_JAZZ_1 "images/guitar_1.png"

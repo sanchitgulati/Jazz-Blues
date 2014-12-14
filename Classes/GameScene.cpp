@@ -237,17 +237,11 @@ void GameScene::update(float dt)
             //End
             if(_male->getAtFinish() && _female->getAtFinish() && !_arrested)
             {
-                kCurrentLevel ++; //increment level
-                UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
-                UserDefault::getInstance()->flush();
                 loadInstuctionsEnd();
             }
             
             if(_playTimes == 10)
             {
-                kCurrentLevel ++; //increment level
-                UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
-                UserDefault::getInstance()->flush();
                 loadInstuctionsEnd();
             }
             
@@ -356,6 +350,9 @@ void GameScene::loadInstuctions()
 
 void GameScene::loadInstuctionsEnd()
 {
+    kCurrentLevel ++; //increment level
+    UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
+    UserDefault::getInstance()->flush();
     _gameState = gsEnd;
     animateMapOut();
     unschedule(schedule_selector(GameScene::update));
@@ -827,6 +824,8 @@ void GameScene::BeginContact(b2Contact* contact)
                 auto callFunc = CallFunc::create([this](){
                     this->loadInstuctionsEnd();
                 });
+                
+                CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_NO);
                 runAction(Sequence::create(DelayTime::create(5),callFunc, NULL));
             }
         }
