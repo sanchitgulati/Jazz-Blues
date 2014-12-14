@@ -11,7 +11,7 @@
 
 using namespace cocos2d;
 
-enum {bPlay,bLevelSelect};
+enum {bPlay,bLevelSelect,bQuit};
 
 MainMenu::MainMenu() {
     
@@ -62,18 +62,24 @@ bool MainMenu::init() {
         gameLogo1->runAction(repeat);
         
         
-        auto labelPlay = Label::createWithTTF("Continue", FONT, 64);
+        auto labelPlay = Label::createWithTTF("continue", FONT, 64);
         labelPlay->setColor(RGB_BLACK);
         auto menuItemPlay = MenuItemLabel::create(labelPlay, CC_CALLBACK_1(MainMenu::menuCallback, this));
         menuItemPlay->setPositionY(120);
         menuItemPlay->setTag(bPlay);
         
         
-        auto labelNew = Label::createWithTTF("Level Select", FONT, 46);
+        auto labelNew = Label::createWithTTF("level selection", FONT, 46);
         labelNew->setColor(RGB_BLACK);
         auto menuItemNew = MenuItemLabel::create(labelNew, CC_CALLBACK_1(MainMenu::menuCallback, this));
         menuItemNew->setPositionY(0);
         menuItemNew->setTag(bLevelSelect);
+        
+        auto labelQuit = Label::createWithTTF("quit", FONT, 46);
+        labelQuit->setColor(RGB_BLACK);
+        auto menuItemQuit = MenuItemLabel::create(labelQuit, CC_CALLBACK_1(MainMenu::menuCallback, this));
+        menuItemQuit->setPositionY(-120);
+        menuItemQuit->setTag(bQuit);
         
         _prop = Node::create();
         this->addChild(_prop);
@@ -107,7 +113,7 @@ bool MainMenu::init() {
         auto rotate = RotateBy::create(10,3);
         prop2->runAction(RepeatForever::create(Sequence::create(rotate,rotate->reverse(), NULL)));
         
-        _menu = Menu::create(menuItemPlay,menuItemNew, NULL);
+        _menu = Menu::create(menuItemPlay,menuItemQuit,menuItemNew, NULL);
         _menu->setPosition(screenSize.width*0.30, screenSize.height*0.30);
         this->addChild(_menu);
         
@@ -268,6 +274,12 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
                 c->runAction(FadeOut::create(1));
             }
             
+            break;
+        }
+        case bQuit:
+        {
+            Director::getInstance()->end();
+            exit(EXIT_SUCCESS);
             break;
         }
         default:

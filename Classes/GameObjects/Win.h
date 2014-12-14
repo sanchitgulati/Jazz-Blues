@@ -23,10 +23,10 @@ private:
 public:
     Win();
     //    void reset(float x,float y);
-    static Win* createFixture(b2World* world,cocos2d::TMXLayer* layer, int x, int y, float width, float height);
+    static Win* createFixture(b2World* world,cocos2d::TMXLayer* layer, int x, int y, float width, float height,bool alt = false);
     ~Win();
-    static Win* create(b2Body* body);
-    bool initWithBody(b2Body* body);
+    static Win* create(b2Body* body,bool alt);
+    bool initWithBody(b2Body* body,bool alt);
     void convert();
     //    void update(float dt);
 };

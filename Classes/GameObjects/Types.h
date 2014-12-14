@@ -22,6 +22,7 @@
 #include "Poison.h"
 #include "Society.h"
 #include "Tunnel.h"
+#include "Police.h"
 
 
 #endif

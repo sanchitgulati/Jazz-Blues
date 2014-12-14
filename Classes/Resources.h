@@ -22,10 +22,12 @@
 #define IMG_MALE "images/boy.png"
 #define IMG_PLATFORM "images/platform.png"
 #define IMG_WALL "images/wall.png"
+#define IMG_POLICE "images/police.png"
 #define IMG_SOCIETY "images/society.png"
 #define IMG_TUNNEL "images/platform.png"
 #define IMG_SPIKE "images/fire.png"
 #define IMG_WIN "images/win.png"
+#define IMG_WIN_ALT "images/booth.png"
 #define IMG_BLOCK "images/block.png"
 #define IMG_TEDDY "images/teddy.png"
 #define IMG_TEMPLE "images/temple.png"
@@ -78,6 +80,7 @@
 #define SFX_TYPE_END "sfx/type03.wav"
 #define SFX_HAHA "sfx/haha.wav"
 #define SFX_THUNDER "sfx/lightning_bolt.wav"
+#define SFX_POLICE "sfx/police.wav"
 
 #define IMG_JAZZ_0 "images/guitar_0.png"
 #define IMG_JAZZ_1 "images/guitar_1.png"
@@ -108,15 +111,15 @@
 #define MAX_BG 0.90
 
 #define LVLS 12
-#define WIN_QOUTES 8
-#define LOSE_QOUTES 8
+#define WIN_QOUTES 7
+#define LOSE_QOUTES 7
 
 #define VFX_CONSTANT 0.75
 
 enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle,menuSkip};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zNight,zRain,zForeground,zHUD,zControl};
-enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel,tmxSociety,tmxHalf,tmxOtherHalf};
+enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel,tmxSociety,tmxPolice};
 enum playerIndex {pUnknown,pFemale,pMale};
 enum sensorIndex {sensorNone = 100,sensorTop = 101,sensorRight = 102,sensorBottom = 103,sensorLeft = 104};
 enum directionIndex {directionLeft,directionRight};
@@ -145,22 +148,20 @@ const std::string level[LVLS] = {
 
 const std::string win[WIN_QOUTES] = {
     "And in her smile I see something more beautiful than the stars",
-    "I never loved you any more than I do, right this second. And I’ll never love you any less than I do, right this second",
+    "And I’ll never love you any less than I do, right this second",
     "Sometimes I can’t see myself when I’m with you. I can only just see you",
     "I am catastrophically in love with you",
     "I love you. Remember. They cannot take it",
-    "And I’ve realized that the Beatles got it wrong. Love isn’t all we need—love is all there is",
-    "We come to love not by finding a perfect person, but by learning to see an imperfect person perfectly",
+    "Love isn’t all we need — love is all there is",
     "Take my hand and we'll make it"
 };
 
 const std::string lose[LOSE_QOUTES] = {
-    "I’d do it all over again, if I had the choice. No regrets",
+    "I'd do it all over again, if I had the choice. No regrets",
     "I can't live, with or without you",
-    "I know the sun will swallow the only earth we’ll ever have, and I am in love with you",
-    "I don’t care how hard being together is, nothing is worse than being apart",
-    "But you’ve slipped under my skin, invaded my blood and seized my heart",
-    "Sometimes people put up walls, not to keep others out, but to see who cares enough to break them down",
+    "I know the sun will swallow the only earth we'll ever have, and I am in love with you",
+    "I dont care how hard being together is, nothing is worse than being apart",
+    "But you ve slipped under my skin, invaded my blood and seized my heart",
     "Remember to let her into your heart",
     "I'd trade all my tomorrows for one single yesterday"
 };

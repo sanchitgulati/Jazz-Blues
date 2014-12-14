@@ -37,6 +37,7 @@ bool GameScene::init()
     }
     _night = nullptr;
     _playTimes = 0;
+    _arrested = false;
     _gameState = gsIntro;
     kCurrentLevel = UserDefault::getInstance()->getIntegerForKey("continue",1);
     
@@ -91,7 +92,7 @@ bool GameScene::init()
     sfxToggle->setPositionX(0);
     
     auto menu = Menu::create(levelSelector,refresh,sfxToggle, NULL);
-    if(kCurrentLevel == 5) //tunnel
+    if(kCurrentLevel == 5 || kCurrentLevel == 10) //tunnel
         menu->setPosition(Vec2(_visibleSize.width/2,margin));
     else
         menu->setPosition(Vec2(_visibleSize.width/2,_visibleSize.height-margin));
@@ -225,7 +226,7 @@ void GameScene::update(float dt)
             }
             
             //End
-            if(_male->getAtFinish() && _female->getAtFinish())
+            if(_male->getAtFinish() && _female->getAtFinish() && !_arrested)
             {
                 kCurrentLevel ++; //increment level
                 UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
@@ -564,8 +565,10 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 }
                 case tmxWin:
                 {
-                    auto win = Win::createFixture(_world, layer, x, y, 3.0, 3.0); //bcoz image is 96*96
-                    _win = win;
+                    bool alt = false;
+                    if(kCurrentLevel == 10)
+                        alt = true;
+                    auto win = Win::createFixture(_world, layer, x, y, 3.0, 3.0,alt); //bcoz image is 96*96
                     _platformsGroup->addChild(win,1);
                     break;
                 }
@@ -626,6 +629,11 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     _society = Society::createFixture(_world, layer, x, y, 3.0, 2.0);
                     _platformsGroup->addChild(_society,0);
                     break;
+                }
+                case tmxPolice:
+                {
+                    auto police = Police::createFixture(_world, layer, x, y, 1.0, 2.0);
+                    _platformsGroup->addChild(police,0);
                 }
                 default:
                     break;
@@ -745,7 +753,31 @@ void GameScene::BeginContact(b2Contact* contact)
             _playTimes++;
             _society->laugh();
         }
-        
+        if(data1->a == tmxPolice || data2->a == tmxPolice)
+        {
+            if(!_arrested)
+            {
+                _arrested = true;
+                if(data1->b == pFemale || data2->b == pFemale) //Is Female
+                {
+                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_POLICE);
+                    auto delay = DelayTime::create(5);
+                    auto callFunc = CallFunc::create([this](){
+                        loadDiedEnd();
+                    });
+                    runAction(Sequence::create(delay,callFunc, NULL));
+                }
+                if((data1->b == pMale || data2->b == pMale))
+                {
+                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_POLICE);
+                    auto delay = DelayTime::create(1);
+                    auto callFunc = CallFunc::create([this](){
+                        loadDiedEnd();
+                    });
+                    runAction(Sequence::create(delay,callFunc, NULL));
+                }
+            }
+        }
         if(data1->a == tmxTemple || data2->a == tmxTemple)
         {
             for (auto c : _listOfDoors) {

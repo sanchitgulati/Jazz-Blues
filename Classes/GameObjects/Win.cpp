@@ -19,10 +19,10 @@ Win::~Win()
     
 }
 
-Win* Win::create(b2Body* body)
+Win* Win::create(b2Body* body,bool alt)
 {
     Win *pRet = new Win();
-    if (pRet && pRet->initWithBody(body))
+    if (pRet && pRet->initWithBody(body,alt))
     {
         pRet->autorelease();
         return pRet;
@@ -35,9 +35,12 @@ Win* Win::create(b2Body* body)
     }
 }
 
-bool Win::initWithBody(b2Body* body)
+bool Win::initWithBody(b2Body* body,bool alt)
 {
-    _sprite = LFSpriteNode::create(IMG_WIN);
+    if(alt)
+        _sprite = LFSpriteNode::create(IMG_WIN_ALT);
+    else
+        _sprite = LFSpriteNode::create(IMG_WIN);
     _sprite->setB2Body(body);
     _sprite->setPTMRatio(kPixelsPerMeter);
     this->addChild(_sprite);
@@ -45,7 +48,7 @@ bool Win::initWithBody(b2Body* body)
 }
 
 
-Win* Win::createFixture(b2World* world, TMXLayer* layer, int x, int y, float width, float height)
+Win* Win::createFixture(b2World* world, TMXLayer* layer, int x, int y, float width, float height,bool alt)
 {
     // get position & size
     auto p = layer->getPositionAt(Point(x,y));
@@ -84,7 +87,7 @@ Win* Win::createFixture(b2World* world, TMXLayer* layer, int x, int y, float wid
     body->CreateFixture(&fixtureDef);
     
     
-    return Win::create(body);
+    return Win::create(body,alt);
     
 }
 

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="25" height="18" tilewidth="32" tileheight="32">
  <properties>
+  <property name="bg" value="snow"/>
   <property name="end" value="we used the telephone"/>
+  <property name="invert" value="true"/>
   <property name="start" value="police came after me"/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">
@@ -9,7 +11,7 @@
  </tileset>
  <layer name="level" width="25" height="18">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA82U0QoAEBAECfn/P5aiJGW3dZepKw/sHF1qsKWOYijAniQ6WKYjGtZ6D4v8cHC85OZQe0cdSu+sY66RmVUdCIxjP4e8v+Jg+M3hMbsq2cGx5nn/V1b0/AZF8Fo6CAcAAA==
+   H4sIAAAAAAAAA8WUQQoAIAgEjQqP/f+3nQIJsjXLBgQhYWiTmIg4oHY00VdgPosedXgYjvSwIu/xw+HJBnXcxOJAdtbrOAVxWPM/cViIeHPNkTZz87lnd9uiR3KXFMWxwuqQRP6Jr6sDqvtj2AgHAAA=
   </data>
  </layer>
 </map>
