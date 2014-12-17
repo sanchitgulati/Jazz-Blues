@@ -61,8 +61,14 @@ bool MainMenu::init() {
         repeat = RepeatForever::create(sequence);
         gameLogo1->runAction(repeat);
         
+        auto strplay = "continue";
         
-        auto labelPlay = Label::createWithTTF("continue", FONT, 64);
+        auto t = UserDefault::getInstance()->getIntegerForKey("continue",1);
+        if(t == 1)
+        {
+            strplay = "new game";
+        }
+        auto labelPlay = Label::createWithTTF(strplay, FONT, 64);
         labelPlay->setColor(RGB_BLACK);
         auto menuItemPlay = MenuItemLabel::create(labelPlay, CC_CALLBACK_1(MainMenu::menuCallback, this));
         menuItemPlay->setPositionY(120);
@@ -86,7 +92,8 @@ bool MainMenu::init() {
         
         auto prop0 = Sprite::create(IMG_JAZZ_0);
         prop0->setScale(Util::getScreenRatioHeight(prop0));
-        prop0->setPosition(screenSize.width*0.70, screenSize.height*0.50);
+        prop0->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+        prop0->setPosition(screenSize.width, screenSize.height*0.50);
         _prop->addChild(prop0);
         delta = 5;
         move = MoveBy::create(12, Vec2(-delta, 0));
@@ -97,7 +104,8 @@ bool MainMenu::init() {
         
         auto prop1 = Sprite::create(IMG_JAZZ_1);
         prop1->setScale(Util::getScreenRatioHeight(prop1));
-        prop1->setPosition(screenSize.width*0.70, screenSize.height*0.50);
+        prop1->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+        prop1->setPosition(screenSize.width, screenSize.height*0.50);
         _prop->addChild(prop1);
         
         delta = 5;
@@ -108,7 +116,8 @@ bool MainMenu::init() {
         
         auto prop2 = Sprite::create(IMG_JAZZ_2);
         prop2->setScale(Util::getScreenRatioHeight(prop2));
-        prop2->setPosition(screenSize.width*0.70, screenSize.height*0.50);
+        prop2->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+        prop2->setPosition(screenSize.width, screenSize.height*0.50);
         _prop->addChild(prop2);
         auto rotate = RotateBy::create(10,3);
         prop2->runAction(RepeatForever::create(Sequence::create(rotate,rotate->reverse(), NULL)));

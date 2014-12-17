@@ -221,8 +221,8 @@ void GameScene::update(float dt)
     _world->Step(dt, 8, 1);
     if(_gameState == gsStart)
     {
-        if(_society != nullptr)
-            _society->move();
+//        if(_society != nullptr)
+//            _society->move();
         if(_female != nullptr)
         {
             //Dynamic Scaling
@@ -352,9 +352,6 @@ void GameScene::loadInstuctions()
 
 void GameScene::loadInstuctionsEnd()
 {
-    kCurrentLevel ++; //increment level
-    UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
-    UserDefault::getInstance()->flush();
     _gameState = gsEnd;
     animateMapOut();
     unschedule(schedule_selector(GameScene::update));
@@ -373,7 +370,7 @@ void GameScene::loadInstuctionsEnd()
     Label* winnerTitle = nullptr;
     if(kCurrentLevel == 12)
     {
-        str = "This game is a dedication.\nTo Jazz, From Blues.";
+        str = "This game is a dedication.";
         winnerTitle = Label::createWithTTF(str, FONT, 36);
         winnerTitle->setWidth(screenSize.width*0.90);
         winnerTitle->setColor(RGB_ROSE);
@@ -421,7 +418,11 @@ void GameScene::loadInstuctionsEnd()
     winnerTitle->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1), NULL));
     menuLbl->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1), NULL));
     
-
+    //update level
+    
+    kCurrentLevel ++; //increment level
+    UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
+    UserDefault::getInstance()->flush();
 }
 
 void GameScene::loadDiedEnd()
