@@ -96,7 +96,7 @@ bool MainMenu::init() {
         prop0->setPosition(screenSize.width, screenSize.height*0.50);
         _prop->addChild(prop0);
         delta = 5;
-        move = MoveBy::create(12, Vec2(-delta, 0));
+        move = MoveBy::create(12, Vec2(delta, 0));
         move_reverse = MoveBy::create(12, Vec2(delta, 0));
         sequence = Sequence::create(move,move_reverse,NULL);
         repeat = RepeatForever::create(sequence);
@@ -109,7 +109,7 @@ bool MainMenu::init() {
         _prop->addChild(prop1);
         
         delta = 5;
-        move = MoveBy::create(15, Vec2(-delta, 0));
+        move = MoveBy::create(15, Vec2(delta, 0));
         sequence = Sequence::create(move,move->reverse(),NULL);
         repeat = RepeatForever::create(sequence);
         prop1->runAction(repeat);
