@@ -78,9 +78,9 @@ Teddy* Teddy::createFixture(b2World* world, TMXLayer* layer, int x, int y, float
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape; //changed from shape
     fixtureDef.density = 0.1f;
-    fixtureDef.friction = 0.2f;
+    fixtureDef.friction = 0.0f;
     fixtureDef.userData = (void*)(new userdataFormat(tmxTeddy));
-    fixtureDef.restitution = 0.4f;
+    fixtureDef.restitution = 0.0f;
     fixtureDef.filter.categoryBits = 0x0002;
     fixtureDef.filter.maskBits = 0x0004;
     body->CreateFixture(&fixtureDef);
