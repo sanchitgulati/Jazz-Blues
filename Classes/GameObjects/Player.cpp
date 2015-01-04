@@ -7,7 +7,9 @@
 //
 
 #include "Player.h"
+#include "Util.h"
 using namespace cocos2d;
+
 
 Player* Player::create(b2Body* body,int pIndex)
 {
@@ -77,7 +79,19 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     _invert = 1;
     _facing = directionRight;
     
+    giftM[0] = "video game";
+    giftM[1] = "book";
+    giftM[2] = "watch";
+    giftM[3] = "shirt";
+    giftM[4] = "kite";
     
+    giftF[0] = "chocolate";
+    giftF[1] = "necklace";
+    giftF[2] = "lily";
+    giftF[3] = "teddy";
+    giftF[4] = "mix tape";
+    
+    first = (int)floor(Util::randf()*5);
     
     schedule(schedule_selector(Player::update));
     return true;
@@ -85,6 +99,7 @@ bool Player::initWithBody(b2Body* body,int pIndex)
 
 Player::Player()
 {
+    lastGift = 0.0f;
 }
 
 Player::~Player()
@@ -100,6 +115,9 @@ Player::Player(float x,float y)
 
 void Player::update(float dt)
 {
+    
+    
+    lastGift+=dt;
 //    _streak->setPosition(_sprite->getPosition());
     auto body = _sprite->getB2Body();
     
@@ -205,7 +223,7 @@ Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int
     fixtureDef.friction = 0.1f;
     fixtureDef.userData = (void*)(new userdataFormat(sensorNone,pIndex));
     fixtureDef.restitution = 0.0f;
-    //    fixtureDef.filter.categoryBits = kFilterCategoryLevel;
+    fixtureDef.filter.categoryBits = 0x0004;
     //    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
     
@@ -346,6 +364,40 @@ void Player::poison()
         auto tint = TintTo::create(5, 0, 162, 0);
         _shape->runAction(Sequence::create(tint,callFunc, NULL));
     }
+}
+
+void Player::gift()
+{
+    
+    if(lastGift <= 2.0f)
+        return;
+    
+    lastGift = 0.0f;
+    
+    auto val1 = (Util::toss() ? -1 : 1) * Util::randf()*_sprite->getBoundingBox().size.width/2;
+    auto val2 = Util::randf()*_sprite->getBoundingBox().size.height/4 + _sprite->getBoundingBox().size.height/2;
+    auto val3 = Util::randf()+1.5;
+    
+    std::string g = "";
+    first++;
+    if(first == 5)
+        first = 0;
+    int n = first;
+    if(_pIndex == pFemale)
+    {
+        g = giftF[n];
+    }
+    else
+    {
+        g = giftM[n];
+    }
+    auto l = Label::createWithTTF(g, FONT_JANE, 72);
+    l->setColor(RGB_ROSE);
+    l->setPosition(_sprite->getBoundingBox().size.width/2 + val1,_sprite->getBoundingBox().size.height + val2);
+    auto callFunc = CallFunc::create([this,l](){this->removeChild(l);});
+    l->runAction(Sequence::create(FadeOut::create(val3),callFunc, NULL));
+    l->runAction(MoveBy::create(val3-0.2, Vec2(0,15)));
+    _sprite->addChild(l);
 }
 
 void Player::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)

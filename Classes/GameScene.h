@@ -20,7 +20,7 @@
 
 enum GameState { gsIntro, gsStart, gsDied, gsEnd};
 
-enum tags {tagIntro,tagMenu};
+enum tags {tagIntro,tagMenu,tagSkip};
 
 
 class GameScene : public cocos2d::Layer, public b2ContactListener
@@ -40,6 +40,8 @@ private:
     int _playTimes;
     bool _arrested;
     bool _god;
+    
+    int _giftTurn;
     
     // stuff the player overlaps for overlap check will go here in this group!
     cocos2d::Node* _overlapGroup;
@@ -101,6 +103,7 @@ protected:
     void transitionToGameScene();
     void restartScene();
     void startGame();
+    void skip();
     void toGameScene();
     virtual void draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags)override;
     void onDraw(const cocos2d::Mat4 &transform, uint32_t flags);

@@ -10,7 +10,7 @@
  </tileset>
  <layer name="level" width="25" height="18">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NnYGBgpwOmJRi1Y9SOUTtGjh30LK9YoDQPFrfAAB8OcWTAjMUfhAAuNcTqBWFGGmJ62UEPAABb4RW/CAcAAA==
+   H4sIAAAAAAAAA2NnYGBgpwOmJRi1Y9SOUTtGjh30LK9YoDQPHnfxEeF2Ziz+IAWQox6EGWmIkf1BC/PJ8Te6fmIBAIL5WUkIBwAA
   </data>
  </layer>
 </map>

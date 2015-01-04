@@ -39,6 +39,7 @@ bool GameScene::init()
     _playTimes = 0;
     _arrested = false;
     _god = false;
+    _giftTurn = pFemale;
     _gameState = gsIntro;
     kCurrentLevel = UserDefault::getInstance()->getIntegerForKey("continue",1);
     
@@ -120,9 +121,9 @@ bool GameScene::init()
 #endif
     
     /* Entering box2d world */
-    //    _platformsGroup->setVisible(false);
-    //    _playerGroup->setVisible(false);
-    //    _bgGroup->setVisible(false);
+    //        _platformsGroup->setVisible(false);
+    //        _playerGroup->setVisible(false);
+    //        _bgGroup->setVisible(false);
     /*end*/
     
     
@@ -150,7 +151,7 @@ bool GameScene::init()
     
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_HAPPY,true);
-//
+    //
     
     if(kCurrentLevel == 12)
     {
@@ -164,6 +165,20 @@ bool GameScene::init()
     return true;
 }
 
+
+void GameScene::skip()
+{
+    auto obj = this->getChildByTag(tagSkip);
+    obj->setVisible(false);
+    auto c = getChildByTag(tagIntro);
+    for(auto child : c->getChildren())
+        child->stopAllActions();
+    c->stopAllActions();
+    c->setVisible(false);
+    this->animateMapIn();
+    this->_gameState = gsStart;
+    CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+}
 
 void GameScene::menuCloseCallback(Ref* pSender)
 {
@@ -182,15 +197,7 @@ void GameScene::menuCloseCallback(Ref* pSender)
         }
         case menuSkip:
         {
-            obj->setVisible(false);
-            auto c = getChildByTag(tagIntro);
-            for(auto child : c->getChildren())
-                child->stopAllActions();
-            c->stopAllActions();
-            c->setVisible(false);
-            this->animateMapIn();
-            this->_gameState = gsStart;
-            CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+            skip();
             break;
         }
         case menuToggle:
@@ -221,8 +228,8 @@ void GameScene::update(float dt)
     _world->Step(dt, 8, 1);
     if(_gameState == gsStart)
     {
-//        if(_society != nullptr)
-//            _society->move();
+        //        if(_society != nullptr)
+        //            _society->move();
         if(_female != nullptr)
         {
             //Dynamic Scaling
@@ -242,9 +249,10 @@ void GameScene::update(float dt)
                 loadInstuctionsEnd();
             }
             
-            if(_playTimes == 10)
+            if(_playTimes == 3)
             {
                 loadInstuctionsEnd();
+                _playTimes = 1;
             }
             
             if(!_male->getIsAlive())
@@ -297,8 +305,17 @@ void GameScene::loadInstuctions()
     menuLbl->setColor(RGB_ROSE);
     auto menuItem = MenuItemLabel::create(menuLbl, CC_CALLBACK_1(GameScene::menuCloseCallback,this));
     menuItem->setTag(menuSkip);
-    auto menu = Menu::create(menuItem,NULL);
+    
+    auto menuLblPC = Label::createWithTTF("press space to skip", FONT, 18);
+    menuLblPC->setColor(RGB_ROSE);
+    auto menuItemPC = MenuItemLabel::create(menuLblPC, CC_CALLBACK_1(GameScene::menuCloseCallback,this));
+    menuItemPC->setTag(menuSkip);
+    menuItemPC->setPositionY(-1*menuLbl->getContentSize().height*1);
+    menuItemPC->setEnabled(false);
+    
+    auto menu = Menu::create(menuItem,menuItemPC,NULL);
     menu->setPosition(Vec2(screenSize.width/2,screenSize.height*0.30));
+    menu->setTag(tagSkip);
     labelTitle->setTag(tagIntro);
     this->addChild(labelTitle);
     this->addChild(menu);
@@ -494,7 +511,7 @@ void GameScene::loadLevel(int level)
     bg->setPosition(screenSize.width/2, screenSize.height/2);
     bg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
     _bgGroup->addChild(bg);
-        
+    
     auto loadLevelString = StringUtils::format("levels/%d.tmx",kCurrentLevel);
     _tm = TMXTiledMap::create(loadLevelString);
     _tm->setVisible(false);
@@ -716,6 +733,25 @@ void GameScene::BeginContact(b2Contact* contact)
     
     
     
+    if(data1->a == tmxTeddy || data2->a == tmxTeddy)
+    {
+        if(data1->b == pFemale || data2->b == pFemale) //Is Female
+        {
+            if(_giftTurn == pFemale){
+                _female->gift();
+                _giftTurn = pMale;
+            }
+        }
+        else if(data1->b == pMale || data2->b == pMale) //Is Male
+        {
+            if(_giftTurn == pMale){
+                _male->gift();
+                _playTimes++;
+                _giftTurn = pFemale;
+            }
+        }
+    }
+    
     if(f1->IsSensor() || f2->IsSensor())
     {
         if(data1->a == tmxPlatform || data2->a == tmxPlatform )
@@ -787,8 +823,23 @@ void GameScene::BeginContact(b2Contact* contact)
         }
         if(data1->a == tmxSociety || data2->a == tmxSociety)
         {
-            _playTimes++;
-            _society->laugh();
+            if(data1->b == pMale || data2->b == pMale || data1->b == pFemale || data2->b == pFemale )
+            {
+                if(!_arrested)
+                {
+                    _arrested = true;
+                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_LOCK);
+                    auto delay = DelayTime::create(1);
+                    auto callFunc = CallFunc::create([this](){
+                        loadDiedEnd();
+                    });
+                    runAction(Sequence::create(delay,callFunc, NULL));
+                }
+            }
+            else if(data1->a == tmxTeddy || data2->a == tmxTeddy)
+            {
+                _society->laugh();
+            }
         }
         if(data1->a == tmxPolice || data2->a == tmxPolice)
         {
@@ -919,6 +970,9 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
         case EventKeyboard::KeyCode::KEY_R:
             transitionToGameScene();
             break;
+        case EventKeyboard::KeyCode::KEY_SPACE:
+            skip();
+            break;
         default:
             break;
     }
@@ -957,9 +1011,9 @@ void GameScene::toGameScene()
     this->addChild(clipper, 500);
     auto callFunc = CallFuncN::create(CC_CALLBACK_0(GameScene::startGame,this));
     heart->runAction(EaseSineIn::create(Spawn::create(ScaleTo::create(2.5f, (size.width/heart->getContentSize().width)*1.3),
-                                                       RotateBy::create(2.5f, 540),
-                                                       Sequence::create(DelayTime::create(2.5),
-                                                                        callFunc, NULL), NULL)));
+                                                      RotateBy::create(2.5f, 540),
+                                                      Sequence::create(DelayTime::create(2.5),
+                                                                       callFunc, NULL), NULL)));
     
 }
 

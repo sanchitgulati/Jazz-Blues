@@ -52,6 +52,11 @@ private:
     
     int _isTouchingFloor;
     
+    float lastGift = 0.0f;
+    int first;
+    std::string giftM[5];
+    std::string giftF[5];
+    
 protected:
 public:
     Player();
@@ -66,6 +71,7 @@ public:
 //    void setIsTouching(int sensorEnum[],int val = true,bool died = false);
     void setIsGround(bool val);
     void poison();
+    void gift();
     void invert();
     bool getIsAlive();
     void setIsDied(bool val);
