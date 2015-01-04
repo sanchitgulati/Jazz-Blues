@@ -42,11 +42,14 @@ bool Door::initWithBody(b2Body* body,float scaleX,float scaleY)
     auto contentSize = _sprite->getContentSize();
     _sprite->setTextureRect(Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
     _sprite->setB2Body(body);
-    _sprite->setRotation((rand()%4)*90); //0-3 * 90degree, can give 0,90,180,270
     _sprite->setPTMRatio(kPixelsPerMeter);
     this->addChild(_sprite);
-
-    _sprite->getTexture()->setTexParameters({GL_LINEAR,GL_LINEAR,GL_REPEAT,GL_REPEAT});
+    
+    if(Util::toss())
+        _sprite->runAction(RepeatForever::create(Sequence::create(RotateBy::create(10, 360),NULL)));
+    else
+        
+        _sprite->runAction(RepeatForever::create(Sequence::create(RotateBy::create(15, 360),NULL)));
     return true;
 }
 

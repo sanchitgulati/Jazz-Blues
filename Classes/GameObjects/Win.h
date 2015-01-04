@@ -28,6 +28,7 @@ public:
     static Win* create(b2Body* body,bool alt);
     bool initWithBody(b2Body* body,bool alt);
     void convert();
+    void fade();
     //    void update(float dt);
 };
 

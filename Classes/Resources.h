@@ -31,13 +31,12 @@
 #define IMG_BLOCK "images/block.png"
 #define IMG_TEDDY "images/teddy.png"
 #define IMG_TEMPLE "images/temple.png"
+#define IMG_TEMPLE_01 "images/temple01.png"
 #define IMG_DOOR "images/door.png"
 #define IMG_CLOUD "images/cloud.png"
 #define IMG_CLOUD_0 "images/cloud01.png"
 #define IMG_CLOUD_1 "images/cloud02.png"
 #define IMG_CLOUD_2 "images/cloud03.png"
-#define IMG_CLOUD_3 "images/cloud04.png"
-#define IMG_CLOUD_4 "images/cloud05.png"
 
 #define IMG_BUTTON_LEFT_0 "images/button_left_0.png"
 #define IMG_BUTTON_LEFT_1 "images/button_left_1.png"
@@ -82,6 +81,7 @@
 #define SFX_THUNDER "sfx/lightning_bolt.wav"
 #define SFX_POLICE "sfx/police.wav"
 #define SFX_LOCK "sfx/lock.wav"
+#define SFX_GRIND "sfx/grind.wav"
 #define SFX_NO "sfx/no.wav"
 
 #define IMG_JAZZ_0 "images/guitar_0.png"
@@ -90,6 +90,7 @@
 #define IMG_GAME_LOGO_0 "images/game_logo_0.png"
 #define IMG_GAME_LOGO_1 "images/game_logo_1.png"
 
+#define IMG_RECORD_D "images/recordD.png"
 #define IMG_RECORD "images/record.png"
 
 //words
@@ -130,6 +131,7 @@ const float kGravity = -kPixelsPerMeter / 0.5; // adjust this to taste
 const float kUpdateInterval = 1.0f / 60.0f;
 const double kSecondsPerUpdate = 0.1;
 struct userdataFormat { int a;int b;int c;cocos2d::Node* node;  userdataFormat(int a,int b = 0,int c = 0,cocos2d::Node* node = nullptr){this->a = a;this->b = b;this->c = c;this->node = node;}};
+
 
 
 const std::string level[LVLS] = {

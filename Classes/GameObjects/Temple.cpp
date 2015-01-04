@@ -41,6 +41,9 @@ bool Temple::initWithBody(b2Body* body)
     _sprite->setB2Body(body);
     _sprite->setPTMRatio(kPixelsPerMeter);
     this->addChild(_sprite);
+    
+    _sprite->runAction(RepeatForever::create(Sequence::create(ScaleBy::create(0.5, 1.2),ScaleBy::create(0.5, 1.2)->reverse(), NULL)));
+    
     return true;
 }
 

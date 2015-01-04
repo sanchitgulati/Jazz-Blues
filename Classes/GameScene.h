@@ -40,7 +40,7 @@ private:
     int _playTimes;
     bool _arrested;
     bool _god;
-    
+    int _blood;
     int _giftTurn;
     
     // stuff the player overlaps for overlap check will go here in this group!

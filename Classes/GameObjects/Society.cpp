@@ -12,6 +12,7 @@ using namespace cocos2d;
 Society::Society()
 {
     lastLaugh = 0.0f;
+    _notMoving = true;
 }
 
 Society::~Society()
@@ -67,23 +68,48 @@ Society* Society::createFixture(b2World* world, TMXLayer* layer, int x, int y, f
                          (p.y + tileSize.height/2 + (vertical*tileSize.height/2) + (-1*vertical)*(tileSize.height * heightMultiplier / 2.0f)) / kPixelsPerMeter
                          );
     b2Body* body = world->CreateBody(&bodyDef);
+    
+    
+    auto widthHalf = (tileSize.width / kPixelsPerMeter) * 0.5f * width;
+    auto heightHalf = (tileSize.height / kPixelsPerMeter) * 0.5f * height;
+
+    
+    
     // define the shape
     b2PolygonShape shape;
     shape.SetAsBox(
-                   ((tileSize.width / kPixelsPerMeter) * 0.5f * width)* widthMultiplier,
-                   ((tileSize.height / kPixelsPerMeter) * 0.5f * height)* heightMultiplier
-                   );
+                   (tileSize.width / kPixelsPerMeter) * 0.5f * width,
+                   (tileSize.height / kPixelsPerMeter) * 0.5f * height *0.50
+                   ,b2Vec2(0, heightHalf * 0.50),0);
+    
+    b2CircleShape shapeC;
+    shapeC.m_radius = (tileSize.width / kPixelsPerMeter) * 0.5f * height * 0.5;
+    shapeC.m_p = b2Vec2(0, -heightHalf*0.50);
+    
     // create the fixture
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &shape;
-    fixtureDef.density = 1.0f;
+    fixtureDef.density = 5.0f;
     fixtureDef.userData = (void*)(new userdataFormat(tmxSociety));
-    fixtureDef.friction = 0.3f;
+    fixtureDef.friction = 1.0f;
+    fixtureDef.isSensor = true;
+    fixtureDef.restitution = 0.0f;
+    fixtureDef.filter.categoryBits = 0x0004;
+    //    fixtureDef.filter.maskBits = 0xffff;
+    body->CreateFixture(&fixtureDef);
+    fixtureDef.shape = &shapeC;
+    fixtureDef.density = 5.0f;
+    fixtureDef.userData = (void*)(new userdataFormat(tmxSociety));
+    fixtureDef.friction = 1.0f;
     fixtureDef.isSensor = true;
     fixtureDef.restitution = 0.0f;
     fixtureDef.filter.categoryBits = 0x0004;
 //    fixtureDef.filter.maskBits = 0xffff;
     body->CreateFixture(&fixtureDef);
+    
+
+    
+    
     return Society::create(body,widthMultiplier,heightMultiplier);
     
 }
@@ -91,6 +117,21 @@ Society* Society::createFixture(b2World* world, TMXLayer* layer, int x, int y, f
 void Society::update(float dt)
 {
     lastLaugh+=dt;
+    if(!_notMoving)
+    {
+        _sprite->getB2Body()->SetLinearVelocity(b2Vec2(5,0));
+    }
+}
+
+void Society::setDynamic()
+{
+    _sprite->getB2Body()->GetFixtureList()[0].SetSensor(false);
+    _sprite->getB2Body()->SetType(b2_dynamicBody);
+}
+
+Vec2 Society::getPos()
+{
+    return _sprite->getPosition();
 }
 
 void Society::laugh()
@@ -112,15 +153,20 @@ void Society::laugh()
         l->runAction(MoveBy::create(val3-0.2, Vec2(0, 5)));
         _sprite->addChild(l);
         CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_HAHA);
-        log("va1 %f  va2 %f  va3 %f",val1,val2,val3);
     }
 }
 
 
 void Society::move()
 {
-    auto pos = _sprite->getB2Body()->GetPosition();
-    pos.x += 0.1;
-    _sprite->getB2Body()->SetTransform(pos, 0);
+    if(_notMoving)
+    {
+        _notMoving = false;
+        auto callFunc = CallFunc::create([this](){
+            this->_notMoving = true;
+        });
+        auto delayTime = DelayTime::create(2.3);
+        runAction(Sequence::create(delayTime,callFunc, NULL));
+    }
 }
 

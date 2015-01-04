@@ -207,7 +207,7 @@ Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int
     shape.SetAsBox(
                    (tileSize.width / kPixelsPerMeter) * 0.5f * width * 0.90,
                    (tileSize.height / kPixelsPerMeter) * 0.5f * height *0.50
-                   ,b2Vec2(0, widthHalf * 0.25),0);
+                   ,b2Vec2(0, heightHalf * 0.25),0);
     
     //define bottom
     b2CircleShape shapeC;

@@ -4,13 +4,14 @@
   <property name="bg" value="snow"/>
   <property name="end" value="but, she turned green, I was the poison now"/>
   <property name="start" value="we met again 1 night"/>
+  <property name="time" value="night"/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">
   <image source="tilesheet.jpg" width="192" height="96"/>
  </tileset>
  <layer name="level" width="25" height="18">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA2NnoC1gh+JRO0aeHSwk6GElQS0zA339wUhDPNzifNSOUTuGoh0AWYtBjQgHAAA=
+   H4sIAAAAAAAAA2NnoC1gh+JROwanHSxUMpcZjx3EAFYS1dMzrBhpiJH9QQ87aGEPclghA2qaj8sOaoNRO0amHQAa2zmTCAcAAA==
   </data>
  </layer>
 </map>

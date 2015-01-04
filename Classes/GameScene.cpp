@@ -39,9 +39,16 @@ bool GameScene::init()
     _playTimes = 0;
     _arrested = false;
     _god = false;
+    _blood = 0;
     _giftTurn = pFemale;
     _gameState = gsIntro;
     kCurrentLevel = UserDefault::getInstance()->getIntegerForKey("continue",1);
+
+    auto max = UserDefault::getInstance()->getIntegerForKey("max",1);
+    if(kCurrentLevel > max)
+        UserDefault::getInstance()->setIntegerForKey("max",kCurrentLevel);
+    
+    UserDefault::getInstance()->flush();
     
     _visibleSize = Director::getInstance()->getVisibleSize();
     _screenOutPosition = Vec2(_visibleSize.width/2,-1*_visibleSize.height/2);
@@ -121,9 +128,9 @@ bool GameScene::init()
 #endif
     
     /* Entering box2d world */
-    //        _platformsGroup->setVisible(false);
-    //        _playerGroup->setVisible(false);
-    //        _bgGroup->setVisible(false);
+//            _platformsGroup->setVisible(false);
+//            _playerGroup->setVisible(false);
+//            _bgGroup->setVisible(false);
     /*end*/
     
     
@@ -243,10 +250,40 @@ void GameScene::update(float dt)
                 loadDiedEnd();
             }
             
+            
+            
             //End
             if(_male->getAtFinish() && _female->getAtFinish() && !_arrested)
             {
-                loadInstuctionsEnd();
+                if(kCurrentLevel == 11)
+                {
+                    auto cf = CallFunc::create([this](){
+                        this->loadInstuctionsEnd();});
+                    
+                    _night->stopAllActions();
+                    _night->setOpacity(100);
+                    auto dt = DelayTime::create(6);
+                    auto finish = (Win*)_platformsGroup->getChildByTag(999);
+                    finish->fade();
+                    
+                    _female->poison();
+                    _arrested = true; //hack
+                    
+                    runAction(Sequence::create(dt,cf, NULL));
+                }
+                else{
+                    _male->setLocalZOrder(0);
+                    _female->setLocalZOrder(0);
+                    for(auto c : _platformsGroup->getChildren())
+                    {
+                        if(c->getTag() == 999)
+                        {
+                            auto s = MoveBy::create(0.1, Vec2(5, 0));
+                            c->runAction(Repeat::create(Sequence::create(s,s->reverse(),s->reverse(), NULL),2));
+                        }
+                    }
+                    loadInstuctionsEnd();
+                }
             }
             
             if(_playTimes == 3)
@@ -274,6 +311,20 @@ void GameScene::update(float dt)
                 _female->removeFromParentAndCleanup(true);
                 _gameState = gsDied;
                 loadDiedEnd();
+                
+            }
+            
+            if(_blood == 1)
+            {
+                auto emitter = ParticleSystemQuad::create("particle_texture.plist");
+                _platformsGroup->addChild(emitter, 999);
+                emitter->setPosition(_society->getPos());
+                
+                
+                CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_GRIND);
+                _society->runAction(FadeOut::create(1));
+                loadInstuctionsEnd();
+                _blood++;
                 
             }
         }
@@ -383,11 +434,14 @@ void GameScene::loadInstuctionsEnd()
     labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
     labelTitle->setPosition(screenSize.width/2,screenSize.height/2);
     
-    auto str = StringUtils::format("\"%s\"",win[(int)floor((Util::randf()*WIN_QOUTES)+1)].c_str());
+    GlobalClass::qouteWin++;
+    if(GlobalClass::qouteWin >= WIN_QOUTES)
+        GlobalClass::qouteWin = 0;
+    auto str = StringUtils::format("\"%s\"",win[GlobalClass::qouteWin].c_str());
     Label* winnerTitle = nullptr;
     if(kCurrentLevel == 12)
     {
-        str = "This game is a dedication.";
+        str = "This game is a dedication.\nTo Jazz,From Blues.";
         winnerTitle = Label::createWithTTF(str, FONT, 36);
         winnerTitle->setWidth(screenSize.width*0.90);
         winnerTitle->setColor(RGB_ROSE);
@@ -449,7 +503,10 @@ void GameScene::loadDiedEnd()
     unschedule(schedule_selector(GameScene::update));
     auto screenSize = Director::getInstance()->getVisibleSize();
     
-    auto str = StringUtils::format("\"%s\"",lose[(int)floor((Util::randf()*LOSE_QOUTES)+1)].c_str());
+    GlobalClass::qouteLose++;
+    if(GlobalClass::qouteLose >= LOSE_QOUTES)
+        GlobalClass::qouteLose= 0;
+    auto str = StringUtils::format("\"%s\"",lose[GlobalClass::qouteLose].c_str());
     auto labelTitle = Label::createWithTTF(str, FONT_JANE, 54);
     labelTitle->setWidth(screenSize.width*0.90);
     labelTitle->setColor(RGB_ROSE);
@@ -622,7 +679,8 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                     bool alt = false;
                     if(kCurrentLevel == 10)
                         alt = true;
-                    auto win = Win::createFixture(_world, layer, x, y, 3.0, 3.0,alt); //bcoz image is 96*96
+                    auto win = Win::createFixture(_world, layer, x, y, 1.0, 2.0,alt); //bcoz image is 96*96
+                    win->setTag(999);
                     _platformsGroup->addChild(win,1);
                     break;
                 }
@@ -679,8 +737,11 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 }
                 case tmxSociety:
                 {
-                    _society = Society::createFixture(_world, layer, x, y, 3.0, 2.0);
+                    _society = Society::createFixture(_world, layer, x, y, 1.0, 3.0);
                     _platformsGroup->addChild(_society,0);
+                    
+                    if(kCurrentLevel == 9)
+                        _society->setDynamic();
                     break;
                 }
                 case tmxPolice:
@@ -719,7 +780,7 @@ void GameScene::animateMapOut()
     {
         _parent->runAction(Sequence::create(DelayTime::create(0.5),MoveTo::create(1, _screenOutPosition),NULL));
         _night->stopAllActions();
-        _night->setOpacity(250);
+//        _night->setOpacity(250);
         _night->runAction(Sequence::create(DelayTime::create(1.5),FadeTo::create(1,100),NULL));
     }
 }
@@ -749,6 +810,14 @@ void GameScene::BeginContact(b2Contact* contact)
                 _playTimes++;
                 _giftTurn = pFemale;
             }
+        }
+    }
+    
+    if(data1->a == tmxSociety || data2->a == tmxSociety)
+    {
+        if(data1->a == tmxFire || data2->a == tmxFire)
+        {
+            _blood++;
         }
     }
     
@@ -808,6 +877,17 @@ void GameScene::BeginContact(b2Contact* contact)
             else if(data1->b == pMale || data2->b == pMale) //Is Male
             {
                 _male->setAtFinish(true);
+                
+                if(kCurrentLevel == 9)
+                {
+                    if(_society != nullptr)
+                    {
+                        auto callFunc = CallFunc::create([this](){
+                            this->_society->move();
+                        });
+                        runAction(callFunc);
+                    }
+                }
             }
         }
         if(data1->a == tmxPoison || data2->a == tmxPoison )

@@ -177,27 +177,34 @@ void MainMenu::createLevelMenu()
         auto lbl = Label::createWithTTF(level[i].c_str(), FONT, 21);
         auto sptr = Sprite::create(IMG_RECORD);
         auto item = MenuItemSprite::create(sptr,sptr, CC_CALLBACK_1(MainMenu::levelCallback, this));
+
         item->setContentSize(Size(screenSize.height*0.24,screenSize.height*0.20));
         sptr->setScale(Util::getScreenRatioHeight(sptr)*0.15);
         item->setTag(i+1);
         lvlList.pushBack(item);
-        lbl->setColor(RGB_ROSE); //229,31,46
+        lbl->setColor(RGB_ROSE);
         lbl->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         lbl->setPosition(Vec2(item->getBoundingBox().size.width/2,0));
         item->addChild(lbl);
-//        sptr->setOpacity(0);
-//        lbl->setOpacity(0);
         sptr->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         sptr->setPosition(item->getBoundingBox().size.width/2, item->getBoundingBox().size.height/2);
-        auto time = 3 + random()%3;
-        sptr->runAction(RepeatForever::create(RotateBy::create(time, 360)));
+        
         item->setScale(0.8);
         item->setVisible(false);
         auto popOut = EaseBounceOut::create(ScaleTo::create(1, 1));
         auto callFunc = CallFunc::create([item](){item->setVisible(true);});
         item->runAction(Sequence::create(DelayTime::create(1),callFunc, popOut,NULL));
-//        sptr->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,255), NULL));
-//        lbl->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,255), NULL));
+        
+        auto v = UserDefault::getInstance()->getIntegerForKey("max",1);
+        if((i+1) > v || (i+1) >= 11) // 9 is an hack
+        {
+            sptr->setOpacity(50);
+            item->setEnabled(false);
+            
+        }
+        else{auto time = 3 + random()%3;
+            sptr->runAction(RepeatForever::create(RotateBy::create(time, 360)));
+        }
     }
     auto menu = Menu::createWithArray(lvlList);
     menu->setAnchorPoint(Vec2::ANCHOR_MIDDLE);

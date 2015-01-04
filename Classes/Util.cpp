@@ -10,6 +10,9 @@
 
 using namespace cocos2d;
 
+int GlobalClass::qouteLose = 0;
+int GlobalClass::qouteWin = 0;
+
 float Util::getScreenRatio(Node* obj)
 {
     Size winSize = Director::getInstance()->getWinSize();

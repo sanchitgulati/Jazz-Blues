@@ -10,7 +10,7 @@
  </tileset>
  <layer name="level" width="25" height="18">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA82S2wrAIAxDdW7syf//3TFwEMSsqbpL4CCU1mBqCLZWUk/C7F8UgQWIApdyQZlBj2yAannU/W96KNx5zKa1j9mgrDd7cmJZeT1YLl/sA/2fnhvJXr1b7Vfv8nqoOxv5j6e2cvZkiLWdgGI9NcxX6Vc9GAceur/7CAcAAA==
+   H4sIAAAAAAAAA82U3QqAIAyFlYqu9P0ft4QJY+zPNqEDB0nO9tEUS7F1vr7J3vg+HLUr4hhZquDZsyNGNTzVwFae+4+mGItj0LzG/hsj29x5ZBvLmoF1F6S6CEOai8bYNSvM310Xmb23tzfv7bXK8J5Z5D4OXbB+mSF96zhjSRlq7T218l6G5AcNh++VCAcAAA==
   </data>
  </layer>
 </map>

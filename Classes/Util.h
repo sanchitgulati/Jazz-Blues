@@ -12,6 +12,12 @@
 #include <iostream>
 #include "cocos2d.h"
 
+class GlobalClass {
+public:
+    static int qouteWin;
+    static int qouteLose;
+};
+
 class Util
 {
 public:

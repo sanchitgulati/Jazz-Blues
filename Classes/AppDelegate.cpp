@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "LogoSplash.h"
 #include "Resources.h"
+#include "Util.h"
 
 USING_NS_CC;
 
@@ -24,6 +25,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     
     CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(MAX_BG);
     CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(MAX_SFX);
+    
+    
+    GlobalClass::qouteLose = (int)floor((Util::randf()*LOSE_QOUTES));
+    GlobalClass::qouteWin = (int)floor((Util::randf()*WIN_QOUTES));
     
     // turn on display FPS
     director->setDisplayStats(false);

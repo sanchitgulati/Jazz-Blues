@@ -91,6 +91,12 @@ Win* Win::createFixture(b2World* world, TMXLayer* layer, int x, int y, float wid
     
 }
 
+
+void Win::fade()
+{
+    _sprite->runAction(FadeOut::create(1));
+}
+
 void Win::convert()
 {
     auto random = DelayTime::create(Util::randf()*3);
