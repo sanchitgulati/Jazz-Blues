@@ -3,7 +3,7 @@
  <properties>
   <property name="bg" value="rain"/>
   <property name="end" value="their fall was unavoidable"/>
-  <property name="start" value="this can't go forever .."/>
+  <property name="start" value="this can't go on forever .."/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">
   <image source="tilesheet.jpg" width="192" height="96"/>

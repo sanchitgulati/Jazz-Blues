@@ -2,8 +2,8 @@
 <map version="1.0" orientation="orthogonal" width="25" height="18" tilewidth="32" tileheight="32">
  <properties>
   <property name="bg" value="autumn"/>
-  <property name="end" value="laugh at me .."/>
-  <property name="start" value="... let them "/>
+  <property name="end" value="so we exchange gifts "/>
+  <property name="start" value="they keep us grounded"/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">
   <image source="tilesheet.jpg" width="192" height="96"/>

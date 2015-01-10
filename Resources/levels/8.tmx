@@ -3,7 +3,7 @@
  <properties>
   <property name="bg" value="rain"/>
   <property name="end" value="... it was perilous"/>
-  <property name="start" value="you start meeting at night"/>
+  <property name="start" value="we started meeting at night"/>
   <property name="time" value="night"/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">

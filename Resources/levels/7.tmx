@@ -2,8 +2,8 @@
 <map version="1.0" orientation="orthogonal" width="25" height="18" tilewidth="32" tileheight="32">
  <properties>
   <property name="bg" value="snow"/>
-  <property name="end" value="i said, she is the reason why my god exists"/>
-  <property name="start" value="they said our gods were different"/>
+  <property name="end" value="but even the god said, NO"/>
+  <property name="start" value="I said, she is the reason why my god exists"/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">
   <image source="tilesheet.jpg" width="192" height="96"/>

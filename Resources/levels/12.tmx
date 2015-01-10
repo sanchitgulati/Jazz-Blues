@@ -3,7 +3,7 @@
  <properties>
   <property name="bg" value="rain"/>
   <property name="end" value="but society took her away"/>
-  <property name="start" value="i went away, to get my soul back, lose the hatred"/>
+  <property name="start" value="I went away, to get my soul back, lose the hatred"/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">
   <image source="tilesheet.jpg" width="192" height="96"/>

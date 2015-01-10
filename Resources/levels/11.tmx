@@ -3,7 +3,7 @@
  <properties>
   <property name="bg" value="snow"/>
   <property name="end" value="but, she turned green, I was the poison now"/>
-  <property name="start" value="we met again 1 night"/>
+  <property name="start" value="we met again one night"/>
   <property name="time" value="night"/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">

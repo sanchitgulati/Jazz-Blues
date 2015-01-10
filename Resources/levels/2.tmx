@@ -2,8 +2,8 @@
 <map version="1.0" orientation="orthogonal" width="25" height="18" tilewidth="32" tileheight="32">
  <properties>
   <property name="bg" value="autumn"/>
-  <property name="end" value="and all was worth it"/>
-  <property name="start" value="used everything i could .."/>
+  <property name="end" value="but all was worth it"/>
+  <property name="start" value="used everything I could .."/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">
   <image source="tilesheet.jpg" width="192" height="96"/>
