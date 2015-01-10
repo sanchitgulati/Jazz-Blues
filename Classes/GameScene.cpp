@@ -1051,7 +1051,10 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
             transitionToGameScene();
             break;
         case EventKeyboard::KeyCode::KEY_SPACE:
-            skip();
+            if(_gameState != gsEnd)
+            {
+                skip();
+            }
             break;
         default:
             break;

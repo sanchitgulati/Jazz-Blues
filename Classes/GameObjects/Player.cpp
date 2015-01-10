@@ -375,7 +375,7 @@ void Player::gift()
     lastGift = 0.0f;
     
     auto val1 = (Util::toss() ? -1 : 1) * Util::randf()*_sprite->getBoundingBox().size.width/2;
-    auto val2 = Util::randf()*_sprite->getBoundingBox().size.height/4 + _sprite->getBoundingBox().size.height/2;
+    auto val2 = Util::randf()*_sprite->getBoundingBox().size.height/4 + _sprite->getBoundingBox().size.height;
     auto val3 = Util::randf()+1.5;
     
     std::string g = "";
@@ -391,8 +391,9 @@ void Player::gift()
     {
         g = giftM[n];
     }
-    auto l = Label::createWithTTF(g, FONT_JANE, 72);
+    auto l = Label::createWithTTF(g, FONT, 36);
     l->setColor(RGB_ROSE);
+    log("size %f %f",_sprite->getBoundingBox().size.height,_sprite->getBoundingBox().size.width);
     l->setPosition(_sprite->getBoundingBox().size.width/2 + val1,_sprite->getBoundingBox().size.height + val2);
     auto callFunc = CallFunc::create([this,l](){this->removeChild(l);});
     l->runAction(Sequence::create(FadeOut::create(val3),callFunc, NULL));
