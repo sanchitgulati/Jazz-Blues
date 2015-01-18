@@ -17,6 +17,7 @@
 #include "Box2d/box2d.h"
 #include "Button.h"
 #include "GLESDebugDraw.h"
+#include "FmodHelper.h"
 
 enum GameState { gsIntro, gsStart, gsDied, gsEnd};
 
@@ -57,6 +58,9 @@ private:
     
     int _gameState;
     int kCurrentLevel;
+    
+    FmodHelper* _fmod;
+    int _mute;
     
     //Box2d
     b2World* _world;
@@ -101,6 +105,7 @@ protected:
     void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
     //Rendering
     void transitionToGameScene();
+    void nextTrack(std::string name);
     void restartScene();
     void startGame();
     void skip();

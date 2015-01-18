@@ -2,15 +2,21 @@
 #define __MAINMENU_SCENE_H__
 
 #include "cocos2d.h"
+#include "FmodHelper.h"
 
 class MainMenu : public cocos2d::LayerColor
 {
     cocos2d::Node* _table;
+    cocos2d::Node* _player;
     cocos2d::Node* _prop;
     cocos2d::Menu* _menu;
     cocos2d::Node* _gameLogo;
+    FmodHelper* _fmod;
     
     void createLevelMenu();
+    void hideButtons(bool guitar = false);
+    void createSoundPlayer();
+    void backToMenu();
 public:
 	MainMenu();
 	~MainMenu();
@@ -25,6 +31,7 @@ public:
     // a selector callback
     void menuCallback(cocos2d::Ref* pSender);
     void levelCallback(cocos2d::Ref* pSender);
+    void soundCallback(cocos2d::Ref* pSender);
     
     
     CREATE_FUNC(MainMenu);

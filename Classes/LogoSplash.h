@@ -2,6 +2,7 @@
 #define __LOGOSPLASH_SCENE_H__
 
 #include "cocos2d.h"
+#include "FmodHelper.h";
 
 class LogoSplash : public cocos2d::LayerColor
 {
@@ -21,6 +22,7 @@ public:
     
     
     cocos2d::Sprite *logoSprite;
+    FmodHelper* _fmod;
     
     CREATE_FUNC(LogoSplash);
 };

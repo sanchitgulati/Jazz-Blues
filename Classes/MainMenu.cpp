@@ -11,7 +11,7 @@
 
 using namespace cocos2d;
 
-enum {bPlay,bLevelSelect,bQuit};
+enum {bPlay,bLevelSelect,bSound,bQuit};
 
 MainMenu::MainMenu() {
     
@@ -68,20 +68,26 @@ bool MainMenu::init() {
         {
             strplay = "new game";
         }
-        auto labelPlay = Label::createWithTTF(strplay, FONT, 64);
+        auto labelPlay = Label::createWithTTF(strplay, FONT, 54);
         labelPlay->setColor(RGB_BLACK);
         auto menuItemPlay = MenuItemLabel::create(labelPlay, CC_CALLBACK_1(MainMenu::menuCallback, this));
-        menuItemPlay->setPositionY(120);
+        menuItemPlay->setPositionY(80);
         menuItemPlay->setTag(bPlay);
         
         
-        auto labelNew = Label::createWithTTF("level selection", FONT, 46);
+        auto labelNew = Label::createWithTTF("level selection", FONT, 36);
         labelNew->setColor(RGB_BLACK);
         auto menuItemNew = MenuItemLabel::create(labelNew, CC_CALLBACK_1(MainMenu::menuCallback, this));
         menuItemNew->setPositionY(0);
         menuItemNew->setTag(bLevelSelect);
         
-        auto labelQuit = Label::createWithTTF("quit", FONT, 46);
+        auto labelMusic = Label::createWithTTF("soundtracks", FONT, 36);
+        labelMusic->setColor(RGB_BLACK);
+        auto menuItemMusic = MenuItemLabel::create(labelMusic, CC_CALLBACK_1(MainMenu::menuCallback, this));
+        menuItemMusic->setPositionY(-60);
+        menuItemMusic->setTag(bSound);
+        
+        auto labelQuit = Label::createWithTTF("quit", FONT, 24);
         labelQuit->setColor(RGB_BLACK);
         auto menuItemQuit = MenuItemLabel::create(labelQuit, CC_CALLBACK_1(MainMenu::menuCallback, this));
         menuItemQuit->setPositionY(-120);
@@ -122,8 +128,8 @@ bool MainMenu::init() {
         auto rotate = RotateBy::create(10,3);
         prop2->runAction(RepeatForever::create(Sequence::create(rotate,rotate->reverse(), NULL)));
         
-        _menu = Menu::create(menuItemPlay,menuItemQuit,menuItemNew, NULL);
-        _menu->setPosition(screenSize.width*0.30, screenSize.height*0.30);
+        _menu = Menu::create(menuItemPlay,menuItemMusic,menuItemQuit,menuItemNew, NULL);
+        _menu->setPosition(screenSize.width*0.30, screenSize.height*0.35);
         this->addChild(_menu);
         
         
@@ -133,6 +139,11 @@ bool MainMenu::init() {
         _table->setVisible(false);
         this->addChild(_table);
         
+        _player = Node::create();
+        _player->setPosition(Vec2(0,0));
+        _player->setOpacity(0);
+        _player->setVisible(false);
+        this->addChild(_player);
         
         
         
@@ -155,15 +166,13 @@ bool MainMenu::init() {
         _table->addChild(bracketRight);
         
         
-        
+        _fmod = FmodHelper::getInstance();
         
         
         bRet = true;
     } while(0);
     
     
-    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
-    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_INTRO,true);
     this->scheduleUpdate();
     
     return bRet;
@@ -171,13 +180,15 @@ bool MainMenu::init() {
 
 void MainMenu::createLevelMenu()
 {
+    
+    _table->setVisible(true);
     Size screenSize = Director::getInstance()->getWinSize();
     cocos2d::Vector<MenuItem *> lvlList;
     for (int i = 0; i < LVLS; i++) {
         auto lbl = Label::createWithTTF(level[i].c_str(), FONT, 21);
         auto sptr = Sprite::create(IMG_RECORD);
         auto item = MenuItemSprite::create(sptr,sptr, CC_CALLBACK_1(MainMenu::levelCallback, this));
-
+        
         item->setContentSize(Size(screenSize.height*0.24,screenSize.height*0.20));
         sptr->setScale(Util::getScreenRatioHeight(sptr)*0.15);
         item->setTag(i+1);
@@ -210,7 +221,7 @@ void MainMenu::createLevelMenu()
     menu->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     menu->setPosition(screenSize.width*0.50, screenSize.height*0.50);
     menu->setTag(3);
-    _table->addChild(menu);
+    this->addChild(menu);
     menu->alignItemsInColumns(3,3,3,3, NULL);
 }
 
@@ -220,6 +231,63 @@ void MainMenu::onEnter() {
     Layer::onEnter();
     
     
+}
+
+void MainMenu::createSoundPlayer()
+{
+    _player->setVisible(true);
+    Size screenSize = Director::getInstance()->getWinSize();
+    cocos2d::Vector<MenuItem *> soundList;
+    
+//    auto image = Sprite::create(BAND_01);
+//    auto scale_fraction = Util::getScreenRatioHeight(image)*0.30;
+//    image->setScale(0);
+//    image->setPosition(screenSize.width*0.20, screenSize.height*0.80);
+//    _player->addChild(image,10);
+//    
+//    image->setVisible(false);
+//    auto popOut = EaseBounceOut::create(ScaleTo::create(1, scale_fraction));
+//    auto callFunc = CallFunc::create([image](){image->setVisible(true);});
+//    image->runAction(Sequence::create(DelayTime::create(1),callFunc, popOut,NULL));
+    
+    
+    auto trackName = Label::createWithTTF("NOW PLAYING : AWEOME", FONT, 42);
+    trackName->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
+    trackName->setPosition(screenSize.width*0.20, screenSize.height*0.80);
+    trackName->setColor(RGB_BLACK);
+    _player->addChild(trackName);
+    
+    
+    auto back = Label::createWithTTF("BACK", FONT, 42);
+    auto backItem = MenuItemLabel::create(back,CC_CALLBACK_1(MainMenu::menuCallback, this));
+    auto menuback = Menu::create(backItem, NULL);
+    menuback->setPosition(screenSize.width*0.20, screenSize.height*0.10);
+    this->addChild(menuback);
+    
+    for (int i = 0; i < TRACKS; i++) {
+        auto lbl = Label::createWithTTF(StringUtils::format("%d.  %s",i+1,tracks[i].c_str()).c_str(), FONT, 21);
+        lbl->setHorizontalAlignment(TextHAlignment::LEFT);
+        lbl->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+        auto item = MenuItemLabel::create(lbl, CC_CALLBACK_1(MainMenu::soundCallback, this));
+        
+        item->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+        item->setTag(i+1);
+        soundList.pushBack(item);
+        lbl->setColor(RGB_BLACK);
+        
+        item->setScale(0.8);
+        item->setVisible(false);
+        auto fadeIn = FadeIn::create(1);
+        auto callFunc = CallFunc::create([item](){item->setVisible(true);});
+        item->runAction(Sequence::create(DelayTime::create(1),callFunc, fadeIn,NULL));
+        
+    }
+    auto menu = Menu::createWithArray(soundList);
+    menu->alignItemsVerticallyWithPadding(10);
+    menu->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+    menu->setPosition(screenSize.width*0.20, screenSize.height*0.50);
+    menu->setTag(4);
+    _player->addChild(menu);
 }
 
 
@@ -232,6 +300,22 @@ void MainMenu::levelCallback(cocos2d::Ref *pSender)
     //    auto t = TransitionFade::create(1.0f, scene, Color3B::WHITE);
     //    Director::getInstance()->replaceScene(t);
     transitionToGameScene();
+}
+
+void MainMenu::soundCallback(cocos2d::Ref *pSender)
+{
+    auto obj = (Node*)pSender;
+    _fmod->changeParam("Music","Menu",0);
+    _fmod->changeParam("Music","Track1",0);
+    _fmod->changeParam("Music","Track2",0);
+    _fmod->changeParam("Music","Track3",0);
+    _fmod->changeParam("Music","Track4",0);
+    
+    if(obj->getTag() == 1)
+        _fmod->changeParam("Music","Menu",1);
+        
+    auto t = StringUtils::format("Track%d",obj->getTag()-1);
+    _fmod->changeParam("Music",t,1);
 }
 
 // a selector callback
@@ -254,42 +338,16 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
             transitionToGameScene();
             break;
         }
+        case bSound:
+        {
+            hideButtons();
+            createSoundPlayer();
+            break;
+        }
         case bLevelSelect:
         {
             createLevelMenu();
-            _table->setVisible(true);
-            for(auto c : _table->getChildren())
-            {
-                if(c->getTag() == 1)
-                    c->runAction(Sequence::create(FadeIn::create(1),FadeOut::create(1), NULL));
-                else if(c->getTag() == 2)
-                    c->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1),FadeOut::create(1), NULL));
-                else if(c->getTag() == 3)
-                {
-                    //was buggy, using new approach now.
-                }
-                else
-                {
-                    c->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,200), NULL));
-                }
-                
-            }
-            
-            auto callFunc = CallFunc::create([this](){
-                _menu->setVisible(false);
-            });
-            _menu->runAction(Sequence::create(FadeOut::create(1),callFunc, NULL));
-            
-            _prop->runAction(MoveBy::create(1, Vec2(100, 0)));
-            for(auto c : _prop->getChildren())
-            {
-                c->runAction(FadeOut::create(1));
-            }
-            for(auto c : _gameLogo->getChildren())
-            {
-                c->runAction(FadeOut::create(1));
-            }
-            
+            hideButtons(true);
             break;
         }
         case bQuit:
@@ -304,13 +362,52 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
     
 }
 
+void MainMenu::hideButtons(bool guitar)
+{
+    if(guitar){
+        for(auto c : _table->getChildren())
+        {
+            if(c->getTag() == 1)
+                c->runAction(Sequence::create(FadeIn::create(1),FadeOut::create(1), NULL));
+            else if(c->getTag() == 2)
+                c->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1),FadeOut::create(1), NULL));
+            else if(c->getTag() == 3)
+            {
+                //was buggy, using new approach now.
+            }
+            else
+            {
+                c->runAction(Sequence::create(DelayTime::create(1),FadeTo::create(1,200), NULL));
+            }
+            
+        }
+        
+        _prop->runAction(MoveBy::create(1, Vec2(100, 0)));
+        
+        
+        for(auto c : _prop->getChildren())
+        {
+            c->runAction(FadeOut::create(1));
+        }
+    }
+    
+    
+    for(auto c : _gameLogo->getChildren())
+    {
+        c->runAction(FadeOut::create(1));
+    }
+    auto callFunc = CallFunc::create([this](){
+        _menu->setVisible(false);
+    });
+    _menu->runAction(Sequence::create(FadeOut::create(1),callFunc, NULL));
+}
 
 void MainMenu::onExit() {
     Layer::onExit();
 }
 void MainMenu::update(float delta)
 {
-    
+    _fmod->update();
 }
 
 void MainMenu::transitionToGameScene()

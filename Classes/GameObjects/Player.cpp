@@ -8,6 +8,7 @@
 
 #include "Player.h"
 #include "Util.h"
+#include "FmodHelper.h"
 using namespace cocos2d;
 
 
@@ -150,8 +151,8 @@ void Player::update(float dt)
             if(_isPoisonFinished)
                 jumpHeight.y *= 1.2;
             body->ApplyLinearImpulse(jumpHeight,body->GetWorldCenter(),true);
-            
-            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_JUMP);
+            auto fmod = FmodHelper::getInstance();
+            fmod->playEvent("Jump");
         }
     }
     
@@ -295,7 +296,7 @@ void Player::setIsGround(bool val)
         _isTouchingFloor ++;
         if(_airTime > 1.2)
         {
-            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_OUCH);
+//            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_OUCH);
         }
         _jumping = false;
         _airTime = 0.0;

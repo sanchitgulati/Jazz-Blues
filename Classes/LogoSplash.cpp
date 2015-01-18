@@ -8,6 +8,8 @@
 
 #include "LogoSplash.h"
 #include "MainMenu.h"
+#include "Util.h"
+#include "Resources.h"
 
 using namespace cocos2d;
 
@@ -49,7 +51,32 @@ bool LogoSplash::init() {
     } while(0);
     
     
+    _fmod = FmodHelper::getInstance();
+    
+    _fmod->loadEvent("Music");
+    _fmod->playEvent("Music");
+    _fmod->changeParam("Music", "Menu",0);
+    _fmod->changeParam("Music", "Track1",0);
+    _fmod->changeParam("Music", "Track2",0);
+    _fmod->changeParam("Music", "Track3",0);
+    _fmod->changeParam("Music", "Track4",0);
+    _fmod->changeParam("Music", "Track5",0);
+    _fmod->changeParam("Music", "Menu",1);
+    
+    
+    
+    _fmod->loadEvent("Typewriter");
+    _fmod->loadEvent("SocietyLaugh");
+    _fmod->loadEvent("Police");
+    
+    
     this->scheduleUpdate();
+    
+    int a = (Util::randf()*LOSE_QOUTES);
+    int b = (Util::randf()*WIN_QOUTES);
+    GlobalClass::qouteLose = a;
+    GlobalClass::qouteWin = b;
+    log("lose %d-%d & win %d-%d",a,GlobalClass::qouteLose,b,GlobalClass::qouteWin);
     
     return bRet;
 }
@@ -96,6 +123,6 @@ void LogoSplash::nextScene(Node *)
 
 void LogoSplash::update(float delta)
 {
-    //    log("Get Position %f %f",logoSprite->getPositionX(),logoSprite->getPositionY());
+    _fmod->update();
     
 }

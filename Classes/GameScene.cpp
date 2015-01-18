@@ -40,6 +40,7 @@ bool GameScene::init()
     _arrested = false;
     _god = false;
     _blood = 0;
+    _mute = 0;
     _giftTurn = pFemale;
     _gameState = gsIntro;
     kCurrentLevel = UserDefault::getInstance()->getIntegerForKey("continue",1);
@@ -156,8 +157,8 @@ bool GameScene::init()
     }
     log("value %s",night);
     
-    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
-    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_HAPPY,true);
+//    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+//    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_HAPPY,true);
     //
     
     if(kCurrentLevel == 12)
@@ -168,6 +169,7 @@ bool GameScene::init()
         runAction(Sequence::create(DelayTime::create(25),callFunc, NULL));
     }
     
+    _fmod = FmodHelper::getInstance();
     this->toGameScene();
     return true;
 }
@@ -184,7 +186,7 @@ void GameScene::skip()
     c->setVisible(false);
     this->animateMapIn();
     this->_gameState = gsStart;
-    CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+//    CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
 }
 
 void GameScene::menuCloseCallback(Ref* pSender)
@@ -209,14 +211,13 @@ void GameScene::menuCloseCallback(Ref* pSender)
         }
         case menuToggle:
         {
-            auto vol  = CocosDenshion::SimpleAudioEngine::getInstance()->getEffectsVolume();
-            if(vol == 0){
-                CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(MAX_SFX);
-                CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(MAX_BG);
+            if(_mute == 1){
+                _mute = 0;
+                _fmod->unmute();
             }
             else{
-                CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(0);
-                CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0);
+                _mute = 1;
+                _fmod->mute();
             }
             break;
         }
@@ -233,6 +234,7 @@ void GameScene::update(float dt)
 #endif
     /* End */
     _world->Step(dt, 8, 1);
+    _fmod->update();
     if(_gameState == gsStart)
     {
         //        if(_society != nullptr)
@@ -321,7 +323,7 @@ void GameScene::update(float dt)
                 emitter->setPosition(_society->getPos());
                 
                 
-                CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_GRIND);
+//                CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_GRIND);
                 _society->runAction(FadeOut::create(1));
                 loadInstuctionsEnd();
                 _blood++;
@@ -391,7 +393,7 @@ void GameScene::loadInstuctions()
         {
             cf = CallFunc::create([this,menu]()
                                   {
-                                      CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE_END);
+//                                      CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE_END);
                                       this->animateMapIn();
                                       menu->setVisible(false);
                                       this->_gameState = gsStart;
@@ -403,11 +405,7 @@ void GameScene::loadInstuctions()
         {
             cf = CallFunc::create([this]()
                                   {
-                                      auto toss = Util::toss();
-                                      if(toss)
-                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE01);
-                                      else
-                                          CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE02);
+                                      this->_fmod->playEvent("Typewriter");
                                   });
             
             c->runAction(Sequence::create(dt,cf,fi, NULL));
@@ -761,7 +759,7 @@ void GameScene::animateMapIn()
 {
     if(_night != nullptr)
     {
-        auto thunder = CallFunc::create([this](){ CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_THUNDER);});
+        auto thunder = CallFunc::create([this](){ /*CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_THUNDER);*/});
         _night->runAction(FadeTo::create(0.7, 250));
         _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(8),thunder, NULL)));
         _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(10),FadeTo::create(0.3, 100),FadeTo::create(0.3, 250), NULL)));
@@ -908,7 +906,7 @@ void GameScene::BeginContact(b2Contact* contact)
                 if(!_arrested)
                 {
                     _arrested = true;
-                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_LOCK);
+//                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_LOCK);
                     auto delay = DelayTime::create(1);
                     auto callFunc = CallFunc::create([this](){
                         loadDiedEnd();
@@ -918,6 +916,7 @@ void GameScene::BeginContact(b2Contact* contact)
             }
             else if(data1->a == tmxTeddy || data2->a == tmxTeddy)
             {
+                _fmod->playEvent("SocietyLaugh");
                 _society->laugh();
             }
         }
@@ -928,7 +927,8 @@ void GameScene::BeginContact(b2Contact* contact)
                 _arrested = true;
                 if(data1->b == pFemale || data2->b == pFemale) //Is Female
                 {
-                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_POLICE);
+                    
+                    this->_fmod->playEvent("Police");
                     auto delay = DelayTime::create(5);
                     auto callFunc = CallFunc::create([this](){
                         loadDiedEnd();
@@ -937,7 +937,7 @@ void GameScene::BeginContact(b2Contact* contact)
                 }
                 if((data1->b == pMale || data2->b == pMale))
                 {
-                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_POLICE);
+                    this->_fmod->playEvent("Police");
                     auto delay = DelayTime::create(1);
                     auto callFunc = CallFunc::create([this](){
                         loadDiedEnd();
@@ -959,7 +959,7 @@ void GameScene::BeginContact(b2Contact* contact)
                     this->loadInstuctionsEnd();
                 });
                 
-                CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_NO);
+//                CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_NO);
                 runAction(Sequence::create(DelayTime::create(5),callFunc, NULL));
             }
         }
@@ -1136,8 +1136,31 @@ void GameScene::restartScene()
 }
 
 
+void GameScene::nextTrack(std::string name)
+{
+    auto img = Sprite::create(IMG_BG);
+    img->setScale(Util::getScreenRatioHeight(img)*0.05, Util::getScreenRatioHeight(img)*0.1);
+    img->setPosition(Vec2(_visibleSize.width*0.50,_visibleSize.height*1.2));
+    img->setColor(RGB_BLUE);
+    this->addChild(img);
+    
+    auto l = Label::createWithTTF(name, FONT, 24);
+    l->setColor(RGB_WHITE);
+    l->setPositionX(10);
+    l->setPositionY(img->getBoundingBox().size.width/2);
+    l->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+    img->addChild(l);
+    
+    auto move = MoveTo::create(1.0, Vec2(_visibleSize.width*0.50,_visibleSize.height*0.8));
+    auto del = CallFunc::create([img](){img->removeFromParentAndCleanup(true);});
+    img->runAction(Sequence::create(move,move->reverse(),del, NULL));
+    
+}
+
 void GameScene::startGame()
 {
+    
+    nextTrack("First");
     //TODO : something
     auto obj = getChildByTag(tagMenu);
     obj->runAction(FadeIn::create(1));

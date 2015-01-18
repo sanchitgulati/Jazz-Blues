@@ -3,6 +3,7 @@
 #include "Resources.h"
 #include "Util.h"
 
+
 USING_NS_CC;
 
 AppDelegate::AppDelegate() {
@@ -23,12 +24,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
         director->setOpenGLView(glview);
     }
     
-    CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(MAX_BG);
-    CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(MAX_SFX);
-    
-    
-    GlobalClass::qouteLose = (int)floor((Util::randf()*LOSE_QOUTES));
-    GlobalClass::qouteWin = (int)floor((Util::randf()*WIN_QOUTES));
     
     // turn on display FPS
     director->setDisplayStats(false);
@@ -52,7 +47,6 @@ void AppDelegate::applicationDidEnterBackground() {
     
 
     // if you use SimpleAudioEngine, it must be pause
-     CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
@@ -60,5 +54,4 @@ void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
 
     // if you use SimpleAudioEngine, it must resume here
-     CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }

@@ -90,6 +90,8 @@
 #define IMG_GAME_LOGO_0 "images/game_logo_0.png"
 #define IMG_GAME_LOGO_1 "images/game_logo_1.png"
 
+#define BAND_01 "images/refuge.jpg"
+
 #define IMG_RECORD_D "images/recordD.png"
 #define IMG_RECORD "images/record.png"
 
@@ -114,6 +116,7 @@
 #define MAX_BG 0.90
 
 #define LVLS 12
+#define TRACKS 6
 #define WIN_QOUTES 7
 #define LOSE_QOUTES 7
 
@@ -147,6 +150,15 @@ const std::string level[LVLS] = {
     "X. Police",
     "XI. Finale",
     "XII. End",
+};
+
+const std::string tracks[TRACKS] = {
+    "Maiden Voyage",
+    "Connections",
+    "Not So Blue",
+    "Movie Night",
+    "In a turn of events",
+    "Estoy"
 };
 
 
