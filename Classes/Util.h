@@ -16,6 +16,8 @@ class GlobalClass {
 public:
     static int qouteWin;
     static int qouteLose;
+    static int soundtrack;
+    static int lock;
 };
 
 class Util

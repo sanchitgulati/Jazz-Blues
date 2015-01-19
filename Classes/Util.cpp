@@ -12,6 +12,8 @@ using namespace cocos2d;
 
 int GlobalClass::qouteLose = 0;
 int GlobalClass::qouteWin = 0;
+int GlobalClass::soundtrack = 0;
+int GlobalClass::lock = 0;
 
 float Util::getScreenRatio(Node* obj)
 {

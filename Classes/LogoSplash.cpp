@@ -63,12 +63,17 @@ bool LogoSplash::init() {
     _fmod->changeParam("Music", "Track5",0);
     _fmod->changeParam("Music", "Menu",0);
     
-    
+    GlobalClass::soundtrack = 0;
+    GlobalClass::lock = 0;
     
     _fmod->loadEvent("Typewriter");
     _fmod->loadEvent("SocietyLaugh");
     _fmod->loadEvent("Police");
     _fmod->loadEvent("Jump");
+    _fmod->loadEvent("Thunder");
+    _fmod->loadEvent("BlueScream");
+    _fmod->loadEvent("CrowdAww");
+    _fmod->loadEvent("CrowdScream");
     
     
     this->scheduleUpdate();

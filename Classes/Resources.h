@@ -12,8 +12,8 @@
 #define PI 3.14
 #define DEGTORAD 180/PI
 
-#define ARC4RANDOM_MAX      0x100000000
-#define SG_RAND_0_1 ((double)arc4random() / ARC4RANDOM_MAX);
+//#define ARC4RANDOM_MAX      0x100000000
+//#define SG_RAND_0_1 ((double)arc4random() / ARC4RANDOM_MAX);
 
 
 #define IMG_BG "images/bg.png"

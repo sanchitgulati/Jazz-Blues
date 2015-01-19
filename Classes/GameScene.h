@@ -42,6 +42,7 @@ private:
     bool _arrested;
     bool _god;
     int _blood;
+    int _bloodMale;
     int _giftTurn;
     
     // stuff the player overlaps for overlap check will go here in this group!

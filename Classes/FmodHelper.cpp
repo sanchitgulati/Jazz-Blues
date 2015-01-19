@@ -113,6 +113,9 @@ bool FmodHelper::loadEvent(std::string eventName)
     
     events.push_back(std::make_pair(eventName, eventInstance));
     
+    
+    log("loading %s and result was %d",eventName.c_str(),flag);
+    
     return flag;
 }
 
@@ -127,6 +130,7 @@ bool FmodHelper::playEvent(std::string eventName)
         {
             Studio::EventInstance* eventInstance = (*it).second;
             auto f = ERRCHECK(eventInstance->start());
+            log("played %s and was sucess %d",eventName.c_str(),f);
             if(f)
                 return true;
         }

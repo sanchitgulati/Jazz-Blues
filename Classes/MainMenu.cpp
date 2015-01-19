@@ -180,7 +180,8 @@ bool MainMenu::init() {
 
 void MainMenu::createLevelMenu()
 {
-    
+    _fmod->changeParam("Music","Menu",0);
+    _fmod->changeParam("Music","LevelTransition",1);
     _table->setVisible(true);
     Size screenSize = Director::getInstance()->getWinSize();
     cocos2d::Vector<MenuItem *> lvlList;
@@ -305,11 +306,14 @@ void MainMenu::levelCallback(cocos2d::Ref *pSender)
 void MainMenu::soundCallback(cocos2d::Ref *pSender)
 {
     auto obj = (Node*)pSender;
-    _fmod->changeParam("Music","Menu",0);
+    _fmod->changeParam("Music","Menu",1);
     _fmod->changeParam("Music","Track1",0);
     _fmod->changeParam("Music","Track2",0);
     _fmod->changeParam("Music","Track3",0);
     _fmod->changeParam("Music","Track4",0);
+    _fmod->changeParam("Music","Track5",0);
+    _fmod->changeParam("Music","Track6",0);
+    _fmod->changeParam("Music","LevelTransition",0);
     
     if(obj->getTag() == 1)
         _fmod->changeParam("Music","Menu",1);
@@ -436,6 +440,7 @@ void MainMenu::transitionToGameScene()
                                                        Sequence::create(DelayTime::create(2.5),
                                                                         callFunc, NULL), NULL)));
     
+    _fmod->changeParam("Music", "Menu",1); //tranisition
 }
 
 void MainMenu::toGameScene()

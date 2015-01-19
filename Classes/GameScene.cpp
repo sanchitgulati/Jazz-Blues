@@ -40,6 +40,7 @@ bool GameScene::init()
     _arrested = false;
     _god = false;
     _blood = 0;
+    _bloodMale = 0;
     _mute = 0;
     _giftTurn = pFemale;
     _gameState = gsIntro;
@@ -170,7 +171,7 @@ bool GameScene::init()
     }
     
     _fmod = FmodHelper::getInstance();
-    _fmod->changeParam("Music", "Menu",1); //tranisition
+    
     
     this->toGameScene();
     return true;
@@ -278,6 +279,8 @@ void GameScene::update(float dt)
                 else{
                     _male->setLocalZOrder(0);
                     _female->setLocalZOrder(0);
+                    
+                    _fmod->playEvent("CrowdAww");
                     for(auto c : _platformsGroup->getChildren())
                     {
                         if(c->getTag() == 999)
@@ -324,12 +327,16 @@ void GameScene::update(float dt)
                 _platformsGroup->addChild(emitter, 999);
                 emitter->setPosition(_society->getPos());
                 
-                
-//                CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_GRIND);
+                _fmod->playEvent("CrowdScream");
                 _society->runAction(FadeOut::create(1));
                 loadInstuctionsEnd();
                 _blood++;
                 
+            }
+            if(_bloodMale == 1)
+            {
+                _fmod->playEvent("BlueScream");
+                _bloodMale++;
             }
         }
     }
@@ -395,7 +402,8 @@ void GameScene::loadInstuctions()
         {
             cf = CallFunc::create([this,menu]()
                                   {
-//                                      CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_TYPE_END);
+                                      this->_fmod->changeParam("Typewriter","FullStop",1);
+                                      this->_fmod->playEvent("Typewriter");
                                       this->animateMapIn();
                                       menu->setVisible(false);
                                       this->_gameState = gsStart;
@@ -407,6 +415,7 @@ void GameScene::loadInstuctions()
         {
             cf = CallFunc::create([this]()
                                   {
+                                      this->_fmod->changeParam("Typewriter","FullStop",0);
                                       this->_fmod->playEvent("Typewriter");
                                   });
             
@@ -420,9 +429,10 @@ void GameScene::loadInstuctions()
 
 void GameScene::loadInstuctionsEnd()
 {
+    _fmod->changeParam("Music", "Menu",0);
     _gameState = gsEnd;
     animateMapOut();
-    unschedule(schedule_selector(GameScene::update));
+//    unschedule(schedule_selector(GameScene::update));
     auto screenSize = Director::getInstance()->getVisibleSize();
     
     auto valuekey = _tm->getProperties();
@@ -500,7 +510,7 @@ void GameScene::loadDiedEnd()
 {
     _gameState = gsEnd;
     animateMapOut();
-    unschedule(schedule_selector(GameScene::update));
+//    unschedule(schedule_selector(GameScene::update));
     auto screenSize = Director::getInstance()->getVisibleSize();
     
     GlobalClass::qouteLose++;
@@ -761,7 +771,9 @@ void GameScene::animateMapIn()
 {
     if(_night != nullptr)
     {
-        auto thunder = CallFunc::create([this](){ /*CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_THUNDER);*/});
+        auto thunder = CallFunc::create([this](){
+            _fmod->playEvent("Thunder");
+        });
         _night->runAction(FadeTo::create(0.7, 250));
         _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(8),thunder, NULL)));
         _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(10),FadeTo::create(0.3, 100),FadeTo::create(0.3, 250), NULL)));
@@ -818,6 +830,14 @@ void GameScene::BeginContact(b2Contact* contact)
         if(data1->a == tmxFire || data2->a == tmxFire)
         {
             _blood++;
+        }
+    }
+    
+    if(data1->b == pMale || data2->b == pMale)
+    {
+        if(data1->a == tmxFire || data2->a == tmxFire)
+        {
+            _bloodMale++;
         }
     }
     
@@ -908,7 +928,16 @@ void GameScene::BeginContact(b2Contact* contact)
                 if(!_arrested)
                 {
                     _arrested = true;
-//                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_LOCK);
+                    if(GlobalClass::lock == 0)
+                    {
+                        GlobalClass::lock = 1;
+                        _fmod->changeParam("Music", "Lock",1);
+                    }
+                    else if(GlobalClass::lock == 1)
+                    {
+                        GlobalClass::lock = 0;
+                        _fmod->changeParam("Music", "Lock",0);
+                    }
                     auto delay = DelayTime::create(1);
                     auto callFunc = CallFunc::create([this](){
                         loadDiedEnd();
@@ -961,7 +990,7 @@ void GameScene::BeginContact(b2Contact* contact)
                     this->loadInstuctionsEnd();
                 });
                 
-//                CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SFX_NO);
+                _fmod->playEvent("CrowdAww");
                 runAction(Sequence::create(DelayTime::create(5),callFunc, NULL));
             }
         }
@@ -1057,7 +1086,49 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
             {
                 skip();
             }
-            break;
+            break;//
+        case EventKeyboard::KeyCode::KEY_N:
+        {
+            nextTrack("Second");
+            switch (GlobalClass::soundtrack) {
+                case 0:
+                    GlobalClass::soundtrack = 1;
+                    _fmod->changeParam("Music", "Track1",1);
+                    break;
+                case 1:
+                    GlobalClass::soundtrack = 2;
+                    _fmod->changeParam("Music", "Track1",0);
+                    _fmod->changeParam("Music", "Track2",1);
+                    break;
+                case 2:
+                    GlobalClass::soundtrack = 3;
+                    _fmod->changeParam("Music", "Track2",0);
+                    _fmod->changeParam("Music", "Track3",1);
+                    break;
+                case 3:
+                    GlobalClass::soundtrack = 4;
+                    _fmod->changeParam("Music", "Track3",0);
+                    _fmod->changeParam("Music", "Track4",1);
+                    break;
+                case 4:
+                    GlobalClass::soundtrack = 5;
+                    _fmod->changeParam("Music", "Track4",0);
+                    _fmod->changeParam("Music", "Track5",1);
+                    break;
+                case 5:
+                    GlobalClass::soundtrack = 6;
+                    _fmod->changeParam("Music", "Track5",0);
+                    _fmod->changeParam("Music", "Track6",1);
+                    break;
+                case 6:
+                    GlobalClass::soundtrack = 1;
+                    _fmod->changeParam("Music", "Track6",0);
+                    _fmod->changeParam("Music", "Track1",1);
+                    break;
+                default:
+                    break;
+            }
+        }
         default:
             break;
     }
@@ -1104,6 +1175,8 @@ void GameScene::toGameScene()
 
 void GameScene::transitionToGameScene()
 {
+    
+    _fmod->changeParam("Music", "Menu",1);
     auto size = Director::getInstance()->getWinSize();
     auto clipper = ClippingNode::create();
     
