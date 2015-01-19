@@ -61,13 +61,14 @@ bool LogoSplash::init() {
     _fmod->changeParam("Music", "Track3",0);
     _fmod->changeParam("Music", "Track4",0);
     _fmod->changeParam("Music", "Track5",0);
-    _fmod->changeParam("Music", "Menu",1);
+    _fmod->changeParam("Music", "Menu",0);
     
     
     
     _fmod->loadEvent("Typewriter");
     _fmod->loadEvent("SocietyLaugh");
     _fmod->loadEvent("Police");
+    _fmod->loadEvent("Jump");
     
     
     this->scheduleUpdate();

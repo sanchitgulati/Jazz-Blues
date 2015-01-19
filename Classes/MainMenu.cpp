@@ -314,7 +314,7 @@ void MainMenu::soundCallback(cocos2d::Ref *pSender)
     if(obj->getTag() == 1)
         _fmod->changeParam("Music","Menu",1);
         
-    auto t = StringUtils::format("Track%d",obj->getTag()-1);
+    auto t = StringUtils::format("Track%d",obj->getTag());
     _fmod->changeParam("Music",t,1);
 }
 

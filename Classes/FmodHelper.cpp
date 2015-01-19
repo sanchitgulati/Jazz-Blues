@@ -122,6 +122,7 @@ bool FmodHelper::playEvent(std::string eventName)
     std::vector<std::pair<std::string,Studio::EventInstance*>>::const_iterator it;
     for(it= events.begin(); it != events.end(); it++)
     {
+//        log("")
         if( strcmp((*it).first.c_str(),eventName.c_str()) == 0)
         {
             Studio::EventInstance* eventInstance = (*it).second;

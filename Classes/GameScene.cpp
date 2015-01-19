@@ -170,6 +170,8 @@ bool GameScene::init()
     }
     
     _fmod = FmodHelper::getInstance();
+    _fmod->changeParam("Music", "Menu",1); //tranisition
+    
     this->toGameScene();
     return true;
 }
