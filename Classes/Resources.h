@@ -117,6 +117,7 @@
 
 #define LVLS 12
 #define TRACKS 6
+#define ARTISTS 6
 #define WIN_QOUTES 7
 #define LOSE_QOUTES 7
 
@@ -158,7 +159,17 @@ const std::string tracks[TRACKS] = {
     "Not So Blue",
     "Movie Night",
     "In a turn of events",
-    "Estoy"
+    "Estoy Bien"
+};
+
+
+const std::string artists[ARTISTS] = {
+    "Fubar Ghetto",
+    "Refuge",
+    "Drift The Trio",
+    "Refuge",
+    "Drift The Trio",
+    "Fubar Ghetto"
 };
 
 

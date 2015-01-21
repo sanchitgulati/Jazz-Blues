@@ -70,7 +70,7 @@ Society* Society::createFixture(b2World* world, TMXLayer* layer, int x, int y, f
     b2Body* body = world->CreateBody(&bodyDef);
     
     
-    auto widthHalf = (tileSize.width / kPixelsPerMeter) * 0.5f * width;
+//    auto widthHalf = (tileSize.width / kPixelsPerMeter) * 0.5f * width;
     auto heightHalf = (tileSize.height / kPixelsPerMeter) * 0.5f * height;
 
     

@@ -11,7 +11,7 @@
 
 using namespace cocos2d;
 
-enum {bPlay,bLevelSelect,bSound,bQuit};
+enum {bPlay,bLevelSelect,bMenu,bSound,bQuit};
 
 MainMenu::MainMenu() {
     
@@ -236,37 +236,51 @@ void MainMenu::onEnter() {
 
 void MainMenu::createSoundPlayer()
 {
+    _fmod->changeParam("Music", "Menu",1);
+    
     _player->setVisible(true);
     Size screenSize = Director::getInstance()->getWinSize();
     cocos2d::Vector<MenuItem *> soundList;
+
     
-//    auto image = Sprite::create(BAND_01);
-//    auto scale_fraction = Util::getScreenRatioHeight(image)*0.30;
-//    image->setScale(0);
-//    image->setPosition(screenSize.width*0.20, screenSize.height*0.80);
-//    _player->addChild(image,10);
-//    
-//    image->setVisible(false);
-//    auto popOut = EaseBounceOut::create(ScaleTo::create(1, scale_fraction));
-//    auto callFunc = CallFunc::create([image](){image->setVisible(true);});
-//    image->runAction(Sequence::create(DelayTime::create(1),callFunc, popOut,NULL));
-    
-    
-    auto trackName = Label::createWithTTF("NOW PLAYING : AWEOME", FONT, 42);
-    trackName->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
-    trackName->setPosition(screenSize.width*0.20, screenSize.height*0.80);
+    auto trackName = Label::createWithTTF("NOW PLAYING", FONT, 42);
+    trackName->setPosition(screenSize.width*0.30, screenSize.height - 50);
     trackName->setColor(RGB_BLACK);
+    
+    trackName->setOpacity(0);
+    trackName->setVisible(false);
+    auto fadeIn = FadeIn::create(1);
+    auto callFunc = CallFunc::create([trackName](){trackName->setVisible(true);});
+    trackName->runAction(Sequence::create(DelayTime::create(1),callFunc, fadeIn,NULL));
+    
+    
     _player->addChild(trackName);
     
     
-    auto back = Label::createWithTTF("BACK", FONT, 42);
+    auto back = Label::createWithTTF("back to menu", FONT, 24);
+    back->setColor(RGB_ROSE);
+    back->setOpacity(0);
+    back->setVisible(false);
+    fadeIn = FadeIn::create(1);
+    callFunc = CallFunc::create([back](){back->setVisible(true);});
+    back->runAction(Sequence::create(DelayTime::create(1),callFunc, fadeIn,NULL));
+    
     auto backItem = MenuItemLabel::create(back,CC_CALLBACK_1(MainMenu::menuCallback, this));
     auto menuback = Menu::create(backItem, NULL);
-    menuback->setPosition(screenSize.width*0.20, screenSize.height*0.10);
-    this->addChild(menuback);
+    backItem->setTag(bMenu);
+    menuback->setPosition(screenSize.width*0.30, screenSize.height - 50 - trackName->getContentSize().height*1.25);
+    _player->addChild(menuback);
     
     for (int i = 0; i < TRACKS; i++) {
-        auto lbl = Label::createWithTTF(StringUtils::format("%d.  %s",i+1,tracks[i].c_str()).c_str(), FONT, 21);
+        auto lbl = Label::createWithTTF(StringUtils::format("%d.  %s\nperformed by : %s",i+1,tracks[i].c_str(),artists[i].c_str()).c_str(), FONT, 21);
+        
+        lbl->setTag(i+1);
+        if(i+1 == GlobalClass::soundtrack)
+            lbl->setColor(RGB_ROSE);
+        else
+            lbl->setColor(RGB_BLACK);
+        
+        _tracksTTF.pushBack(lbl);
         lbl->setHorizontalAlignment(TextHAlignment::LEFT);
         lbl->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
         auto item = MenuItemLabel::create(lbl, CC_CALLBACK_1(MainMenu::soundCallback, this));
@@ -274,15 +288,30 @@ void MainMenu::createSoundPlayer()
         item->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
         item->setTag(i+1);
         soundList.pushBack(item);
-        lbl->setColor(RGB_BLACK);
         
-        item->setScale(0.8);
+        item->setOpacity(0);
         item->setVisible(false);
         auto fadeIn = FadeIn::create(1);
         auto callFunc = CallFunc::create([item](){item->setVisible(true);});
         item->runAction(Sequence::create(DelayTime::create(1),callFunc, fadeIn,NULL));
         
     }
+    
+    auto credits = "A game by Sanchit Gulati\nMusic Curation & Sound Design by 3quavers\nSpecial thanks to Manish Basetia\nThanks Fubar Ghetto, Drift The Trio & Refuge for their music\nAudio Engine : FMOD Studio by Firelight Technologies";
+    
+    auto creditsTTF = Label::createWithTTF(credits, FONT, 16);
+    creditsTTF->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    creditsTTF->setPosition(Vec2(10,10));
+    creditsTTF->setColor(RGB_BLACK);
+    
+    creditsTTF->setOpacity(0);
+    creditsTTF->setVisible(false);
+    fadeIn = FadeIn::create(1);
+    callFunc = CallFunc::create([creditsTTF](){creditsTTF->setVisible(true);});
+    creditsTTF->runAction(Sequence::create(DelayTime::create(1),callFunc, fadeIn,NULL));
+    _player->addChild(creditsTTF);
+    
+    
     auto menu = Menu::createWithArray(soundList);
     menu->alignItemsVerticallyWithPadding(10);
     menu->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
@@ -305,7 +334,18 @@ void MainMenu::levelCallback(cocos2d::Ref *pSender)
 
 void MainMenu::soundCallback(cocos2d::Ref *pSender)
 {
+
+    
     auto obj = (Node*)pSender;
+    
+    for(auto t : _tracksTTF)
+    {
+        if(t->getTag() == obj->getTag())
+            t->setColor(RGB_ROSE);
+        else
+            t->setColor(RGB_BLACK);
+    }
+    
     _fmod->changeParam("Music","Menu",1);
     _fmod->changeParam("Music","Track1",0);
     _fmod->changeParam("Music","Track2",0);
@@ -317,14 +357,20 @@ void MainMenu::soundCallback(cocos2d::Ref *pSender)
     
     if(obj->getTag() == 1)
         _fmod->changeParam("Music","Menu",1);
-        
-    auto t = StringUtils::format("Track%d",obj->getTag());
+    
+    auto s = obj->getTag();
+    auto t = StringUtils::format("Track%d",s);
     _fmod->changeParam("Music",t,1);
+    
+    
+    GlobalClass::soundtrack = s;
 }
 
 // a selector callback
 void MainMenu::menuCallback(cocos2d::Ref* pSender)
 {
+    
+    _menu->setEnabled(false);
     auto obj = (Node*)pSender;
     
     switch (obj->getTag()) {
@@ -354,6 +400,11 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
             hideButtons(true);
             break;
         }
+        case bMenu:
+        {
+            showButtons();
+            break;
+        }
         case bQuit:
         {
             Director::getInstance()->end();
@@ -364,6 +415,31 @@ void MainMenu::menuCallback(cocos2d::Ref* pSender)
             break;
     }
     
+}
+
+void MainMenu::showButtons()
+{
+    for(auto c : _player->getChildren())
+    {
+        c->runAction(FadeOut::create(1));
+    }
+    _menu->setEnabled(true);
+    
+    
+    auto callFunc0 = CallFunc::create([this](){
+        _player->setVisible(false);
+    });
+    _fmod->changeParam("Music", "Menu",0);
+    
+    _player->runAction(Sequence::create(FadeOut::create(1),callFunc0, NULL));
+    for(auto c : _gameLogo->getChildren())
+    {
+        c->runAction(Sequence::create(DelayTime::create(1),FadeIn::create(1), NULL) );
+    }
+    auto callFunc = CallFunc::create([this](){
+        _menu->setVisible(true);
+    });
+    _menu->runAction(Sequence::create(DelayTime::create(1),FadeIn::create(1),callFunc, NULL));
 }
 
 void MainMenu::hideButtons(bool guitar)

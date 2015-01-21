@@ -12,9 +12,11 @@ class MainMenu : public cocos2d::LayerColor
     cocos2d::Menu* _menu;
     cocos2d::Node* _gameLogo;
     FmodHelper* _fmod;
+    cocos2d::Vector<cocos2d::Node*> _tracksTTF;
     
     void createLevelMenu();
     void hideButtons(bool guitar = false);
+    void showButtons();
     void createSoundPlayer();
     void backToMenu();
 public:

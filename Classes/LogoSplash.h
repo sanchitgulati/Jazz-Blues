@@ -2,7 +2,7 @@
 #define __LOGOSPLASH_SCENE_H__
 
 #include "cocos2d.h"
-#include "FmodHelper.h";
+#include "FmodHelper.h"//;
 
 class LogoSplash : public cocos2d::LayerColor
 {
