@@ -297,7 +297,7 @@ void MainMenu::createSoundPlayer()
         
     }
     
-    auto credits = "A game by Sanchit Gulati\nMusic Curation & Sound Design by 3quavers\nSpecial thanks to Manish Basetia\nThanks Fubar Ghetto, Drift The Trio & Refuge for their music\nAudio Engine : FMOD Studio by Firelight Technologies";
+    auto credits = "A game by Sanchit Gulati\nMusic Curation & Sound Design by 3quavers\nsfx from freesfx.co.uk\nSpecial thanks to Manish Basetia\nThanks Fubar Ghetto, Drift The Trio & Refuge for their music\nAudio Engine : FMOD Studio by Firelight Technologies";
     
     auto creditsTTF = Label::createWithTTF(credits, FONT, 16);
     creditsTTF->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
