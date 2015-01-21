@@ -114,7 +114,7 @@ bool FmodHelper::loadEvent(std::string eventName)
     events.push_back(std::make_pair(eventName, eventInstance));
     
     
-    log("loading %s and result was %d",eventName.c_str(),flag);
+    //    log("loading %s and result was %d",eventName.c_str(),flag);
     
     return flag;
 }
@@ -125,18 +125,40 @@ bool FmodHelper::playEvent(std::string eventName)
     std::vector<std::pair<std::string,Studio::EventInstance*>>::const_iterator it;
     for(it= events.begin(); it != events.end(); it++)
     {
-//        log("")
+        //        log("")
         if( strcmp((*it).first.c_str(),eventName.c_str()) == 0)
         {
             Studio::EventInstance* eventInstance = (*it).second;
             auto f = ERRCHECK(eventInstance->start());
-            log("played %s and was sucess %d",eventName.c_str(),f);
+            //            log("played %s and was sucess %d",eventName.c_str(),f);
             if(f)
                 return true;
         }
     }
     return flag;
 }
+
+bool FmodHelper::stopEvent(std::string eventName,bool fade)
+{
+    bool flag = false;
+    std::vector<std::pair<std::string,Studio::EventInstance*>>::const_iterator it;
+    for(it= events.begin(); it != events.end(); it++)
+    {
+        if( strcmp((*it).first.c_str(),eventName.c_str()) == 0)
+        {
+            Studio::EventInstance* eventInstance = (*it).second;
+            bool f;
+            if(fade)
+                f = ERRCHECK(eventInstance->stop(FMOD_STUDIO_STOP_IMMEDIATE));
+            else
+                f = ERRCHECK(eventInstance->stop(FMOD_STUDIO_STOP_ALLOWFADEOUT));
+            if(f)
+                return true;
+        }
+    }
+    return flag;
+}
+
 
 bool FmodHelper::changeParam(std::string eventName,std::string paramName,float val)
 {

@@ -122,7 +122,7 @@
 
 #define VFX_CONSTANT 0.75
 
-enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuToggle,menuSkip};
+enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuNext,menuToggle,menuSkip};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zNight,zRain,zForeground,zHUD,zControl};
 enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel,tmxSociety,tmxPolice};

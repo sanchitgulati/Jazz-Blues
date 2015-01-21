@@ -61,9 +61,17 @@ bool LogoSplash::init() {
     _fmod->changeParam("Music", "Track3",0);
     _fmod->changeParam("Music", "Track4",0);
     _fmod->changeParam("Music", "Track5",0);
-    _fmod->changeParam("Music", "Menu",0);
     
-    GlobalClass::soundtrack = 0;
+    Util::randf();
+    Util::randf();
+    
+    
+    int s = int(round(Util::randf()*5)+1);
+    log("Track %d",s);
+    auto song = StringUtils::format("Track%d",s);
+    _fmod->changeParam("Music", song,1);
+    
+    GlobalClass::soundtrack = s;
     GlobalClass::lock = 0;
     
     _fmod->loadEvent("Typewriter");
@@ -75,14 +83,13 @@ bool LogoSplash::init() {
     _fmod->loadEvent("CrowdAww");
     _fmod->loadEvent("CrowdScream");
     
-    
     this->scheduleUpdate();
     
     int a = (Util::randf()*LOSE_QOUTES);
     int b = (Util::randf()*WIN_QOUTES);
     GlobalClass::qouteLose = a;
     GlobalClass::qouteWin = b;
-    log("lose %d-%d & win %d-%d",a,GlobalClass::qouteLose,b,GlobalClass::qouteWin);
+    log("Lose %d & Win %d",GlobalClass::qouteLose,GlobalClass::qouteWin);
     
     return bRet;
 }

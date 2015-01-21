@@ -30,6 +30,7 @@ public:
     bool init();
     bool loadEvent(std::string eventName);
     bool playEvent(std::string eventName);
+    bool stopEvent(std::string eventName,bool fade = false);
     bool changeParam(std::string eventName,std::string paramName,float val = 1.0);
     void update();
     void mute();

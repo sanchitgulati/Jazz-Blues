@@ -202,6 +202,14 @@ void GameScene::menuCloseCallback(Ref* pSender)
             Director::getInstance()->replaceScene(scene);
             break;
         }
+        case menuNext:
+        {
+            kCurrentLevel ++; //increment level
+            UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
+            UserDefault::getInstance()->flush();
+            transitionToGameScene();
+            break;
+        }
         case menuRefresh:
         {
             transitionToGameScene();
@@ -480,7 +488,7 @@ void GameScene::loadInstuctionsEnd()
     auto menuLbl = Label::createWithTTF(nextText.c_str(),FONT,36);
     menuLbl->setColor(RGB_ROSE);
     auto menuItem = MenuItemLabel::create(menuLbl, CC_CALLBACK_1(GameScene::menuCloseCallback,this));
-    menuItem->setTag(menuRefresh);
+    menuItem->setTag(menuNext);
     auto menu = Menu::create(menuItem,NULL);
     menu->setPosition(Vec2(screenSize.width/2,screenSize.height*0.30));
     
@@ -499,11 +507,6 @@ void GameScene::loadInstuctionsEnd()
     winnerTitle->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1), NULL));
     menuLbl->runAction(Sequence::create(DelayTime::create(2),FadeIn::create(1), NULL));
     
-    //update level
-    
-    kCurrentLevel ++; //increment level
-    UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
-    UserDefault::getInstance()->flush();
 }
 
 void GameScene::loadDiedEnd()
@@ -927,6 +930,7 @@ void GameScene::BeginContact(b2Contact* contact)
             {
                 if(!_arrested)
                 {
+                    _fmod->stopEvent("SocietyLaugh");
                     _arrested = true;
                     if(GlobalClass::lock == 0)
                     {
