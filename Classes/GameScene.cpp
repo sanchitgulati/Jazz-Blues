@@ -79,7 +79,7 @@ bool GameScene::init()
     _music = Node::create();
     this->addChild(_music,zForeground);
     
-    //    kCurrentLevel = 12; //hack
+    //        kCurrentLevel = 12; //hack
     
     
     createPhysicalWorld();
@@ -88,6 +88,7 @@ bool GameScene::init()
     
     // schedule the update
     this->schedule(schedule_selector(GameScene::update), kUpdateInterval);
+    this->schedule(schedule_selector(GameScene::fmodupdate), kUpdateInterval);
     
     //Menu
     auto levelSelector = MenuItemImage::create(IMG_LEVEL_SELECTOR_0, IMG_LEVEL_SELECTOR_1,CC_CALLBACK_1(GameScene::menuCloseCallback, this));
@@ -178,7 +179,7 @@ bool GameScene::init()
         });
         runAction(Sequence::create(DelayTime::create(25),callFunc, NULL));
         
-        schedule(schedule_selector(GameScene::fall), 1.5);
+        schedule(schedule_selector(GameScene::fall), 1.2);
     }
     
     _fmod = FmodHelper::getInstance();
@@ -275,6 +276,11 @@ void GameScene::menuCloseCallback(Ref* pSender)
     }
 }
 
+void GameScene::fmodupdate(float dt)
+{
+    _fmod->update();
+}
+
 void GameScene::update(float dt)
 {
     /* Taking inputs from On-Screen Button if any */
@@ -300,7 +306,7 @@ void GameScene::update(float dt)
             auto maxScale = MAX(diffX, diffY);
             _parent->setScale(_visibleSize.height/(_parent->getContentSize().height + (maxScale*0.5)));
             
-            if( (_female->getB2Body()->GetPosition().y <= -100/32) || (_male->getB2Body()->GetPosition().y <= -100/32))
+            if( (_female->getB2Body()->GetPosition().y <= -100/32) && (_male->getB2Body()->GetPosition().y >= -100/32))
             {
                 loadDiedEnd();
             }
@@ -491,7 +497,7 @@ void GameScene::loadInstuctionsEnd()
     _fmod->changeParam("Music", "Menu",0);
     _gameState = gsEnd;
     animateMapOut();
-    //    unschedule(schedule_selector(GameScene::update));
+    unschedule(schedule_selector(GameScene::update));
     auto screenSize = Director::getInstance()->getVisibleSize();
     
     auto valuekey = _tm->getProperties();
@@ -570,7 +576,7 @@ void GameScene::loadDiedEnd()
 {
     _gameState = gsEnd;
     animateMapOut();
-    //    unschedule(schedule_selector(GameScene::update));
+    unschedule(schedule_selector(GameScene::update));
     auto screenSize = Director::getInstance()->getVisibleSize();
     
     GlobalClass::qouteLose++;
@@ -583,7 +589,7 @@ void GameScene::loadDiedEnd()
     
     labelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     labelTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
-    labelTitle->setPosition(screenSize.width/2,screenSize.height*0.70);
+    labelTitle->setPosition(screenSize.width/2,screenSize.height*0.55);
     
     auto menuLbl = Label::createWithTTF("- retry chapter-",FONT,36);
     menuLbl->setColor(RGB_ROSE);
