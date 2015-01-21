@@ -45,11 +45,17 @@ private:
     int _bloodMale;
     int _giftTurn;
     
+    bool _fall_counter;
+    
+    cocos2d::Vector<cocos2d::Node*> _fall;
+    cocos2d::Vector<cocos2d::Node*> _buttons;
+    
     // stuff the player overlaps for overlap check will go here in this group!
     cocos2d::Node* _overlapGroup;
     
     cocos2d::Node* _bgGroup;
     cocos2d::Node* _fgGroup;
+    cocos2d::Node* _music;
     
     cocos2d::Vector<Door*> _listOfDoors;
     
@@ -62,6 +68,8 @@ private:
     
     FmodHelper* _fmod;
     int _mute;
+    
+    bool _inTransition;
     
     //Box2d
     b2World* _world;
@@ -84,6 +92,7 @@ protected:
     void loadInstuctions();
     void loadInstuctionsEnd();
     void loadDiedEnd();
+    void fall(float dt);
     
     
     void animateMapIn();
@@ -106,8 +115,10 @@ protected:
     void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
     //Rendering
     void transitionToGameScene();
-    void nextTrack(std::string name);
+    void transitionToMenuScene();
+    void nextTrack(bool change = false);
     void restartScene();
+    void menuScene();
     void startGame();
     void skip();
     void toGameScene();

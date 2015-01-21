@@ -50,6 +50,11 @@ bool Platform::initWithBody(b2Body* body,float scaleX,float scaleY)
     return true;
 }
 
+void Platform::fall()
+{
+    _sprite->getB2Body()->SetType(b2_dynamicBody);
+    _sprite->getB2Body()->SetAngularVelocity(2);
+}
 
 Platform* Platform::createFixture(b2World* world, TMXLayer* layer, int x, int y, float width, float height,int length,bool vertical)
 {

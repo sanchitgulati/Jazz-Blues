@@ -19,6 +19,7 @@ Button::Button(const char *normalSprite, const char *selectedSprite,cocos2d::Nod
 	_normalSprite = Sprite::create(normalSprite);
 	_selectedSprite = Sprite::create(selectedSprite);
 	_selectedSprite->setVisible(false);
+    _normalSprite->setOpacity(100);
     _normalSprite->setAnchorPoint(Vec2(0.0, 0.0));
     _selectedSprite->setAnchorPoint(Vec2(0.0, 0.0));
     

@@ -42,10 +42,12 @@ bool GameScene::init()
     _blood = 0;
     _bloodMale = 0;
     _mute = 0;
+    _inTransition = false;
     _giftTurn = pFemale;
+    _fall_counter = false;
     _gameState = gsIntro;
     kCurrentLevel = UserDefault::getInstance()->getIntegerForKey("continue",1);
-
+    
     auto max = UserDefault::getInstance()->getIntegerForKey("max",1);
     if(kCurrentLevel > max)
         UserDefault::getInstance()->setIntegerForKey("max",kCurrentLevel);
@@ -73,6 +75,11 @@ bool GameScene::init()
     _parent = Node::create();
     _parent->setAnchorPoint(Point(0.5,0.5));
     this->addChild(_parent,zGame);
+    
+    _music = Node::create();
+    this->addChild(_music,zForeground);
+    
+    //    kCurrentLevel = 12; //hack
     
     
     createPhysicalWorld();
@@ -116,23 +123,29 @@ bool GameScene::init()
     auto left = Button::create(IMG_BUTTON_LEFT_0, IMG_BUTTON_LEFT_1,_male,_female);
     left->setUserData((void*)(new userdataFormat(bLeft)));
     left->setPosition(128, 128);
+    left->setVisible(false);
+    _buttons.pushBack(left);
     this->addChild(left,zControl);
     
     auto right = Button::create(IMG_BUTTON_RIGHT_0, IMG_BUTTON_RIGHT_1,_male,_female);
     right->setUserData((void*)(new userdataFormat(bRight)));
     right->setPosition(320,128);
+    right->setVisible(false);
+    _buttons.pushBack(right);
     this->addChild(right,zControl);
     
     auto up = Button::create(IMG_BUTTON_UP_0, IMG_BUTTON_UP_1,_male,_female);
     up->setUserData((void*)(new userdataFormat(bUp)));
     up->setPosition(_visibleSize.width - 128,128);
+    up->setVisible(false);
+    _buttons.pushBack(up);
     this->addChild(up,zControl);
 #endif
     
     /* Entering box2d world */
-//            _platformsGroup->setVisible(false);
-//            _playerGroup->setVisible(false);
-//            _bgGroup->setVisible(false);
+    //            _platformsGroup->setVisible(false);
+    //            _playerGroup->setVisible(false);
+    //            _bgGroup->setVisible(false);
     /*end*/
     
     
@@ -143,7 +156,6 @@ bool GameScene::init()
         _male->invert();
         _female->invert();
     }
-    log("value %s",invert);
     
     auto night = valuekey["time"].asString().c_str();
     _night = nullptr;
@@ -158,9 +170,6 @@ bool GameScene::init()
     }
     log("value %s",night);
     
-//    CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
-//    CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(SFX_BG_HAPPY,true);
-    //
     
     if(kCurrentLevel == 12)
     {
@@ -168,6 +177,8 @@ bool GameScene::init()
             this->loadInstuctionsEnd();
         });
         runAction(Sequence::create(DelayTime::create(25),callFunc, NULL));
+        
+        schedule(schedule_selector(GameScene::fall), 1.5);
     }
     
     _fmod = FmodHelper::getInstance();
@@ -177,6 +188,27 @@ bool GameScene::init()
     return true;
 }
 
+void GameScene::fall(float dt)
+{
+    if(_fall_counter)
+    {
+        _fall_counter = false;
+        auto s = _fall.begin();
+        auto t = (Platform*)(*s);
+        t->fall();
+        _fall.erase(s);
+    }
+    else
+    {
+        _fall_counter = true;
+        auto w = _fall.rbegin();
+        auto s = _fall.find(*w);
+        auto t = (Platform*)(*s);
+        t->fall();
+        _fall.erase(s);
+    }
+    
+}
 
 void GameScene::skip()
 {
@@ -187,9 +219,11 @@ void GameScene::skip()
         child->stopAllActions();
     c->stopAllActions();
     c->setVisible(false);
+    for(auto c : _buttons)
+        c->setVisible(true);
     this->animateMapIn();
     this->_gameState = gsStart;
-//    CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+    //    CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
 }
 
 void GameScene::menuCloseCallback(Ref* pSender)
@@ -198,8 +232,7 @@ void GameScene::menuCloseCallback(Ref* pSender)
     switch (obj->getTag()) {
         case menuLevel:
         {
-            auto scene = (Scene*)MainMenu::create();
-            Director::getInstance()->replaceScene(scene);
+            transitionToMenuScene();
             break;
         }
         case menuNext:
@@ -208,6 +241,11 @@ void GameScene::menuCloseCallback(Ref* pSender)
             UserDefault::getInstance()->setIntegerForKey("continue", kCurrentLevel);
             UserDefault::getInstance()->flush();
             transitionToGameScene();
+            break;
+        }
+        case menuSong:
+        {
+            nextTrack(true);
             break;
         }
         case menuRefresh:
@@ -248,8 +286,12 @@ void GameScene::update(float dt)
     _fmod->update();
     if(_gameState == gsStart)
     {
-        //        if(_society != nullptr)
-        //            _society->move();
+        
+        if(_male->getB2Body()->GetPosition().y <= -100/32)
+        {
+            loadDiedEnd();
+        }
+        
         if(_female != nullptr)
         {
             //Dynamic Scaling
@@ -376,14 +418,21 @@ void GameScene::loadInstuctions()
     auto menuItem = MenuItemLabel::create(menuLbl, CC_CALLBACK_1(GameScene::menuCloseCallback,this));
     menuItem->setTag(menuSkip);
     
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
     auto menuLblPC = Label::createWithTTF("press space to skip", FONT, 18);
     menuLblPC->setColor(RGB_ROSE);
     auto menuItemPC = MenuItemLabel::create(menuLblPC, CC_CALLBACK_1(GameScene::menuCloseCallback,this));
     menuItemPC->setTag(menuSkip);
     menuItemPC->setPositionY(-1*menuLbl->getContentSize().height*1);
     menuItemPC->setEnabled(false);
+#endif
     
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
     auto menu = Menu::create(menuItem,menuItemPC,NULL);
+#else
+    auto menu = Menu::create(menuItem,NULL);
+#endif
+    
     menu->setPosition(Vec2(screenSize.width/2,screenSize.height*0.30));
     menu->setTag(tagSkip);
     labelTitle->setTag(tagIntro);
@@ -414,6 +463,8 @@ void GameScene::loadInstuctions()
                                       this->_fmod->playEvent("Typewriter");
                                       this->animateMapIn();
                                       menu->setVisible(false);
+                                      for(auto c : _buttons)
+                                          c->setVisible(true);
                                       this->_gameState = gsStart;
                                   });
             
@@ -440,7 +491,7 @@ void GameScene::loadInstuctionsEnd()
     _fmod->changeParam("Music", "Menu",0);
     _gameState = gsEnd;
     animateMapOut();
-//    unschedule(schedule_selector(GameScene::update));
+    //    unschedule(schedule_selector(GameScene::update));
     auto screenSize = Director::getInstance()->getVisibleSize();
     
     auto valuekey = _tm->getProperties();
@@ -459,7 +510,9 @@ void GameScene::loadInstuctionsEnd()
     Label* winnerTitle = nullptr;
     if(kCurrentLevel == 12)
     {
-        str = "This game is a dedication.\nTo Jazz,From Blues.";
+        
+        unschedule(schedule_selector(GameScene::fall));
+        str = "This game is a dedication.\nTo Jazz, From Blues.";
         winnerTitle = Label::createWithTTF(str, FONT, 36);
         winnerTitle->setWidth(screenSize.width*0.90);
         winnerTitle->setColor(RGB_ROSE);
@@ -467,6 +520,10 @@ void GameScene::loadInstuctionsEnd()
         winnerTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         winnerTitle->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
         winnerTitle->setPosition(screenSize.width/2,screenSize.height*0.70);
+        
+        winnerTitle->runAction(Sequence::create(DelayTime::create(3),FadeOut::create(5), NULL));
+        labelTitle->runAction(Sequence::create(DelayTime::create(4),FadeOut::create(6), NULL));
+        labelTitle->runAction(ScaleBy::create(10, 1.5));
     }
     else
     {
@@ -513,7 +570,7 @@ void GameScene::loadDiedEnd()
 {
     _gameState = gsEnd;
     animateMapOut();
-//    unschedule(schedule_selector(GameScene::update));
+    //    unschedule(schedule_selector(GameScene::update));
     auto screenSize = Director::getInstance()->getVisibleSize();
     
     GlobalClass::qouteLose++;
@@ -671,6 +728,8 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 {
                     auto platform = Platform::createFixture(_world,layer, x, y, 1.0f, 1.0f);
                     _platformsGroup->addChild(platform,0);
+                    if(kCurrentLevel == 12)
+                        _fall.pushBack(platform);
                     break;
                 }
                 case tmxFemale:
@@ -787,6 +846,9 @@ void GameScene::animateMapIn()
 
 void GameScene::animateMapOut()
 {
+    
+    for(auto c : _buttons)
+        c->setVisible(false);
     if(_night == nullptr)
     {
         _parent->runAction(Sequence::create(DelayTime::create(0.5),MoveTo::create(1, _screenOutPosition),NULL));
@@ -795,7 +857,7 @@ void GameScene::animateMapOut()
     {
         _parent->runAction(Sequence::create(DelayTime::create(0.5),MoveTo::create(1, _screenOutPosition),NULL));
         _night->stopAllActions();
-//        _night->setOpacity(250);
+        //        _night->setOpacity(250);
         _night->runAction(Sequence::create(DelayTime::create(1.5),FadeTo::create(1,100),NULL));
     }
 }
@@ -1093,45 +1155,7 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
             break;//
         case EventKeyboard::KeyCode::KEY_N:
         {
-            nextTrack("Second");
-            switch (GlobalClass::soundtrack) {
-                case 0:
-                    GlobalClass::soundtrack = 1;
-                    _fmod->changeParam("Music", "Track1",1);
-                    break;
-                case 1:
-                    GlobalClass::soundtrack = 2;
-                    _fmod->changeParam("Music", "Track1",0);
-                    _fmod->changeParam("Music", "Track2",1);
-                    break;
-                case 2:
-                    GlobalClass::soundtrack = 3;
-                    _fmod->changeParam("Music", "Track2",0);
-                    _fmod->changeParam("Music", "Track3",1);
-                    break;
-                case 3:
-                    GlobalClass::soundtrack = 4;
-                    _fmod->changeParam("Music", "Track3",0);
-                    _fmod->changeParam("Music", "Track4",1);
-                    break;
-                case 4:
-                    GlobalClass::soundtrack = 5;
-                    _fmod->changeParam("Music", "Track4",0);
-                    _fmod->changeParam("Music", "Track5",1);
-                    break;
-                case 5:
-                    GlobalClass::soundtrack = 6;
-                    _fmod->changeParam("Music", "Track5",0);
-                    _fmod->changeParam("Music", "Track6",1);
-                    break;
-                case 6:
-                    GlobalClass::soundtrack = 1;
-                    _fmod->changeParam("Music", "Track6",0);
-                    _fmod->changeParam("Music", "Track1",1);
-                    break;
-                default:
-                    break;
-            }
+            nextTrack(true);
         }
         default:
             break;
@@ -1179,6 +1203,11 @@ void GameScene::toGameScene()
 
 void GameScene::transitionToGameScene()
 {
+    if(_inTransition)
+        return;
+    
+    _inTransition = true;
+    
     
     _fmod->changeParam("Music", "Menu",1);
     auto size = Director::getInstance()->getWinSize();
@@ -1207,6 +1236,39 @@ void GameScene::transitionToGameScene()
     
 }
 
+void GameScene::transitionToMenuScene()
+{
+    if(_inTransition)
+        return;
+    
+    _inTransition = true;
+    _fmod->changeParam("Music", "Menu",1);
+    auto size = Director::getInstance()->getWinSize();
+    auto clipper = ClippingNode::create();
+    
+    clipper->setAnchorPoint(Point(0.5f, 0.5f));
+    clipper->setPosition(size.width / 2, size.height / 2);
+    clipper->setAlphaThreshold(0.05f);
+    clipper->setInverted(true);
+    
+    Sprite* blackRect = Sprite::create("images/black_screen.png");
+    blackRect->setScale(size.width/blackRect->getContentSize().width, size.height/blackRect->getContentSize().height);
+    clipper->addChild(blackRect);
+    
+    auto heart = Sprite::create("images/heart.png");
+    heart->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    heart->setScale((size.width/heart->getContentSize().width)*1.3);
+    clipper->setStencil(heart);	//set the cut triangle in the ClippingNode.
+    
+    this->addChild(clipper, 500);
+    auto callFunc = CallFuncN::create(CC_CALLBACK_0(GameScene::menuScene,this));
+    heart->runAction(EaseSineOut::create(Spawn::create(ScaleTo::create(2.5f, 0.0f, 0.0f),
+                                                       RotateBy::create(2.5f, 540),
+                                                       Sequence::create(DelayTime::create(2.5),
+                                                                        callFunc, NULL), NULL)));
+    
+}
+
 void GameScene::restartScene()
 {
     //get the game scene and run it.
@@ -1215,31 +1277,102 @@ void GameScene::restartScene()
 }
 
 
-void GameScene::nextTrack(std::string name)
+void GameScene::menuScene()
 {
-    auto img = Sprite::create(IMG_BG);
-    img->setScale(Util::getScreenRatioHeight(img)*0.05, Util::getScreenRatioHeight(img)*0.1);
-    img->setPosition(Vec2(_visibleSize.width*0.50,_visibleSize.height*1.2));
-    img->setColor(RGB_BLUE);
-    this->addChild(img);
     
-    auto l = Label::createWithTTF(name, FONT, 24);
-    l->setColor(RGB_WHITE);
-    l->setPositionX(10);
-    l->setPositionY(img->getBoundingBox().size.width/2);
+    //get the game scene and run it.
+    auto scene = MainMenu::createScene();
+    Director::getInstance()->replaceScene(scene);
+}
+
+void GameScene::nextTrack(bool change)
+{
+    Vec2 pos = Vec2(_visibleSize.width + 214 - 10,10);
+    if(change)
+    {
+        switch (GlobalClass::soundtrack) {
+            case 0:
+                GlobalClass::soundtrack = 1;
+                _fmod->changeParam("Music", "Track1",1);
+                break;
+            case 1:
+                GlobalClass::soundtrack = 2;
+                _fmod->changeParam("Music", "Track1",0);
+                _fmod->changeParam("Music", "Track2",1);
+                break;
+            case 2:
+                GlobalClass::soundtrack = 3;
+                _fmod->changeParam("Music", "Track2",0);
+                _fmod->changeParam("Music", "Track3",1);
+                break;
+            case 3:
+                GlobalClass::soundtrack = 4;
+                _fmod->changeParam("Music", "Track3",0);
+                _fmod->changeParam("Music", "Track4",1);
+                break;
+            case 4:
+                GlobalClass::soundtrack = 5;
+                _fmod->changeParam("Music", "Track4",0);
+                _fmod->changeParam("Music", "Track5",1);
+                break;
+            case 5:
+                GlobalClass::soundtrack = 6;
+                _fmod->changeParam("Music", "Track5",0);
+                _fmod->changeParam("Music", "Track6",1);
+                break;
+            case 6:
+                GlobalClass::soundtrack = 1;
+                _fmod->changeParam("Music", "Track6",0);
+                _fmod->changeParam("Music", "Track1",1);
+                break;
+            default:
+                break;
+        }
+    }
+    auto name = StringUtils::format("%s\nby %s",tracks[GlobalClass::soundtrack-1].c_str(),artists[GlobalClass::soundtrack-1].c_str());
+    
+    _music->removeAllChildrenWithCleanup(true);
+    
+    auto img = Sprite::create(IMG_MUSIC);
+    img->setColor(RGB_BLUE);
+    img->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+    img->setPosition(pos);
+    if(change)
+    {
+        auto show = EaseBackInOut::create(MoveTo::create(0.5, Vec2(_visibleSize.width - 10,10)));
+        auto delay = DelayTime::create(5);
+        auto move = EaseBackInOut::create(MoveTo::create(0.5, pos));
+        img->runAction(Sequence::create(show,delay,move, NULL));
+    }
+    _music->addChild(img,999);
+    
+    auto nextN = Sprite::create(IMG_NEXT);
+    nextN->setColor(RGB_WHITE);
+    auto nextD = Sprite::create(IMG_NEXT);
+    nextD->setColor(RGB_BLUE);
+    
+    auto item = MenuItemSprite::create(nextN, nextD, CC_CALLBACK_1(GameScene::menuCloseCallback, this));
+    item->setPositionX(32);
+    item->setPositionY(16 + 6);
+    item->setTag(menuSong);
+    auto menu = Menu::create(item, NULL);
+    menu->setPosition(Vec2::ZERO);
+    img->addChild(menu,99);
+    
+    auto l = Label::createWithTTF(name, FONT, 16);
+    l->setColor(RGB_BLACK);
+    l->setPositionX(54);
+    l->setPositionY(16 + 6);
     l->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
     img->addChild(l);
     
-    auto move = MoveTo::create(1.0, Vec2(_visibleSize.width*0.50,_visibleSize.height*0.8));
-    auto del = CallFunc::create([img](){img->removeFromParentAndCleanup(true);});
-    img->runAction(Sequence::create(move,move->reverse(),del, NULL));
     
 }
 
 void GameScene::startGame()
 {
-    
-    nextTrack("First");
+    auto s = StringUtils::format("%s\nby %s",tracks[GlobalClass::soundtrack-1].c_str(),artists[GlobalClass::soundtrack-1].c_str());
+    nextTrack();
     //TODO : something
     auto obj = getChildByTag(tagMenu);
     obj->runAction(FadeIn::create(1));

@@ -20,6 +20,7 @@ class MainMenu : public cocos2d::LayerColor
     void createSoundPlayer();
     void backToMenu();
 public:
+    static cocos2d::Scene* createScene();
 	MainMenu();
 	~MainMenu();
     virtual bool init();

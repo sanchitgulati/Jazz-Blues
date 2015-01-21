@@ -17,6 +17,8 @@
 
 
 #define IMG_BG "images/bg.png"
+#define IMG_MUSIC "images/music.png"
+#define IMG_NEXT "images/next.png"
 #define IMG_FEMALE "images/girl.png"
 #define IMG_BODY "images/body.png"
 #define IMG_MALE "images/boy.png"
@@ -123,7 +125,7 @@
 
 #define VFX_CONSTANT 0.75
 
-enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuNext,menuToggle,menuSkip};
+enum gameMenuTag {menuLevel,menuMute,menuUnmute,menuRefresh,menuNext,menuSong,menuToggle,menuSkip};
 enum zButtonIndex {bLeft,bRight,bUp};
 enum zIndex {zBackground,zGame,zNight,zRain,zForeground,zHUD,zControl};
 enum tiledIndex {tmxEmpty,tmxPlatform,tmxFire,tmxFemale,tmxMale,tmxWin,tmxBlock,tmxWall,tmxCloud,tmxTemple,tmxDoor,tmxPoison,tmxTeddy,tmxTunnel,tmxSociety,tmxPolice};

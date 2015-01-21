@@ -22,6 +22,7 @@ private:
     int itemType;
 public:
     Platform();
+    void fall();
 //    void reset(float x,float y);
     static Platform* createFixture(b2World* world,cocos2d::TMXLayer* layer, int x, int y, float width, float height,int length = 1,bool vertical = false);
     ~Platform();

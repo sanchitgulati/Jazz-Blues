@@ -266,9 +266,10 @@ void MainMenu::createSoundPlayer()
     back->runAction(Sequence::create(DelayTime::create(1),callFunc, fadeIn,NULL));
     
     auto backItem = MenuItemLabel::create(back,CC_CALLBACK_1(MainMenu::menuCallback, this));
+    
     auto menuback = Menu::create(backItem, NULL);
     backItem->setTag(bMenu);
-    menuback->setPosition(screenSize.width*0.30, screenSize.height - 50 - trackName->getContentSize().height*1.25);
+    menuback->setPosition(screenSize.width*0.30 - 45, screenSize.height - 50 - trackName->getContentSize().height*1.25);
     _player->addChild(menuback);
     
     for (int i = 0; i < TRACKS; i++) {
@@ -524,4 +525,19 @@ void MainMenu::toGameScene()
     //get the game scene and run it.
     auto scene = GameScene::createScene();
     Director::getInstance()->replaceScene(scene);
+}
+
+Scene* MainMenu::createScene()
+{
+    // 'scene' is an autorelease object
+    auto scene = Scene::create();
+    
+    // 'layer' is an autorelease object
+    auto layer = MainMenu::create();
+    
+    // add layer as a child to scene
+    scene->addChild(layer);
+    
+    // return the scene
+    return scene;
 }
