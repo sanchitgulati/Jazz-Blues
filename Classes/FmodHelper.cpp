@@ -73,6 +73,8 @@ bool FmodHelper::init()
     }
     
     
+//    auto bank = FileUtils::getInstance()->fullPathForFilename("fmod/Master Bank.bank");
+//    auto strings = FileUtils::getInstance()->fullPathForFilename("fmod/Master Bank.strings.bank");
     auto bank = FileUtils::getInstance()->fullPathForFilename("fmod/master.bank");
     auto strings = FileUtils::getInstance()->fullPathForFilename("fmod/master.strings.bank");
     

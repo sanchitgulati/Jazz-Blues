@@ -82,6 +82,8 @@ bool LogoSplash::init() {
     _fmod->loadEvent("BlueScream");
     _fmod->loadEvent("CrowdAww");
     _fmod->loadEvent("CrowdScream");
+    _fmod->loadEvent("EarthQuake");
+    _fmod->loadEvent("No");
     
     this->scheduleUpdate();
     

@@ -106,7 +106,7 @@ bool MainMenu::init() {
         move_reverse = MoveBy::create(12, Vec2(delta, 0));
         sequence = Sequence::create(move,move_reverse,NULL);
         repeat = RepeatForever::create(sequence);
-        prop0->runAction(repeat);
+        //prop0->runAction(repeat);
         
         auto prop1 = Sprite::create(IMG_JAZZ_1);
         prop1->setScale(Util::getScreenRatioHeight(prop1));
@@ -118,14 +118,14 @@ bool MainMenu::init() {
         move = MoveBy::create(15, Vec2(delta, 0));
         sequence = Sequence::create(move,move->reverse(),NULL);
         repeat = RepeatForever::create(sequence);
-        prop1->runAction(repeat);
+        //prop1->runAction(repeat);
         
         auto prop2 = Sprite::create(IMG_JAZZ_2);
         prop2->setScale(Util::getScreenRatioHeight(prop2));
         prop2->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
         prop2->setPosition(screenSize.width, screenSize.height*0.50);
         _prop->addChild(prop2);
-        auto rotate = RotateBy::create(10,3);
+        auto rotate = RotateBy::create(20,3);
         prop2->runAction(RepeatForever::create(Sequence::create(rotate,rotate->reverse(), NULL)));
         
         _menu = Menu::create(menuItemPlay,menuItemMusic,menuItemQuit,menuItemNew, NULL);
@@ -167,7 +167,7 @@ bool MainMenu::init() {
         
         
         _fmod = FmodHelper::getInstance();
-        
+        _fmod->changeParam("Music","FinalLevel",0);
         
         bRet = true;
     } while(0);
@@ -298,7 +298,7 @@ void MainMenu::createSoundPlayer()
         
     }
     
-    auto credits = "A game by Sanchit Gulati\nMusic Curation & Sound Design by 3quavers\nsfx from freesfx.co.uk\nSpecial thanks to Manish Basetia\nThanks Fubar Ghetto, Drift The Trio & Refuge for their music\nAudio Engine : FMOD Studio by Firelight Technologies";
+    auto credits = "A game by Sanchit Gulati\nMusic Curation & Sound Design by 3 Quavers\nsfx from freesfx.co.uk\nSpecial thanks to Manish Basetia\nThanks Fubar Ghetto, Drift The Trio & Refuge for their music\nAudio Engine : FMOD Studio by Firelight Technologies";
     
     auto creditsTTF = Label::createWithTTF(credits, FONT, 16);
     creditsTTF->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);

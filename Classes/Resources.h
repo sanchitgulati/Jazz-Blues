@@ -160,7 +160,7 @@ const std::string tracks[TRACKS] = {
     "Connections",
     "Not So Blue",
     "Movie Night",
-    "In a turn of events",
+    "In A Turn Of Events",
     "Estoy Bien"
 };
 

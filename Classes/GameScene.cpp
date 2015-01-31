@@ -85,6 +85,8 @@ bool GameScene::init()
     createPhysicalWorld();
     loadLevel(0);
     loadInstuctions();
+    _fmod = FmodHelper::getInstance();
+    _fmod->changeParam("Music","FinalLevel",0);
     
     // schedule the update
     this->schedule(schedule_selector(GameScene::update), kUpdateInterval);
@@ -174,15 +176,21 @@ bool GameScene::init()
     
     if(kCurrentLevel == 12)
     {
+        _fmod->changeParam("Music","FinalLevel",1);
+        
+        _fmod->playEvent("EarthQuake");
+        _fmod->changeParam("EarthQuake","Loop",1);
+        
+        
         auto callFunc = CallFunc::create([this](){
             this->loadInstuctionsEnd();
+            this->_fmod->changeParam("EarthQuake","Loop",0);
         });
         runAction(Sequence::create(DelayTime::create(25),callFunc, NULL));
         
         schedule(schedule_selector(GameScene::fall), 1.2);
     }
     
-    _fmod = FmodHelper::getInstance();
     
     
     this->toGameScene();
@@ -843,7 +851,7 @@ void GameScene::animateMapIn()
             _fmod->playEvent("Thunder");
         });
         _night->runAction(FadeTo::create(0.7, 250));
-        _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(8),thunder, NULL)));
+        _night->runAction(RepeatForever::create(Sequence::create(thunder,DelayTime::create(8), NULL)));
         _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(10),FadeTo::create(0.3, 100),FadeTo::create(0.3, 250), NULL)));
         _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(3),FadeTo::create(0.1, 100),FadeTo::create(0.1, 250), NULL)));
     }
@@ -1062,7 +1070,7 @@ void GameScene::BeginContact(b2Contact* contact)
                     this->loadInstuctionsEnd();
                 });
                 
-                _fmod->playEvent("CrowdAww");
+                _fmod->playEvent("No");
                 runAction(Sequence::create(DelayTime::create(5),callFunc, NULL));
             }
         }
@@ -1359,7 +1367,7 @@ void GameScene::nextTrack(bool change)
     
     auto item = MenuItemSprite::create(nextN, nextD, CC_CALLBACK_1(GameScene::menuCloseCallback, this));
     item->setPositionX(32);
-    item->setPositionY(16 + 6);
+    item->setPositionY(16 + 8);
     item->setTag(menuSong);
     auto menu = Menu::create(item, NULL);
     menu->setPosition(Vec2::ZERO);

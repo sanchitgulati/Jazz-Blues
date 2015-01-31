@@ -2,9 +2,9 @@
 <map version="1.0" orientation="orthogonal" width="25" height="18" tilewidth="32" tileheight="32">
  <properties>
   <property name="bg" value="rain"/>
-  <property name="end" value="everything was diffrent"/>
+  <property name="end" value="they said, my god forbid it "/>
   <property name="invert" value="true"/>
-  <property name="start" value="... things changed ..."/>
+  <property name="start" value="everything was different "/>
  </properties>
  <tileset firstgid="1" name="1" tilewidth="32" tileheight="32">
   <image source="tilesheet.jpg" width="192" height="96"/>
