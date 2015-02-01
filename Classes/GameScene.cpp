@@ -176,10 +176,6 @@ bool GameScene::init()
     
     if(kCurrentLevel == 12)
     {
-        _fmod->changeParam("Music","FinalLevel",1);
-        
-        _fmod->playEvent("EarthQuake");
-        _fmod->changeParam("EarthQuake","Loop",1);
         
         
         auto callFunc = CallFunc::create([this](){
@@ -856,6 +852,15 @@ void GameScene::animateMapIn()
         _night->runAction(RepeatForever::create(Sequence::create(DelayTime::create(3),FadeTo::create(0.1, 100),FadeTo::create(0.1, 250), NULL)));
     }
     _parent->runAction(Sequence::create(DelayTime::create(1.0f),EaseCubicActionOut::create(MoveTo::create(1, _screenInPosition)),NULL));
+    
+    
+    if(kCurrentLevel == 12)
+    {
+        
+        _fmod->changeParam("Music","FinalLevel",1);
+        _fmod->playEvent("EarthQuake");
+        _fmod->changeParam("EarthQuake","Loop",1);
+    }
 }
 
 void GameScene::animateMapOut()

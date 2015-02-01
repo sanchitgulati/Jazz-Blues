@@ -8,6 +8,7 @@
 
 #include "Button.h"
 #include "GameObjects/Player.h"
+#include "Util.h"
 using namespace cocos2d;
 
 
@@ -17,7 +18,11 @@ Button::Button(const char *normalSprite, const char *selectedSprite,cocos2d::Nod
     _target2 = target2;
     setAnchorPoint(Vec2(0.5, 0.5));
 	_normalSprite = Sprite::create(normalSprite);
+    
+    auto scale = clampf(Util::getScreenRatioHeight(_normalSprite)*0.15,0.5,1);
+    _normalSprite->setScale(scale);
 	_selectedSprite = Sprite::create(selectedSprite);
+    _selectedSprite->setScale(scale);
 	_selectedSprite->setVisible(false);
     _normalSprite->setOpacity(100);
     _normalSprite->setAnchorPoint(Vec2(0.0, 0.0));

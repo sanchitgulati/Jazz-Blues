@@ -168,6 +168,7 @@ bool MainMenu::init() {
         
         _fmod = FmodHelper::getInstance();
         _fmod->changeParam("Music","FinalLevel",0);
+        _fmod->changeParam("Music","Menu",0);
         
         bRet = true;
     } while(0);
