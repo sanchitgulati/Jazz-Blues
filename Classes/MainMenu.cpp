@@ -30,10 +30,10 @@ bool MainMenu::init() {
         this->setColor(Color3B::WHITE);
         this->setOpacity(255);
         
-        Size screenSize = Director::getInstance()->getWinSize();
+        cocos2d::Size screenSizeSize = Director::getInstance()->getWinSize();
         
-        auto bg = Sprite::create("images/paper.png",cocos2d::Rect(0,0,screenSize.width,screenSize.height));
-        bg->setPosition(screenSize.width/2, screenSize.height/2);
+        auto bg = Sprite::create("images/paper.png",cocos2d::Rect(0,0,screenSizeSize.width,screenSizeSize.height));
+        bg->setPosition(screenSizeSize.width/2, screenSizeSize.height/2);
         bg->getTexture()->setTexParameters({GL_LINEAR, GL_LINEAR,GL_REPEAT,GL_REPEAT});
         this->addChild(bg);
         
@@ -48,12 +48,12 @@ bool MainMenu::init() {
         _gameLogo = Node::create();
         this->addChild(_gameLogo);
         auto gameLogo0 = Sprite::create(IMG_GAME_LOGO_0);
-        gameLogo0->setPosition(Point(screenSize.width/2,screenSize.height*0.80));
+        gameLogo0->setPosition(cocos2d::Point(screenSizeSize.width/2,screenSizeSize.height*0.80));
         gameLogo0->setScale(Util::getScreenRatioHeight(gameLogo0)*0.4);
         _gameLogo->addChild(gameLogo0);
         
         auto gameLogo1 = Sprite::create(IMG_GAME_LOGO_1);
-        gameLogo1->setPosition(Point(screenSize.width/2,screenSize.height*0.80));
+        gameLogo1->setPosition(cocos2d::Point(screenSizeSize.width/2,screenSizeSize.height*0.80));
         gameLogo1->setScale(Util::getScreenRatioHeight(gameLogo1)*0.4);
         _gameLogo->addChild(gameLogo1);
         
@@ -99,7 +99,7 @@ bool MainMenu::init() {
         auto prop0 = Sprite::create(IMG_JAZZ_0);
         prop0->setScale(Util::getScreenRatioHeight(prop0));
         prop0->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
-        prop0->setPosition(screenSize.width, screenSize.height*0.50);
+        prop0->setPosition(screenSizeSize.width, screenSizeSize.height*0.50);
         _prop->addChild(prop0);
         delta = 5;
         move = MoveBy::create(12, Vec2(delta, 0));
@@ -111,7 +111,7 @@ bool MainMenu::init() {
         auto prop1 = Sprite::create(IMG_JAZZ_1);
         prop1->setScale(Util::getScreenRatioHeight(prop1));
         prop1->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
-        prop1->setPosition(screenSize.width, screenSize.height*0.50);
+        prop1->setPosition(screenSizeSize.width, screenSizeSize.height*0.50);
         _prop->addChild(prop1);
         
         delta = 5;
@@ -123,13 +123,13 @@ bool MainMenu::init() {
         auto prop2 = Sprite::create(IMG_JAZZ_2);
         prop2->setScale(Util::getScreenRatioHeight(prop2));
         prop2->setAnchorPoint(Vec2::ANCHOR_MIDDLE_RIGHT);
-        prop2->setPosition(screenSize.width, screenSize.height*0.50);
+        prop2->setPosition(screenSizeSize.width, screenSizeSize.height*0.50);
         _prop->addChild(prop2);
         auto rotate = RotateBy::create(20,3);
         prop2->runAction(RepeatForever::create(Sequence::create(rotate,rotate->reverse(), NULL)));
         
         _menu = Menu::create(menuItemPlay,menuItemMusic,menuItemQuit,menuItemNew, NULL);
-        _menu->setPosition(screenSize.width*0.30, screenSize.height*0.35);
+        _menu->setPosition(screenSizeSize.width*0.30, screenSizeSize.height*0.35);
         this->addChild(_menu);
         
         
@@ -151,7 +151,7 @@ bool MainMenu::init() {
         
         auto bracketLeft = Sprite::create(FNT_BRACKET);
         bracketLeft->setScale(Util::getScreenRatioHeight(bracketLeft)*0.40);
-        bracketLeft->setPosition(0.0 + margin, screenSize.height - margin);
+        bracketLeft->setPosition(0.0 + margin, screenSizeSize.height - margin);
         bracketLeft->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
         bracketLeft->setOpacity(0);
         _table->addChild(bracketLeft);
@@ -160,7 +160,7 @@ bool MainMenu::init() {
         bracketRight->setFlippedX(true);
         bracketRight->setFlippedY(true);
         bracketRight->setScale(Util::getScreenRatioHeight(bracketRight)*0.40);
-        bracketRight->setPosition(screenSize.width - margin, 0 + margin);
+        bracketRight->setPosition(screenSizeSize.width - margin, 0 + margin);
         bracketRight->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
         bracketRight->setOpacity(0);
         _table->addChild(bracketRight);
@@ -184,14 +184,14 @@ void MainMenu::createLevelMenu()
     _fmod->changeParam("Music","Menu",0);
     _fmod->changeParam("Music","LevelTransition",1);
     _table->setVisible(true);
-    Size screenSize = Director::getInstance()->getWinSize();
+    cocos2d::Size screenSizeSize = Director::getInstance()->getWinSize();
     cocos2d::Vector<MenuItem *> lvlList;
     for (int i = 0; i < LVLS; i++) {
         auto lbl = Label::createWithTTF(level[i].c_str(), FONT, 21);
         auto sptr = Sprite::create(IMG_RECORD);
         auto item = MenuItemSprite::create(sptr,sptr, CC_CALLBACK_1(MainMenu::levelCallback, this));
         
-        item->setContentSize(Size(screenSize.height*0.24,screenSize.height*0.20));
+        item->setContentSize(cocos2d::Size(screenSizeSize.height*0.24,screenSizeSize.height*0.20));
         sptr->setScale(Util::getScreenRatioHeight(sptr)*0.15);
         item->setTag(i+1);
         lvlList.pushBack(item);
@@ -215,13 +215,13 @@ void MainMenu::createLevelMenu()
             item->setEnabled(false);
             
         }
-        else{auto time = 3 + random()%3;
+        else{auto time = 3 + Util::randf()*3;
             sptr->runAction(RepeatForever::create(RotateBy::create(time, 360)));
         }
     }
     auto menu = Menu::createWithArray(lvlList);
     menu->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    menu->setPosition(screenSize.width*0.50, screenSize.height*0.50);
+    menu->setPosition(screenSizeSize.width*0.50, screenSizeSize.height*0.50);
     menu->setTag(3);
     this->addChild(menu);
     menu->alignItemsInColumns(3,3,3,3, NULL);
@@ -240,12 +240,12 @@ void MainMenu::createSoundPlayer()
     _fmod->changeParam("Music", "Menu",1);
     
     _player->setVisible(true);
-    Size screenSize = Director::getInstance()->getWinSize();
+    cocos2d::Size screenSizeSize = Director::getInstance()->getWinSize();
     cocos2d::Vector<MenuItem *> soundList;
 
     
     auto trackName = Label::createWithTTF("NOW PLAYING", FONT, 42);
-    trackName->setPosition(screenSize.width*0.30, screenSize.height - 50);
+    trackName->setPosition(screenSizeSize.width*0.30, screenSizeSize.height - 50);
     trackName->setColor(RGB_BLACK);
     
     trackName->setOpacity(0);
@@ -270,7 +270,7 @@ void MainMenu::createSoundPlayer()
     
     auto menuback = Menu::create(backItem, NULL);
     backItem->setTag(bMenu);
-    menuback->setPosition(screenSize.width*0.30 - 45, screenSize.height - 50 - trackName->getContentSize().height*1.25);
+    menuback->setPosition(screenSizeSize.width*0.30 - 45, screenSizeSize.height - 50 - trackName->getContentSize().height*1.25);
     _player->addChild(menuback);
     
     for (int i = 0; i < TRACKS; i++) {
@@ -317,7 +317,7 @@ void MainMenu::createSoundPlayer()
     auto menu = Menu::createWithArray(soundList);
     menu->alignItemsVerticallyWithPadding(10);
     menu->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
-    menu->setPosition(screenSize.width*0.20, screenSize.height*0.50);
+    menu->setPosition(screenSizeSize.width*0.20, screenSizeSize.height*0.50);
     menu->setTag(4);
     _player->addChild(menu);
 }
@@ -494,21 +494,21 @@ void MainMenu::update(float delta)
 
 void MainMenu::transitionToGameScene()
 {
-    auto size = Director::getInstance()->getWinSize();
+    auto Size = Director::getInstance()->getWinSize();
     auto clipper = ClippingNode::create();
     
-    clipper->setAnchorPoint(Point(0.5f, 0.5f));
-    clipper->setPosition(size.width / 2, size.height / 2);
+    clipper->setAnchorPoint(cocos2d::Point(0.5f, 0.5f));
+    clipper->setPosition(Size.width / 2, Size.height / 2);
     clipper->setAlphaThreshold(0.05f);
     clipper->setInverted(true);
     
     Sprite* blackRect = Sprite::create("images/black_screen.png");
-    blackRect->setScale(size.width/blackRect->getContentSize().width, size.height/blackRect->getContentSize().height);
+    blackRect->setScale(Size.width/blackRect->getContentSize().width, Size.height/blackRect->getContentSize().height);
     clipper->addChild(blackRect);
     
     auto heart = Sprite::create("images/heart.png");
     heart->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    heart->setScale((size.width/heart->getContentSize().width)*1.3);
+    heart->setScale((Size.width/heart->getContentSize().width)*1.3);
     clipper->setStencil(heart);	//set the cut triangle in the ClippingNode.
     
     this->addChild(clipper, 500);

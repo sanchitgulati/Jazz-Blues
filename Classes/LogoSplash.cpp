@@ -37,14 +37,14 @@ bool LogoSplash::init() {
         this->setColor(Color3B::WHITE);
         this->setOpacity(255);
         
-        Size screenSize = Director::getInstance()->getWinSize();
+        cocos2d::Size screenSize = Director::getInstance()->getWinSize();
         
         logoSprite = CCSprite::create("images/logo.png");
         float logoWidth = logoSprite->boundingBox().size.width;
         logoSprite->setScale(clampf(screenSize.width/logoWidth*0.8,0,1));
         
         this->addChild(logoSprite);
-        logoSprite->setPosition(Point(screenSize.width/2,screenSize.height/2));
+        logoSprite->setPosition(Vec2(screenSize.width/2,screenSize.height/2));
         logoSprite->setOpacity(0);
         
         bRet = true;

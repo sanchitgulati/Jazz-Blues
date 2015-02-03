@@ -56,7 +56,7 @@ bool Player::initWithBody(b2Body* body,int pIndex)
     
     _jumpHeight = 1536/kPixelsPerMeter;
     _gravity = -1000/kPixelsPerMeter;
-    _maxspeed = Point(240/kPixelsPerMeter,1020/kPixelsPerMeter);
+    _maxspeed = Vec2(240/kPixelsPerMeter,1020/kPixelsPerMeter);
     
     //Add Physics Restrictions
         
@@ -185,7 +185,7 @@ void Player::update(float dt)
 Player* Player::createPlayerFixture(b2World* world,cocos2d::TMXLayer* layer, int x, int y, float width, float height,int pIndex)
 {
     // get position & size
-    auto p = layer->getPositionAt(Point(x,y));
+    auto p = layer->getPositionAt(Vec2(x,y));
     auto tileSize = layer->getMapTileSize(); // was _tm->getTileSize // Equal in our case
     // note: creating the 'world' member variable
     // is discussed in the next chapter

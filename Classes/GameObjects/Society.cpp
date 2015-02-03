@@ -41,7 +41,7 @@ bool Society::initWithBody(b2Body* body,float scaleX,float scaleY)
     _sprite = LFSpriteNode::create(IMG_SOCIETY);
     _sprite->setColor(RGB_WHITE);
     auto contentSize = _sprite->getContentSize();
-    _sprite->setTextureRect(Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
+    _sprite->setTextureRect(cocos2d::Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
     _sprite->setB2Body(body);
     _sprite->setPTMRatio(kPixelsPerMeter);
     this->addChild(_sprite);
@@ -55,7 +55,7 @@ Society* Society::createFixture(b2World* world, TMXLayer* layer, int x, int y, f
     auto widthMultiplier = MAX((length*(!vertical)), 1);
     auto heightMultiplier = MAX((length*(vertical)), 1);
     // get position & size
-    auto p = layer->getPositionAt(Point(x,y));
+    auto p = layer->getPositionAt(Vec2(x,y));
     auto tileSize = layer->getMapTileSize(); // was _tm->getTilesize
     // note: creating the 'world' member variable
     // is discussed in the next chapter

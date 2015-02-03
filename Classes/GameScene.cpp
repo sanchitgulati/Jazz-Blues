@@ -73,7 +73,7 @@ bool GameScene::init()
     _female = nullptr;
     
     _parent = Node::create();
-    _parent->setAnchorPoint(Point(0.5,0.5));
+    _parent->setAnchorPoint(Vec2(0.5,0.5));
     this->addChild(_parent,zGame);
     
     _music = Node::create();
@@ -656,7 +656,7 @@ void GameScene::loadLevel(int level)
     _parent->addChild(_platformsGroup);
     
     _parent->setPosition(_screenOutPosition);
-    _parent->setContentSize(Size(_tm->getMapSize().width * _tm->getTileSize().width,
+    _parent->setContentSize(cocos2d::Size(_tm->getMapSize().width * _tm->getTileSize().width,
                                  _tm->getMapSize().height * _tm->getTileSize().height));
     _platformsGroup->setContentSize(_parent->getContentSize());
     
@@ -725,12 +725,12 @@ void GameScene::prepareLayers()
 void GameScene::createFixturesFirstPass(TMXLayer* layer)
 {
     // create all the rectangular fixtures for each tile
-    Size layerSize = layer->getLayerSize();
+    cocos2d::Size layerSize = layer->getLayerSize();
     for (int y = 0; y < layerSize.height; y++)
     {
         for (int x = 0; x < layerSize.width; x++)
         {
-            auto tileGID = layer->getTileGIDAt(Point(x,y));
+            auto tileGID = layer->getTileGIDAt(Vec2(x,y));
             switch (tileGID) {
                 case tmxEmpty:
                     break;
@@ -775,7 +775,7 @@ void GameScene::createFixturesFirstPass(TMXLayer* layer)
                 }
                 case tmxBlock:
                 {
-                    auto block = Block::createFixture(_world, layer, x, y, 1.0, 1.0);
+                    auto block = GameBlock::createFixture(_world, layer, x, y, 1.0, 1.0);
                     _platformsGroup->addChild(block,1);
                     break;
                 }
@@ -1197,7 +1197,7 @@ void GameScene::toGameScene()
     auto size = Director::getInstance()->getWinSize();
     auto clipper = ClippingNode::create();
     
-    clipper->setAnchorPoint(Point(0.5f, 0.5f));
+    clipper->setAnchorPoint(Vec2(0.5f, 0.5f));
     clipper->setPosition(size.width / 2, size.height / 2);
     clipper->setAlphaThreshold(0.05f);
     clipper->setInverted(true);
@@ -1232,7 +1232,7 @@ void GameScene::transitionToGameScene()
     auto size = Director::getInstance()->getWinSize();
     auto clipper = ClippingNode::create();
     
-    clipper->setAnchorPoint(Point(0.5f, 0.5f));
+    clipper->setAnchorPoint(Vec2(0.5f, 0.5f));
     clipper->setPosition(size.width / 2, size.height / 2);
     clipper->setAlphaThreshold(0.05f);
     clipper->setInverted(true);
@@ -1265,7 +1265,7 @@ void GameScene::transitionToMenuScene()
     auto size = Director::getInstance()->getWinSize();
     auto clipper = ClippingNode::create();
     
-    clipper->setAnchorPoint(Point(0.5f, 0.5f));
+    clipper->setAnchorPoint(Vec2(0.5f, 0.5f));
     clipper->setPosition(size.width / 2, size.height / 2);
     clipper->setAlphaThreshold(0.05f);
     clipper->setInverted(true);

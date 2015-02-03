@@ -17,7 +17,7 @@ int GlobalClass::lock = 0;
 
 float Util::getScreenRatio(Node* obj)
 {
-    Size winSize = Director::getInstance()->getWinSize();
+    cocos2d::Size winSize = Director::getInstance()->getWinSize();
     if(winSize.width > winSize.height)
     {
         return (winSize.height/obj->getBoundingBox().size.height);
@@ -31,7 +31,7 @@ float Util::getScreenRatio(Node* obj)
 float Util::getScreenRatioWidth(Node* obj)
 {
     
-    Size winSize = Director::getInstance()->getWinSize();
+    cocos2d::Size winSize = Director::getInstance()->getWinSize();
     return (winSize.width/obj->getBoundingBox().size.width);
     
 }
@@ -39,7 +39,7 @@ float Util::getScreenRatioWidth(Node* obj)
 float Util::getScreenRatioHeight(Node* obj)
 {
     
-    Size winSize = Director::getInstance()->getWinSize();
+    cocos2d::Size winSize = Director::getInstance()->getWinSize();
     return (winSize.height/obj->getBoundingBox().size.height);
 }
 

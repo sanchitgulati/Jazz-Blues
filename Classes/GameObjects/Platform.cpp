@@ -40,7 +40,7 @@ bool Platform::initWithBody(b2Body* body,float scaleX,float scaleY)
     _sprite = LFSpriteNode::create(IMG_PLATFORM);
     _sprite->setColor(RGB_PLATFORM);
     auto contentSize = _sprite->getContentSize();
-    _sprite->setTextureRect(Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
+    _sprite->setTextureRect(cocos2d::Rect(0, 0, contentSize.width*scaleX, contentSize.height*scaleY));
     _sprite->setB2Body(body);
     _sprite->setRotation((rand()%4)*90); //0-3 * 90degree, can give 0,90,180,270
     _sprite->setPTMRatio(kPixelsPerMeter);
@@ -61,7 +61,7 @@ Platform* Platform::createFixture(b2World* world, TMXLayer* layer, int x, int y,
     auto widthMultiplier = MAX((length*(!vertical)), 1);
     auto heightMultiplier = MAX((length*(vertical)), 1);
     // get position & size
-    auto p = layer->getPositionAt(Point(x,y));
+    auto p = layer->getPositionAt(Vec2(x,y));
     auto tileSize = layer->getMapTileSize(); // was _tm->getTilesize
     // note: creating the 'world' member variable
     // is discussed in the next chapter

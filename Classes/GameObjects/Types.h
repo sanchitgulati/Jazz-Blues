@@ -13,7 +13,7 @@
 #include "Platform.h"
 #include "Death.h"
 #include "Win.h"
-#include "Block.h"
+#include "GameBlock.h"
 #include "Wall.h"
 #include "Temple.h"
 #include "Cloud.h"

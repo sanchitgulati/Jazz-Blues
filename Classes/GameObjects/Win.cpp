@@ -51,7 +51,7 @@ bool Win::initWithBody(b2Body* body,bool alt)
 Win* Win::createFixture(b2World* world, TMXLayer* layer, int x, int y, float width, float height,bool alt)
 {
     // get position & size
-    auto p = layer->getPositionAt(Point(x,y));
+    auto p = layer->getPositionAt(Vec2(x,y));
     auto tileSize = layer->getMapTileSize(); // was _tm->getTileSize // Equal in our case
     // note: creating the 'world' member variable
     // is discussed in the next chapter

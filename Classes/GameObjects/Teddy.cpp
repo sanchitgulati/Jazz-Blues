@@ -49,7 +49,7 @@ bool Teddy::initWithBody(b2Body* body)
 Teddy* Teddy::createFixture(b2World* world, TMXLayer* layer, int x, int y, float width, float height)
 {
     // get position & size
-    auto p = layer->getPositionAt(Point(x,y));
+    auto p = layer->getPositionAt(cocos2d::Point(x,y));
     auto tileSize = layer->getMapTileSize(); // was _tm->getTileSize // Equal in our case
     // note: creating the 'world' member variable
     // is discussed in the next chapter
